@@ -2,7 +2,7 @@
 #include "cocos2d.h"
 #include <cmath>
 
-#define size_of_tower 80  //炮塔显示的长和宽
+#define size_of_tower 75  //炮塔显示的长和宽
 #define size_of_up 60  //炮塔升级和删除图标显示的长和宽
 
 class enemy;
