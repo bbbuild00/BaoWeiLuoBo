@@ -33,34 +33,34 @@ protected:
 class stone1 :public stone {
 public:
     stone1(cocos2d::Vec2 p, GameScene* lay);
-    static stone* create(cocos2d::Vec2 po, GameScene* lay);
+    static stone1* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };
 
 class stone2 :public stone {
 public:
     stone2(cocos2d::Vec2 p, GameScene* lay);
-    static stone* create(cocos2d::Vec2 po, GameScene* lay);
+    static stone2* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };
 
 class stone3 :public stone {
 public:
     stone3(cocos2d::Vec2 p, GameScene* lay);
-    static stone* create(cocos2d::Vec2 po, GameScene* lay);
+    static stone3* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };
 
 class stone4 :public stone {
 public:
     stone4(cocos2d::Vec2 p, GameScene* lay);
-    static stone* create(cocos2d::Vec2 po, GameScene* lay);
+    static stone4* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };
 
 class stone5 :public stone {
 public:
     stone5(cocos2d::Vec2 p, GameScene* lay);
-    static stone* create(cocos2d::Vec2 po, GameScene* lay);
+    static stone5* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };

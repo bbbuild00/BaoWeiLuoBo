@@ -19,8 +19,8 @@ void stone::Attacked(int damage) {
     }
 }
 
-static stone1::stone* create(cocos2d::Vec2 po, GameScene* lay) {
-    stone* layer = new stone1(po, lay);
+stone1* stone1::create(cocos2d::Vec2 po, GameScene* lay) {
+    stone1* layer = new stone1(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -29,8 +29,8 @@ static stone1::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     return nullptr;
 }
 
-static stone2::stone* create(cocos2d::Vec2 po, GameScene* lay) {
-    stone* layer = new stone2(po, lay);
+stone2* stone2::create(cocos2d::Vec2 po, GameScene* lay) {
+    stone2* layer = new stone2(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -39,8 +39,8 @@ static stone2::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     return nullptr;
 }
 
-static stone3::stone* create(cocos2d::Vec2 po, GameScene* lay) {
-    stone* layer = new stone3(po, lay);
+stone3*stone3:: create(cocos2d::Vec2 po, GameScene* lay) {
+    stone3* layer = new stone3(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -49,8 +49,8 @@ static stone3::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     return nullptr;
 }
 
-static stone4::stone* create(cocos2d::Vec2 po, GameScene* lay) {
-    stone* layer = new stone4(po, lay);
+stone4*stone4:: create(cocos2d::Vec2 po, GameScene* lay) {
+    stone4* layer = new stone4(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -59,8 +59,8 @@ static stone4::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     return nullptr;
 }
 
-static stone5::stone* create(cocos2d::Vec2 po, GameScene* lay) {
-    stone* layer = new stone5(po, lay);
+stone5*stone5:: create(cocos2d::Vec2 po, GameScene* lay) {
+    stone5* layer = new stone5(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;

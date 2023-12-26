@@ -28,7 +28,7 @@ public:
 	int getHP() { return HP; }//获取当前血量
 	int getmoney() { return money; }//获取打败小怪兽奖励的金币
 	bool Attacackable() { return active; }//判断小怪兽是否可以被攻击,是否消失
-	void getout(tower* tower);//小怪兽脱离炮塔攻击范围
+	//void getout(tower* tower);//小怪兽脱离炮塔攻击范围
 	void beremoved();//小怪兽被移除
 	void doublespeed() { speed *= 2; }
 	void normalspeed() { speed /= 2; }
@@ -61,7 +61,7 @@ protected:
 class enemy1 :public enemy {
 public:
 	enemy1(waypoint* st, GameScene* lay);
-	static enemy* create(waypoint* st, GameScene* lay);
+	static enemy1* create(waypoint* st, GameScene* lay);
 	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
@@ -72,7 +72,7 @@ public:
 class enemy2 :public enemy {
 public:
 	enemy2(waypoint* st, GameScene* lay);
-	static enemy* create(waypoint* st, GameScene* lay);
+	static enemy2* create(waypoint* st, GameScene* lay);
 	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
@@ -83,7 +83,7 @@ public:
 class enemy3 :public enemy {
 public:
 	enemy3(waypoint* st, GameScene* lay);
-	static enemy* create(waypoint* st, GameScene* lay);
+	static enemy3* create(waypoint* st, GameScene* lay);
 	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
