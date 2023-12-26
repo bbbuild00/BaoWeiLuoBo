@@ -1,4 +1,5 @@
 #include"stone.h"
+#include"GameScene.h"
 
 void stone::Attacked(int damage) {
     HP -= damage;
@@ -6,20 +7,59 @@ void stone::Attacked(int damage) {
         //调用函数：移走石头（防御塔和控制台），添加金币，
         //和炮塔层通讯
         TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+
+        StoneLayer* pStone = dynamic_cast<StoneLayer*>(w->getChildByTag(TagStone));
         //调用函数：移走石头（防御塔和控制台），添加金币，
-        w->removeMonster(stone);
-        pTower->enemy_killed();
+        pStone->removeStone(this);
+
+        //pTower->enemy_killed();
         //和金币层通讯
-        MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
+        StoneLayer* pMoney = dynamic_cast<StoneLayer*>(w->getChildByTag(TagStone));
         pMoney->update(getmoney());
     }
 }
 
-static stone* create(cocos2d::Vec2 po, StoneLayer* lay) {
+static stone1::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     stone* layer = new stone1(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+static stone2::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     stone* layer = new stone2(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+static stone3::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     stone* layer = new stone3(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+static stone4::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     stone* layer = new stone4(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+static stone5::stone* create(cocos2d::Vec2 po, GameScene* lay) {
     stone* layer = new stone5(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();
@@ -29,35 +69,35 @@ static stone* create(cocos2d::Vec2 po, StoneLayer* lay) {
     return nullptr;
 }
 
-stone1::stone1(cocos2d::Vec2 p, StoneLayer* lay) {
+stone1::stone1(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone2::stone2(cocos2d::Vec2 p, StoneLayer* lay) {
+stone2::stone2(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone3::stone3(cocos2d::Vec2 p, StoneLayer* lay) {
+stone3::stone3(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone4::stone4(cocos2d::Vec2 p, StoneLayer* lay) {
+stone4::stone4(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone5::stone5(cocos2d::Vec2 p, StoneLayer* lay) {
+stone5::stone5(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;

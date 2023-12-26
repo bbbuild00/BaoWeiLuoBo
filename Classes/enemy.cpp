@@ -1,6 +1,8 @@
 #include"enemy.h"
+#include"GameScene.h"
+#include"waypoint.h"
 
-enemy1::enemy1(waypoint* st,MonsterLayer* lay) {
+enemy1::enemy1(waypoint* st, GameScene* lay) {
     mpos = st->getpos();
     stop = false;
     slowice = false;
@@ -9,7 +11,7 @@ enemy1::enemy1(waypoint* st,MonsterLayer* lay) {
     //mpos=st->getpos();
 }
 
-enemy2::enemy2(waypoint* st, MonsterLayer* lay) {
+enemy2::enemy2(waypoint* st, GameScene* lay) {
     mpos = st->getpos();
     stop = false;
     slowice = false;
@@ -18,7 +20,7 @@ enemy2::enemy2(waypoint* st, MonsterLayer* lay) {
     //mpos=st->getpos();
 }
 
-enemy3::enemy3(waypoint* st, MonsterLayer* lay) {
+enemy3::enemy3(waypoint* st, GameScene* lay) {
     mpos = st->getpos();
     stop = false;
     slowice = false;
@@ -27,10 +29,8 @@ enemy3::enemy3(waypoint* st, MonsterLayer* lay) {
     //mpos=st->getpos();
 }
 
-static enemy* create(waypoint* st, MonsterLayer* lay) {
+static enemy1::enemy* create(waypoint* st, GameScene* lay) {
     enemy* layer = new enemy1(st,lay);
-    enemy* layer = new enemy2(st, lay);
-    enemy* layer = new enemy3(st, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -39,6 +39,26 @@ static enemy* create(waypoint* st, MonsterLayer* lay) {
     return nullptr;
 }
 
+static enemy2::enemy* create(waypoint* st, GameScene* lay) {
+    enemy* layer = new enemy2(st, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+static enemy3::enemy* create(waypoint* st, GameScene* lay) {
+    enemy* layer = new enemy3(st, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+/*
 void q() {
     auto listener = cocos2d::EventListenerMouse::create();
 
@@ -55,7 +75,7 @@ void q() {
     // 注册监听器
     cocos2d::_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cocos2d::sprite);
 }
-
+*/
 // 初始化函数
 bool enemy::init(){
     if (!Layer::init()) {
@@ -293,7 +313,7 @@ void enemy3::draw_enemy() {
 }
 
 void enemy::move() {
-addWayPoint1(m_waypointList, monster);//走向的航点
+   // addWayPoint1(m_waypointList, monster);//走向的航点
     if (slowice) {
         auto moveTo1 = cocos2d::MoveTo::create(2, m_waypointList.at(0)->getpos());
         auto moveTo2 = cocos2d::MoveTo::create(2, m_waypointList.at(1)->getpos());
@@ -390,13 +410,13 @@ addWayPoint1(m_waypointList, monster);//走向的航点
 }
 
 enemy1::~enemy1() {
-    Attacktower.clear();
+   // enemy_killed();
 }
 enemy2::~enemy2() {
-    Attacktower.clear();
+   //enemy_killed();
 }
 enemy3::~enemy3() {
-    Attacktower.clear();
+  // enemy_killed();
 }
 
 
@@ -554,9 +574,12 @@ void enemy::Attacked(int damage) {
     if (HP <= 0) {
         //和炮塔层通讯
         TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+        
+        MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(w->getChildByTag(TagMonster));
         //调用函数：移走石头（防御塔和控制台），添加金币，
-        w->removeMonster(enemy);
-        pTower->enemy_killed();
+        pMonster->removeMonster(this);
+        
+        //pTower->enemy_killed();
         //和金币层通讯
         MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
         pMoney->update(getmoney());

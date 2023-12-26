@@ -4,10 +4,13 @@
 #include "cocos/2d/CCDrawNode.h"
 #include "cocos/platform/CCImage.h"
 #include"waypoint.h"
+#include"tower.h"
+#include"GameScene.h"
 
 class enemy :public cocos2d::Layer
 {
 public:
+	//static enemy1::enemy* create(waypoint* st, GameScene* lay)
 	//enemy(waypoint* st, MonsterLayer* lay);
 	//virtual ~enemy();
 	//static enemy* create(waypoint* st, MonsterLayer* lay);
@@ -58,7 +61,8 @@ protected:
 class enemy1 :public enemy {
 public:
 	enemy1(waypoint* st, GameScene* lay);
-	void draw_enemy();
+	static enemy* create(waypoint* st, GameScene* lay);
+	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
 	void slowdown();//判断速度（被减速）//关关或刘姐姐调用
@@ -68,7 +72,8 @@ public:
 class enemy2 :public enemy {
 public:
 	enemy2(waypoint* st, GameScene* lay);
-	void draw_enemy();
+	static enemy* create(waypoint* st, GameScene* lay);
+	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
 	void slowdown();//判断速度（被减速）//关关或刘姐姐调用
@@ -78,7 +83,8 @@ public:
 class enemy3 :public enemy {
 public:
 	enemy3(waypoint* st, GameScene* lay);
-	void draw_enemy();
+	static enemy* create(waypoint* st, GameScene* lay);
+	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
 	void slowdown();//判断速度（被减速）//关关或刘姐姐调用

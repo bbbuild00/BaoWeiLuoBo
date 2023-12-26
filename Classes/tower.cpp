@@ -76,14 +76,14 @@ void tower::get_stone(stone* a)  //未解之谜函数
 {
 	attack_stone = a;   
 	enemy_point = a->getpos();  
-	attack_stone->addtower(this);  //向对应的障碍物增加的谁在攻击他 //谁要杀了我，而我又杀了谁？
+	//attack_stone->addtower(this);  //向对应的障碍物增加的谁在攻击他 //谁要杀了我，而我又杀了谁？
 }
 
 void tower::get_enemy(enemy* a)  //未解之谜函数
 {
 	attack_enemy = a;   
 	enemy_point = a->getpos();  
-	attack_enemy->addtower(this);  //向对应的障碍物增加的谁在攻击他 //谁要杀了我，而我又杀了谁？
+	//attack_enemy->addtower(this);  //向对应的障碍物增加的谁在攻击他 //谁要杀了我，而我又杀了谁？
 }
 
 void tower::enemy_killed() 
@@ -126,9 +126,9 @@ void tower::check_enemy_in()  //尚未实现
 			enemy_out();
 		}
 	}
-	else {  
-		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(_pGameScene->getChildByTag(TagMonster));
-		for (enemy* child : pMonster->getChildren()) {
+	/*else {
+		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(scene->getChildByTag(TagMonster));
+		for (enemy* child : dynamic_cast<enemy*>(pMonster->getChildren())) {
 			if (enemy* e = dynamic_cast<enemy*>(child)) { 
 				bool a = check_if_in_range(e->getpos());
 				if (a) {
@@ -137,7 +137,7 @@ void tower::check_enemy_in()  //尚未实现
 				}
 			}
 		}
-	}
+	}*/
 }
 
 int tower::get_damage()
