@@ -12,10 +12,10 @@ public:
 	//virtual ~enemy();
 	//static enemy* create(waypoint* st, MonsterLayer* lay);
 	virtual bool init() override;// 初始化函数
-
-	virtual void draw_enemy() = 0;//纯虚函数//绘制小怪兽
-	virtual void cartoon(float dt) = 0;//在冰冻攻击后变换图片
-	virtual void slowdown() = 0;//判断速度（被减速）//关关或刘姐姐调用
+	
+	virtual void draw_enemy()=0;//纯虚函数//绘制小怪兽
+	virtual void cartoon(float dt)=0;//在冰冻攻击后变换图片
+	virtual void slowdown()=0;//判断速度（被减速）//关关或刘姐姐调用
 
 	void move();//小怪兽的移动
 
@@ -37,7 +37,7 @@ protected:
 	int fullHP;//满血
 	double speed;//速度
 	bool stop;//暂停
-
+	
 	cocos2d::Sprite* monster = NULL;//小怪兽
 	cocos2d::Sprite* brush;//血条
 

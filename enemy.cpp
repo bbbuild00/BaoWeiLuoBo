@@ -1,6 +1,7 @@
 #include"enemy.h"
+#include"GameScene.h"
 
-enemy1::enemy1(waypoint* st,MonsterLayer* lay) {
+enemy1::enemy1(waypoint* st, GameScene* lay) {
     mpos = st->getpos();
     stop = false;
     slowice = false;
@@ -9,7 +10,7 @@ enemy1::enemy1(waypoint* st,MonsterLayer* lay) {
     //mpos=st->getpos();
 }
 
-enemy2::enemy2(waypoint* st, MonsterLayer* lay) {
+enemy2::enemy2(waypoint* st, GameScene* lay) {
     mpos = st->getpos();
     stop = false;
     slowice = false;
@@ -18,7 +19,7 @@ enemy2::enemy2(waypoint* st, MonsterLayer* lay) {
     //mpos=st->getpos();
 }
 
-enemy3::enemy3(waypoint* st, MonsterLayer* lay) {
+enemy3::enemy3(waypoint* st, GameScene* lay) {
     mpos = st->getpos();
     stop = false;
     slowice = false;
@@ -27,7 +28,7 @@ enemy3::enemy3(waypoint* st, MonsterLayer* lay) {
     //mpos=st->getpos();
 }
 
-static enemy* create(waypoint* st, MonsterLayer* lay) {
+static enemy* create(waypoint* st, GameScene* lay) {
     enemy* layer = new enemy1(st,lay);
     enemy* layer = new enemy2(st, lay);
     enemy* layer = new enemy3(st, lay);
@@ -39,23 +40,6 @@ static enemy* create(waypoint* st, MonsterLayer* lay) {
     return nullptr;
 }
 
-void q() {
-    auto listener = cocos2d::EventListenerMouse::create();
-
-    listener->onMouseDown = [=](cocos2d::Event* event) {
-        auto e = static_cast<cocos2d::EventMouse*>(event);
-        float x = e->getCursorX();
-        float y = e->getCursorY();
-        // 检测鼠标是否点击精灵
-        if (cocos2d::sprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
-            // 在这里可以执行你需要的操作
-        }
-        };
-
-    // 注册监听器
-    cocos2d::_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cocos2d::sprite);
-}
-
 // 初始化函数
 bool enemy::init(){
     if (!Layer::init()) {
@@ -65,8 +49,26 @@ bool enemy::init(){
     draw_enemy();
 
     //点击事件
+    /*auto listener = cocos2d::EventListenerMouse::create();
 
+    listener->onMouseDown = [=](cocos2d::Event* event) {
+        auto e = static_cast<cocos2d::EventMouse*>(event);
+        float x = e->getCursorX();
+        float y = e->getCursorY();
+        // 检测鼠标是否点击精灵
+		if (monster->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+			//和炮塔层通讯
+			TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+			pTower->check_if_in_range(cocos2d::Vec2 p);  //判断障碍物是否在我的攻击范围内
+           for (Node* child : towerLayer->getChildren()) { 
+            // // 检查是否是 Tower 类型的子节点 if (Tower* tower = dynamic_cast<Tower*>(child)) { 
+            // // 调用 shoot() 函数 tower->shoot(); }
+        }
+		};
 
+    // 注册监听器
+    cocos2d::_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, monster);
+*/
 
     move();
 

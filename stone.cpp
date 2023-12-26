@@ -15,7 +15,7 @@ void stone::Attacked(int damage) {
     }
 }
 
-static stone* create(cocos2d::Vec2 po, StoneLayer* lay) {
+static stone* create(cocos2d::Vec2 po, GameScene* lay) {
     stone* layer = new stone1(po, lay);
     stone* layer = new stone2(po, lay);
     stone* layer = new stone3(po, lay);
@@ -29,35 +29,35 @@ static stone* create(cocos2d::Vec2 po, StoneLayer* lay) {
     return nullptr;
 }
 
-stone1::stone1(cocos2d::Vec2 p, StoneLayer* lay) {
+stone1::stone1(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone2::stone2(cocos2d::Vec2 p, StoneLayer* lay) {
+stone2::stone2(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone3::stone3(cocos2d::Vec2 p, StoneLayer* lay) {
+stone3::stone3(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone4::stone4(cocos2d::Vec2 p, StoneLayer* lay) {
+stone4::stone4(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
     fullHP = 100;
 }
 
-stone5::stone5(cocos2d::Vec2 p, StoneLayer* lay) {
+stone5::stone5(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
     HP = 100;
