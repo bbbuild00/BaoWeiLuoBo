@@ -4,9 +4,14 @@ void stone::Attacked(int damage) {
     HP -= damage;
     if (HP <= 0) {
         //调用函数：移走石头（防御塔和控制台），添加金币，
-        w->removeStone(stone);
-      w->_pTower->stone_killed();
-      w->_pMoney->updateMoney(getmoney());
+        //和炮塔层通讯
+        TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+        //调用函数：移走石头（防御塔和控制台），添加金币，
+        w->removeMonster(stone);
+        pTower->enemy_killed();
+        //和金币层通讯
+        MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
+        pMoney->update(getmoney());
     }
 }
 
