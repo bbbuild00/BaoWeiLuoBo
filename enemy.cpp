@@ -1,7 +1,5 @@
 #include"enemy.h"
 
-class waypoint;
-
 enemy1::enemy1(waypoint* st,MonsterLayer* lay) {
     mpos = st->getpos();
     stop = false;
@@ -41,6 +39,23 @@ static enemy* create(waypoint* st, MonsterLayer* lay) {
     return nullptr;
 }
 
+void q() {
+    auto listener = cocos2d::EventListenerMouse::create();
+
+    listener->onMouseDown = [=](cocos2d::Event* event) {
+        auto e = static_cast<cocos2d::EventMouse*>(event);
+        float x = e->getCursorX();
+        float y = e->getCursorY();
+        // 检测鼠标是否点击精灵
+        if (cocos2d::sprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+            // 在这里可以执行你需要的操作
+        }
+        };
+
+    // 注册监听器
+    cocos2d::_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cocos2d::sprite);
+}
+
 // 初始化函数
 bool enemy::init(){
     if (!Layer::init()) {
@@ -50,6 +65,8 @@ bool enemy::init(){
     draw_enemy();
 
     //点击事件
+
+
 
     move();
 
@@ -535,10 +552,14 @@ void enemy3::slowdown() {
 void enemy::Attacked(int damage) {
     HP -= damage;
     if (HP <= 0) {
+        //和炮塔层通讯
+        TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
         //调用函数：移走石头（防御塔和控制台），添加金币，
         w->removeMonster(enemy);
-        w->_pTower->enemy_killed();
-        w->_pMoney->updateMoney(getmoney());
+        pTower->enemy_killed();
+        //和金币层通讯
+        MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
+        pMoney->update(getmoney());
     }
 }
 //添加攻击我的炮塔

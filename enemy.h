@@ -12,10 +12,10 @@ public:
 	//virtual ~enemy();
 	//static enemy* create(waypoint* st, MonsterLayer* lay);
 	virtual bool init() override;// 初始化函数
-	
-	virtual void draw_enemy()=0;//纯虚函数//绘制小怪兽
-	virtual void cartoon(float dt)=0;//在冰冻攻击后变换图片
-	virtual void slowdown()=0;//判断速度（被减速）//关关或刘姐姐调用
+
+	virtual void draw_enemy() = 0;//纯虚函数//绘制小怪兽
+	virtual void cartoon(float dt) = 0;//在冰冻攻击后变换图片
+	virtual void slowdown() = 0;//判断速度（被减速）//关关或刘姐姐调用
 
 	void move();//小怪兽的移动
 
@@ -37,11 +37,11 @@ protected:
 	int fullHP;//满血
 	double speed;//速度
 	bool stop;//暂停
-	
+
 	cocos2d::Sprite* monster = NULL;//小怪兽
 	cocos2d::Sprite* brush;//血条
 
-	Monster* w;
+	GameScene* w;
 	bool slowice;//是否被冰块攻击
 	bool active;//是否移动
 	cocos2d::Vec2 mpos;//当前位置
@@ -51,13 +51,13 @@ protected:
 	cocos2d::Vector<waypoint*>m_waypointList;//走向的航点
 
 	//记录有哪些炮塔在攻击它，当小怪兽死去后，到对应的炮塔里，把炮塔对应的该攻击对象删除
-	cocos2d::Vector<tower*>Attacktower;
+	//cocos2d::Vector<tower*>Attacktower;
 
 };
 
 class enemy1 :public enemy {
 public:
-	enemy1(waypoint* st, MonsterLayer* lay);
+	enemy1(waypoint* st, GameScene* lay);
 	void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
@@ -67,7 +67,7 @@ public:
 
 class enemy2 :public enemy {
 public:
-	enemy2(waypoint* st, MonsterLayer* lay);
+	enemy2(waypoint* st, GameScene* lay);
 	void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
@@ -77,7 +77,7 @@ public:
 
 class enemy3 :public enemy {
 public:
-	enemy3(waypoint* st, MonsterLayer* lay);
+	enemy3(waypoint* st, GameScene* lay);
 	void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
