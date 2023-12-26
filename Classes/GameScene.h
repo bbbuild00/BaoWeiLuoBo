@@ -5,6 +5,19 @@
 
 #include "cocos2d.h"
 
+#define RODE 9
+#define BARRIER 4
+#define TOWER1 1//1¼¶Ëþ
+#define TOWER2 2//2¼¶Ëþ
+#define TOWER3 3//¶¥¼¶Ëþ
+#define GREEN_BOTTLE 1
+#define SHIT 2
+#define TagMenu 1
+#define TagTower 2
+#define TagMonster 3
+#define TagMoney 4
+#define TagStone 5
+
 class GameScene : public cocos2d::Scene
 {
 public:
