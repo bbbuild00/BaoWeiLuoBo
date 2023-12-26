@@ -5,7 +5,6 @@
 #include "stone.h"
 #include "enemy.h"
 
-
 void tower::add_money()
 {
 	scene->_pMoney->updateMoney((grade + 1) * 5);
