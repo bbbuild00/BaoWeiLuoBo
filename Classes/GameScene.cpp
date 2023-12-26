@@ -15,18 +15,7 @@ char gameMap[7][12] = { {0,0,0,0,0,0,0,0,0,0,0,0},
                         {9,9,0,0,0,0,0,0,0,0,9,9},
                         {9,9,9,9,0,0,0,0,0,9,9,9} };//地图框架,0为空，1-3为炮塔，4为障碍物、9为路或不可移动障碍
 
-#define RODE 9
-#define BARRIER 4
-#define TOWER1 1//1级塔
-#define TOWER2 2//2级塔
-#define TOWER3 3//顶级塔
-#define GREEN_BOTTLE 1
-#define SHIT 2
-#define TagMenu 1
-#define TagTower 2
-#define TagMonster 3
-#define TagMoney 4
-#define TagStone 5
+
 
 struct mapPos {
     int x;
@@ -283,7 +272,7 @@ bool MenuLayer::init() {
                 grid[i][j]->setTexture("/game/StartSprite.png");
                 grid[i][j]->setScale(0.9);
                 Vec2 vec = gridToPosition(j, i);
-                grid[i][j]->setAnchorPoint(Vec2(0, 0));
+                //grid[i][j]->setAnchorPoint(Vec2(0, 0));
                 grid[i][j]->setPosition(vec.x, vec.y);
                 this->addChild(grid[i][j]);
                 grid[i][j]->setVisible(false);
@@ -405,7 +394,7 @@ bool TowerLayer::ifAvailable(int Type) {
     {
         case GREEN_BOTTLE:
             if (pMoney->getMoney() >= 100)//这里有问题 引发了异常: 读取访问权限冲突。this->_pTower->_pMoney 是 0xDDDDDDDD。
-
+                //pMoney->update(-120);
                 return true;
             else
                 return false;
@@ -434,18 +423,18 @@ void TowerLayer::buidTower(int Type, cocos2d::Sprite* gridBuiding) {
         auto newTower = tower_1::create(position, _pGameScene);//还是改成传GameScene指针
         */
         //测试
-        auto newTower = Sprite::create("/game/green_CanClick1.PNG");
-        newTower->setAnchorPoint(Vec2(0, 0));//文美加一句这个！位置才对的上
+        auto newTower = Sprite::create("tower1-1.png");
         newTower->setPosition(position);
         this->addChild(newTower);
+        //TowerLayer* ptower = dynamic_cast<TowerLayer*>(newTower->getParent());
+        //ptower->removeTower(this);
     }
     else if (Type == SHIT) {
         /*建tower2
         auto newTower = tower_2::create(position, _pGameScene);
         */
         //测试
-        auto newTower2 = Sprite::create("/game/shit_CanClick1.PNG");
-        newTower2->setAnchorPoint(Vec2(0, 0));//文美加一句这个！位置才对的上
+        auto newTower2 = Sprite::create("tower3-1.png");
         newTower2->setPosition(position);
         this->addChild(newTower2);
     }
@@ -458,6 +447,7 @@ bool TowerLayer::removeTower(tower* Tower) {
     /*从层上移掉塔
     removeChild(dynamic_cast<Layer*>(Tower));
     */
+    MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(_pGameScene->getChildByTag(TagMonster));
     return true;
 }
 
