@@ -4,7 +4,7 @@
 #define __GAME_SCENE_H__
 
 #include "cocos2d.h"
-
+//111
 #define RODE 9
 #define BARRIER 4
 #define TOWER1 1//1¼¶Ëþ
