@@ -2,15 +2,17 @@
 #include "cocos2d.h"
 #include <cmath>
 
+
 #define size_of_tower 75  //炮塔显示的长和宽
 #define size_of_up 60  //炮塔升级和删除图标显示的长和宽
+
 
 class enemy;
 class Widget;
 class Bullet;
 class QTimer;
 class stone;
-class TowerLayer;
+class GameScene;
 
 const float internal_time = 1.0;   //炮塔两次攻击之间的间隔时间
 
@@ -61,17 +63,17 @@ protected:
 	cocos2d::Vec2 point; //炮塔的坐标
 	cocos2d::Vec2 enemy_point; //要攻击的坐标
 	bool stop = false;  //暂停
-	TowerLayer* scene = NULL;
+	GameScene* scene = NULL;
 };
 
 
 class tower_1 : public tower  //第一个炮塔
 {
 public:
-	tower_1(cocos2d::Vec2& a,TowerLayer* b);    //构造函数，要求传进一个位置来
+	tower_1(cocos2d::Vec2& a,GameScene* b);    //构造函数，要求传进一个位置来
 	virtual void upgrade();
 	virtual void shoot();  
-	static tower_1* create(cocos2d::Vec2& a, TowerLayer* b) {
+	static tower_1* create(cocos2d::Vec2& a, GameScene* b) {
 		tower_1* layer = new tower_1(a, b);
 		if (layer && layer->init()) {
 			layer->autorelease();
@@ -90,10 +92,10 @@ public:
 class tower_2 : public tower  //第二个炮塔
 {
 public:
-	tower_2(cocos2d::Vec2& a,TowerLayer* b);    //构造函数，要求传进一个位置来
+	tower_2(cocos2d::Vec2& a,GameScene* b);    //构造函数，要求传进一个位置来
 	virtual void upgrade();
 	virtual void shoot();  
-	static tower_2* create(cocos2d::Vec2& a, TowerLayer* b) {
+	static tower_2* create(cocos2d::Vec2& a, GameScene* b) {
 		tower_2* layer = new tower_2(a, b);
 		if (layer && layer->init()) {
 			layer->autorelease();
@@ -112,10 +114,10 @@ public:
 class tower_3 : public tower  //第二个炮塔
 {
 public:
-	tower_3(cocos2d::Vec2& a,TowerLayer* b);    //构造函数，要求传进一个位置来
+	tower_3(cocos2d::Vec2& a,GameScene* b);    //构造函数，要求传进一个位置来
 	virtual void upgrade();
 	virtual void shoot();  
-	static tower_3* create(cocos2d::Vec2& a, TowerLayer* b) {
+	static tower_3* create(cocos2d::Vec2& a, GameScene* b) {
 		tower_3* layer = new tower_3(a, b);
 		if (layer && layer->init()) {
 			layer->autorelease();

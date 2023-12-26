@@ -1,18 +1,22 @@
 #include "tower.h"
 #include "Bullet.h"
-#include "TowerLayer.h"
+#include "GameScene.h"
 #include <string>
 #include "stone.h"
 #include "enemy.h"
 
+
+
 void tower::add_money()
 {
-	scene->_pMoney->updateMoney((grade + 1) * 5);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update((grade + 1) * 5);
 }
 
 void tower::removed()
 {
-	scene->removeTower(this);
+	TowerLayer* ptower = dynamic_cast<TowerLayer*>(this->getParent());
+	ptower->removeTower(this);
 }
 
 void tower::set_rotation(double angle)   //将炮塔对应的精灵进行旋转，要求传入一个角度来
@@ -123,7 +127,8 @@ void tower::check_enemy_in()  //尚未实现
 		}
 	}
 	else {  
-		for (enemy* child : scene->_pMonsters->getChildren()) {
+		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(_pGameScene->getChildByTag(TagMonster));
+		for (enemy* child : pMonster->getChildren()) {
 			if (enemy* e = dynamic_cast<enemy*>(child)) { 
 				bool a = check_if_in_range(e->getpos());
 				if (a) {
@@ -147,13 +152,14 @@ bool tower::if_continue(int a)
 	return false;
 }
 
-tower_1::tower_1(cocos2d::Vec2& a,TowerLayer* b)
+tower_1::tower_1(cocos2d::Vec2& a,GameScene* b)
 {
 	point = a;
 	grade = 0;
 	damage = damage_1[0];
 	scene = b;
-	scene->_pMoney->updateMoney(-cost_money_1[0]);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update(-cost_money_1[0]);
 }
 
 void tower_1::upgrade()
@@ -162,13 +168,15 @@ void tower_1::upgrade()
 		turretSprite->setTexture("tower1-2.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_1[1];
-		scene->_pMoney->updateMoney(-cost_money_1[1]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_1[1]);
 	}
 	else if (grade == 1) {
 		turretSprite->setTexture("tower1-3.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_1[2];
-		scene->_pMoney->updateMoney(-cost_money_1[2]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_1[2]);
 	}
 	grade++;
 }
@@ -179,7 +187,7 @@ void tower_1::shoot()
 		Bullet* bullet = Bullet_1::create(point, enemy_point, this, attack_stone); //创建了一个子弹类？
 		this->addChild(bullet);
 		bullet->move();  //让子弹动起来
-		
+
 	}
 	if (attack_enemy != NULL) {    //存在要攻击的敌人
 		Bullet* bullet = Bullet_1::create(point, enemy_point, this, attack_enemy); //创建了一个子弹类？
@@ -210,7 +218,9 @@ bool tower_1::init()
 			// 在这里可以执行你需要的操作
 			//问一下关关怎么让1-a和1-b一直显示嘞
 
-			int allmoney = scene->_pMoney->getMoney();
+
+			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+			int allmoney = pMoney->getMoney();
 			//画点击后立即出现的东西（和关关商量一下留白事宜）
 			if (grade == 0 || grade == 1) {  
 				if ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1)) {   //如果足够升级的话
@@ -256,7 +266,7 @@ bool tower_1::init()
 					_eventDispatcher->addEventListenerWithSceneGraphPriority(listene,  upSprite);
 
 
-					
+
 					//搞一个监视器嘞
 					auto listen = cocos2d::EventListenerMouse::create(); 
 					listen->onMouseDown = [=](cocos2d::Event *event){
@@ -268,15 +278,17 @@ bool tower_1::init()
 							// 在这里可以执行你需要的操作
 							//还没完全想好
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_1[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_1[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[1]);
 							}
 							this->removeChild(upSprite);  //把这个精灵摘除喽
 							this->removeChild(downSprite);
 							removed();
-							
+
 						}
 					};
 					// 注册监听器
@@ -319,15 +331,17 @@ bool tower_1::init()
 							// 在这里可以执行你需要的操作
 							//还没完全想好
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_1[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_1[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[1]);
 							}
 							this->removeChild(upSprite);  //把这个精灵摘除喽
 							this->removeChild(downSprite);
 							removed();
-							
+
 						}
 					};
 					// 注册监听器
@@ -356,14 +370,14 @@ bool tower_1::init()
 					if( downSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
 						// 在这里可以执行你需要的操作
 						//还没完全想好
-						
-							scene->_pMoney->updateMoney( get_money_1[2]);
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-					
+						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+						pMoney->update(get_money_1[2]);
+						this->removeChild(upSprite);  //把这个精灵摘除喽
+						this->removeChild(downSprite);
+						removed();
 
-						
+
+
 					}
 				};
 				// 注册监听器
@@ -391,18 +405,19 @@ bool tower_1::init()
 		},  0.01, "ShootScheduler"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	return true;
-		
+
 }
 
 
 
-tower_2::tower_2(cocos2d::Vec2& a,TowerLayer*  b)
+tower_2::tower_2(cocos2d::Vec2& a,GameScene*  b)
 {
 	point = a;
 	grade = 0;
 	damage = damage_2[0];
 	scene = b;
-	scene->_pMoney->updateMoney(-cost_money_2[0]);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update(-cost_money_2[0]);
 }
 void tower_2::upgrade()
 {
@@ -410,13 +425,15 @@ void tower_2::upgrade()
 		turretSprite->setTexture("tower2-2.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_2[1];
-		scene->_pMoney->updateMoney(-cost_money_2[1]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_2[1]);
 	}
 	else if (grade == 1) {
 		turretSprite->setTexture("tower2-3.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_2[2];
-		scene->_pMoney->updateMoney(-cost_money_2[2]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_2[2]);
 	}
 	grade++;
 }
@@ -456,7 +473,8 @@ bool tower_2::init()
 			// 在这里可以执行你需要的操作
 			//问一下关关怎么让1-a和1-b一直显示嘞
 
-			int allmoney = scene->_pMoney->getMoney();
+			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+			int allmoney = pMoney->getMoney();
 			//画点击后立即出现的东西（和关关商量一下留白事宜）
 			if (grade == 0 || grade == 1) {  
 				if ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1)) {   //如果足够升级的话
@@ -514,10 +532,12 @@ bool tower_2::init()
 							// 在这里可以执行你需要的操作
 							//还没完全想好
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_2[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_2[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[1]);
 							}
 							this->removeChild(upSprite);  //把这个精灵摘除喽
 							this->removeChild(downSprite);
@@ -565,10 +585,12 @@ bool tower_2::init()
 							// 在这里可以执行你需要的操作
 							//还没完全想好
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_2[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_2[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[1]);
 							}
 							this->removeChild(upSprite);  //把这个精灵摘除喽
 							this->removeChild(downSprite);
@@ -602,7 +624,8 @@ bool tower_2::init()
 					if( downSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
 						// 在这里可以执行你需要的操作
 						//还没完全想好
-						scene->_pMoney->updateMoney(get_money_2[2]);
+						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+						pMoney->update( get_money_2[2]);
 						this->removeChild(upSprite);  //把这个精灵摘除喽
 						this->removeChild(downSprite);
 						removed();
@@ -642,13 +665,14 @@ bool tower_2::init()
 
 
 
-tower_3::tower_3(cocos2d::Vec2& a,TowerLayer*  b)
+tower_3::tower_3(cocos2d::Vec2& a,GameScene*  b)
 {
 	point = a;
 	grade = 0;
 	damage = damage_3[0];
 	scene = b;
-	scene->_pMoney->updateMoney(-cost_money_3[0]);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update( -cost_money_3[0]);
 }
 void tower_3::upgrade()
 {
@@ -656,13 +680,15 @@ void tower_3::upgrade()
 		turretSprite->setTexture("tower3-2.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_3[1];
-		scene->_pMoney->updateMoney(-cost_money_3[1]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update( -cost_money_3[1]);
 	}
 	else if (grade == 1) {
 		turretSprite->setTexture("tower3-3.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_3[2];
-		scene->_pMoney->updateMoney(-cost_money_3[2]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update( -cost_money_3[2]);
 	}
 	grade++;
 }
@@ -701,7 +727,8 @@ bool tower_3::init()
 		if( turretSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
 			// 在这里可以执行你需要的操作
 			//问一下关关怎么让1-a和1-b一直显示
-			int allmoney = scene->_pMoney->getMoney();
+			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+			int allmoney = pMoney->getMoney();
 			//画点击后立即出现的东西（和关关商量一下留白事宜）
 			if (grade == 0 || grade == 1) {  
 				if ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1)) {   //如果足够升级的话
@@ -759,10 +786,12 @@ bool tower_3::init()
 							// 在这里可以执行你需要的操作
 							//还没完全想好
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_3[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_3[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[1]);
 							}
 							this->removeChild(upSprite);  //把这个精灵摘除喽
 							this->removeChild(downSprite);
@@ -826,10 +855,12 @@ bool tower_3::init()
 							// 在这里可以执行你需要的操作
 							//还没完全想好
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_3[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_3[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[1]);
 							}
 							this->removeChild(upSprite);  //把这个精灵摘除喽
 							this->removeChild(downSprite);
@@ -877,9 +908,9 @@ bool tower_3::init()
 					if( downSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
 						// 在这里可以执行你需要的操作
 						//还没完全想好
-						
-						scene->_pMoney->updateMoney(get_money_3[2]);
-					
+						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+						pMoney->update( get_money_3[2]);
+
 						this->removeChild(upSprite);  //把这个精灵摘除喽
 						this->removeChild(downSprite);
 						removed();
