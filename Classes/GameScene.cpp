@@ -2,6 +2,9 @@
 //#include "SimpleAudioEngine.h"
 #include "ui/CocosGUI.h"
 #include<string>
+#include"tower.h"
+#include"enemy.h"
+#include"stone.h"
 
 
 USING_NS_CC;
@@ -272,7 +275,7 @@ bool MenuLayer::init() {
                 grid[i][j]->setTexture("/game/StartSprite.png");
                 grid[i][j]->setScale(0.9);
                 Vec2 vec = gridToPosition(j, i);
-                //grid[i][j]->setAnchorPoint(Vec2(0, 0));
+                grid[i][j]->setAnchorPoint(Vec2(0, 0));
                 grid[i][j]->setPosition(vec.x, vec.y);
                 this->addChild(grid[i][j]);
                 grid[i][j]->setVisible(false);
@@ -416,28 +419,24 @@ void TowerLayer::buidTower(int Type, cocos2d::Sprite* gridBuiding) {
     if (!gridBuiding)return;
 
     Vec2 position0 = gridBuiding->getPosition();
-    Vec2 position =  Vec2(position0.x+75/2,position0.y+75/2);
+    Vec2 position = Vec2(position0.x + 75 / 2, position0.y + 75 / 2);
 
     //tower newTower;
     if (Type == GREEN_BOTTLE) {
-        /*建tower1
-        auto newTower = tower_1::create(position, _pGameScene);//还是改成传GameScene指针
-        */
-        //测试
-        auto newTower = Sprite::create("tower1-1.png");
-        newTower->setPosition(position);
-        this->addChild(newTower);
+        //建tower1
+        auto newTower = tower_1::create(position, _pGameScene);
         //TowerLayer* ptower = dynamic_cast<TowerLayer*>(newTower->getParent());
         //ptower->removeTower(this);
     }
     else if (Type == SHIT) {
-        /*建tower2
+        //建tower2
         auto newTower = tower_2::create(position, _pGameScene);
-        */
-        //测试
+        
+        /*测试
         auto newTower2 = Sprite::create("tower3-1.png");
         newTower2->setPosition(position);
         this->addChild(newTower2);
+        */
     }
 }
 
@@ -445,9 +444,9 @@ bool TowerLayer::removeTower(tower* Tower) {
     if (!Tower) {
         return false;
     }
-    /*从层上移掉塔
+    //从层上移掉塔
     removeChild(dynamic_cast<Layer*>(Tower));
-    */
+    
     MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(_pGameScene->getChildByTag(TagMonster));
     return true;
 }
@@ -472,7 +471,7 @@ bool MonsterLayer::removeMonster(enemy* Enemy) {
     if (!Enemy) {
         return false;
     }
-    //removeChild(dynamic_cast<Layer*>(Enemy));//有定义后可以直接指
+    removeChild(dynamic_cast<Layer*>(Enemy));//有定义后可以直接指
     return true;
 }
 
@@ -497,6 +496,6 @@ bool StoneLayer::removeStone(stone* Stone) {
     if (!Stone) {
         return false;
     }
-    //removeChild(dynamic_cast<Layer*>(Stone));//有定义后可以直接指
+    removeChild(dynamic_cast<Layer*>(Stone));//有定义后可以直接指
     return true;
 }
