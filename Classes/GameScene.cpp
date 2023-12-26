@@ -415,7 +415,8 @@ void TowerLayer::buidTower(int Type, cocos2d::Sprite* gridBuiding) {
 
     if (!gridBuiding)return;
 
-    Vec2 position = gridBuiding->getPosition();
+    Vec2 position0 = gridBuiding->getPosition();
+    Vec2 position =  Vec2(position0.x+75/2,position0.y+75/2);
 
     //tower newTower;
     if (Type == GREEN_BOTTLE) {
