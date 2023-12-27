@@ -89,6 +89,7 @@ public:
     static cocos2d::Layer* createLayer(GameScene* pScene);
     virtual bool init();
     CREATE_FUNC(MonsterLayer);
+    void createMonster();//Éú³ÉÐ¡¹ÖÊÞ
     bool removeMonster(enemy* Enemy);
 
 private:
