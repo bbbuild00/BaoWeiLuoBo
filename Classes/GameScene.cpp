@@ -103,6 +103,9 @@ bool GameScene::init() {
     //倒计时
     countToStart();
 
+    //小怪物出现
+    monsterLayer->createMonster();
+
     return true;
 
 }
@@ -478,6 +481,13 @@ bool MonsterLayer::init() {
     }
 
     return true;
+}
+
+void MonsterLayer::createMonster() {
+    /*
+    auto monster = enemy1::create(Vec2(300, 100), _pGameScene);
+    this->addChild(monster);
+    */
 }
 
 bool MonsterLayer::removeMonster(enemy* Enemy) {
