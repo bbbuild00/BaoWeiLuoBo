@@ -29,8 +29,8 @@ enemy3::enemy3(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-static enemy1::enemy* create(waypoint* st, GameScene* lay) {
-    enemy* layer = new enemy1(st,lay);
+enemy1* enemy1::create(waypoint* st, GameScene* lay) {
+    enemy1* layer = new enemy1(st,lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -39,8 +39,8 @@ static enemy1::enemy* create(waypoint* st, GameScene* lay) {
     return nullptr;
 }
 
-static enemy2::enemy* create(waypoint* st, GameScene* lay) {
-    enemy* layer = new enemy2(st, lay);
+enemy2* enemy2::create(waypoint* st, GameScene* lay) {
+    enemy2* layer = new enemy2(st, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -49,8 +49,8 @@ static enemy2::enemy* create(waypoint* st, GameScene* lay) {
     return nullptr;
 }
 
-static enemy3::enemy* create(waypoint* st, GameScene* lay) {
-    enemy* layer = new enemy3(st, lay);
+enemy3* enemy3::create(waypoint* st, GameScene* lay) {
+    enemy3* layer = new enemy3(st, lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
