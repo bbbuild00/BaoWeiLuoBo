@@ -32,16 +32,14 @@ static Vec2 gridToPosition(int x, int y) {
     vec.y = 465 - y * 75;
     return vec;
 }
-//把通用位置坐标转换为框框坐标,在框内返回1
+//把通用位置坐标转换为框框坐标,在地图内返回1
 bool positionToGrid(const Vec2& position, struct mapPos& grid) {
     if (position.x < 35 || position.x>35 + 12 * 75 || position.y < 465 - 6 * 75 || position.y>465 + 75) {
-        return false;
+        return false;//地图外，返回false
     }
     grid.x = static_cast<int>((position.x - 35) / 75);
     grid.y = static_cast<int>((465 - position.y) / 75 + 1);
-    if (gameMap[grid.y][grid.x] != 0) {
-        return false;
-    }
+    //log("gameMap[%d][%d] = %d", grid.y, grid.x, (int)gameMap[grid.y][grid.x]);
     return true;
 }
 
@@ -259,7 +257,9 @@ bool MenuLayer::init() {
     
     //注册触摸事件监听器
     auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
+    touchListener->setSwallowTouches(true);
     touchListener->onTouchBegan = CC_CALLBACK_2(MenuLayer::touchBegan, this);
+    
     //touchListener->onTouchMoved = CC_CALLBACK_2(TouchLayer::onTouchMoved, this);
     //touchListener->onTouchEnded = CC_CALLBACK_2(TouchLayer::onTouchEnded, this);
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -271,14 +271,16 @@ bool MenuLayer::init() {
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
             if (gameMap[i][j] != RODE) {
-                grid[i][j] = Sprite::create();
-                grid[i][j]->setTexture("/game/StartSprite.png");
-                grid[i][j]->setScale(0.9);
+                grid[i][j].x = j;
+                grid[i][j].y = i;
+                grid[i][j].spriteGrid = Sprite::create();
+                grid[i][j].spriteGrid->setTexture("/game/StartSprite.png");
+                grid[i][j].spriteGrid->setScale(0.9);
                 Vec2 vec = gridToPosition(j, i);
-                grid[i][j]->setAnchorPoint(Vec2(0, 0));
-                grid[i][j]->setPosition(vec.x, vec.y);
-                this->addChild(grid[i][j]);
-                grid[i][j]->setVisible(false);
+                grid[i][j].spriteGrid->setAnchorPoint(Vec2(0, 0));
+                grid[i][j].spriteGrid->setPosition(vec.x, vec.y);
+                this->addChild(grid[i][j].spriteGrid);
+                grid[i][j].spriteGrid->setVisible(false);
             }
             
         }
@@ -290,10 +292,11 @@ void MenuLayer::buildTower(int row, int col) {
     auto layerBuild = Layer::create();
     layerBuild->setName("layerBuild");//Menu layer中的一个层，后面用名字来调用
     //框框
-    gridBuiding = grid[row][col];
+    gridBuiding = &grid[row][col];
     if (gridBuiding) {
-        gridBuiding->setTexture("/game/Grid.png");
-        gridBuiding->setVisible(true);
+        Grid grid = *gridBuiding;
+        grid.spriteGrid->setTexture("/game/Grid.png");
+        grid.spriteGrid->setVisible(true);
         
     }
     //炮塔选项
@@ -331,43 +334,48 @@ bool MenuLayer::touchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 {
     //获取点击位置
     auto touchLocation = this->convertToNodeSpace(touch->getLocation());
-    //选中空地的处理
     mapPos gridPosition;
+    //点击位置在地图外，不处理
+    if (!positionToGrid(touchLocation, gridPosition)) {
+        return true;
+    }
+
+    //点击位置在地图内的处理
 
     //和炮塔层通讯
     TowerLayer* pTower = dynamic_cast<TowerLayer*>(_pGameScene->getChildByTag(TagTower));
 
-    if (positionToGrid(touchLocation, gridPosition)) {
-        //弹出建塔圈圈
-        if (!ifBuildLayer) {
+    if (!ifBuildLayer) {
+        //选中空地则弹出建塔圈圈
+        if (gameMap[gridPosition.y][gridPosition.x] == 0) {
+            //log("build layer: gameMap[%d][%d] = %d", gridPosition.y, gridPosition.x, (int)gameMap[gridPosition.y][gridPosition.x]);
             buildTower(gridPosition.y, gridPosition.x);
             ifBuildLayer = 1;//当前处于选择建塔状态
         }
-        //建塔或取消建塔圈圈
-        else {
-            //获取建炮塔层
-            auto buildTower = this->getChildByName("layerBuild");
-            auto towerGreen = buildTower->getChildByName("greenBottle");
-            auto towerShit = buildTower->getChildByName("shit");
-
-            //判断点击位置是否在炮塔选项图标内
-            if (towerGreen->getBoundingBox().containsPoint(touchLocation)){
-                if (pTower->ifAvailable(GREEN_BOTTLE)) {
-                    pTower->buidTower(GREEN_BOTTLE, gridBuiding);
-                    gameMap[gridPosition.y][gridPosition.x] = TOWER1;
-                }
+    }
+    else {//建塔或取消建塔圈圈
+        //获取建炮塔层
+        auto buildTower = this->getChildByName("layerBuild");
+        auto towerGreen = buildTower->getChildByName("greenBottle");
+        auto towerShit = buildTower->getChildByName("shit");
+        //获取当前建塔框
+        Grid grid = *gridBuiding;
+        //log("build tower: gameMap[%d][%d] = %d", grid.y, grid.x, (int)gameMap[grid.y][grid.x]);
+        //判断点击位置是否在炮塔选项图标内
+        if (towerGreen->getBoundingBox().containsPoint(touchLocation)) {
+            if (pTower->ifAvailable(GREEN_BOTTLE)) {
+                pTower->buidTower(GREEN_BOTTLE, grid.x, grid.y);
             }
-            else if (towerShit->getBoundingBox().containsPoint(touchLocation)){
-                if (pTower->ifAvailable(SHIT)) {
-                    pTower->buidTower(SHIT, gridBuiding);
-                    gameMap[gridPosition.y][gridPosition.x] = TOWER1;
-                }
-            }
-            this->removeChildByName("layerBuild");//移除菜单
-            gridBuiding->setVisible(false);//隐藏特殊框
-            gridBuiding = nullptr;
-            ifBuildLayer = 0;//回到非建塔状态
         }
+        else if (towerShit->getBoundingBox().containsPoint(touchLocation)) {
+            if (pTower->ifAvailable(SHIT)) {
+                pTower->buidTower(SHIT, grid.x, grid.y);
+            }
+        }
+        this->removeChildByName("layerBuild");//移除菜单
+        grid.spriteGrid->setVisible(false);//隐藏特殊框
+        gridBuiding = nullptr;
+        ifBuildLayer = 0;//回到非建塔状态
     }
     //选到小路、背景、障碍上还得显示禁区图标，但是要注意和怪兽的冲突处理
     return true;
@@ -414,36 +422,41 @@ bool TowerLayer::ifAvailable(int Type) {
     }
 }
 
-void TowerLayer::buidTower(int Type, cocos2d::Sprite* gridBuiding) {
+void TowerLayer::buidTower(int Type, int gridx, int gridy) {
 
-    if (!gridBuiding)return;
-
-    Vec2 position0 = gridBuiding->getPosition();
+    Vec2 position0 = gridToPosition(gridx, gridy);
     Vec2 position = Vec2(position0.x + 75 / 2, position0.y + 75 / 2);
-
+    log("build tower position : (%fl, %fl)", position.x, position.y);
     //tower newTower;
     if (Type == GREEN_BOTTLE) {
         //建tower1
         auto newTower = tower_1::create(position, _pGameScene);
+        this->addChild(newTower);
         //TowerLayer* ptower = dynamic_cast<TowerLayer*>(newTower->getParent());
         //ptower->removeTower(this);
     }
     else if (Type == SHIT) {
-        //建tower2
-        auto newTower = tower_2::create(position, _pGameScene);
-        
-        /*测试
-        auto newTower2 = Sprite::create("tower3-1.png");
-        newTower2->setPosition(position);
-        this->addChild(newTower2);
-        */
+        //建tower3
+        auto newTower = tower_3::create(position, _pGameScene);
+        this->addChild(newTower);
     }
+    gameMap[gridy][gridx] = TOWER1;
 }
 
 bool TowerLayer::removeTower(tower* Tower) {
     if (!Tower) {
         return false;
     }
+   
+    /*无效的getposition
+    Vec2 position0 = Tower->getPosition();
+    Vec2 position = Vec2(position0.x - 75 / 2, position0.y - 75 / 2);
+    log("remove tower position : (% d, % d)", position0.x, position0.y);
+    mapPos mappos;
+    positionToGrid(position, mappos);
+    gameMap[mappos.y][mappos.x] = 0;*/
+    
+    
     //从层上移掉塔
     removeChild(dynamic_cast<Layer*>(Tower));
     

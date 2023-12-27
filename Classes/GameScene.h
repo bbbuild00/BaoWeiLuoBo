@@ -54,7 +54,12 @@ private:
 class TowerLayer;
 class MonsterLayer;
 class StoneLayer;
-
+struct Grid
+{
+    cocos2d::Sprite* spriteGrid = nullptr;
+    int x;
+    int y;
+};
 class MenuLayer : public cocos2d::Layer
 {
 public:
@@ -68,8 +73,8 @@ public:
 
 private:
     
-    cocos2d::Sprite* grid[7][12] = { 0 };//框框结点
-    cocos2d::Sprite* gridBuiding = nullptr;//指向显示建塔的框框的指针
+    Grid grid[7][12] = { 0 };//框框结点
+    Grid* gridBuiding = nullptr;//指向显示建塔的框框的指针
     bool ifBuildLayer = 0;//是否在选择建塔状态
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
 };
@@ -100,7 +105,7 @@ public:
     static cocos2d::Layer* createLayer(GameScene* pScene);
     virtual bool init();
     bool ifAvailable(int Type);//判断是否够钱
-    void buidTower(int Type, cocos2d::Sprite* gridBuiding);//调用tower函数，空地建塔
+    void buidTower(int Type, int gridx, int gridy);//调用tower函数，空地建塔
     bool removeTower(tower* Tower);
     CREATE_FUNC(TowerLayer);
 

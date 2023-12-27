@@ -103,7 +103,7 @@ void tower::stone_killed()
 void tower::enemy_out() 
 {
 	if (attack_enemy != NULL) {
-		attack_enemy->getout(this);
+		//attack_enemy->getout(this);
 		attack_enemy = NULL;
 	}
 }
@@ -127,6 +127,23 @@ void tower::check_enemy_in()  //ипн╢й╣ож
 		}
 	}
 	else {
+<<<<<<< Updated upstream
+=======
+		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(scene->getChildByTag(TagMonster));
+
+		for (Node* child : pMonster->getChildren()) {
+			if (enemy* e = dynamic_cast<enemy*>(child)) {
+				bool a = check_if_in_range(e->getpos());
+				if (a) {
+					get_enemy(e);
+					break;
+				}
+			}
+		}
+	}
+
+	/*else {
+>>>>>>> Stashed changes
 		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(scene->getChildByTag(TagMonster));
 		for (Node* nodeChild : (pMonster->getChildren())) {
 			enemy* child = dynamic_cast<enemy*>(nodeChild);
