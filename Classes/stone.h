@@ -12,13 +12,14 @@ public:
     virtual void draw_stone() = 0;//画障碍物
     // static stone* create(cocos2d::Vec2 po，StoneLayer* lay);
     virtual bool init() override; // 初始化函数
-    cocos2d::Vec2 getpos() { return point; }
+    cocos2d::Vec2 getpos();
     int getmoney() { return money; }
  //  void addtower(tower* tw) { towerlist.push_back(tw); }
     void stone::Attacked(int damage);
-
+    void addtower(tower* a);
+    void mouse_click();
 protected:
-    cocos2d::Sprite* stone_1 = NULL;//障碍物1
+    cocos2d::Sprite* stone_s = NULL;//障碍物1
     cocos2d::Sprite* Brush;//血条
     int q;
     int HP;
@@ -27,7 +28,8 @@ protected:
     int money;
 
     GameScene* w;
-    cocos2d::Vector<tower*>towerlist;
+    //记录有哪些炮塔在攻击它，当小怪兽死去后，到对应的炮塔里，把炮塔对应的该攻击对象删除
+    cocos2d::Vector<tower*>Attacktower;
 };
 
 class stone1 :public stone {

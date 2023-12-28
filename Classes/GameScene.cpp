@@ -484,10 +484,10 @@ bool MonsterLayer::init() {
 }
 
 void MonsterLayer::createMonster() {
-    /*
-    auto monster = enemy1::create(Vec2(300, 100), _pGameScene);
+    
+    auto monster = enemy1::create(_pGameScene);
     this->addChild(monster);
-    */
+    
 }
 
 bool MonsterLayer::removeMonster(enemy* Enemy) {

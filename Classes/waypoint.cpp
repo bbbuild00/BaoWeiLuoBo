@@ -15,7 +15,7 @@ bool crash(cocos2d::Vec2 a, cocos2d::Vec2 b) {//Åö×²¼ì²â
 	return false;
 }
 
-void waypoint::addWayPoint1(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* monster) {
+void addWayPoint1(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* monster) {
     waypoint* waypoint1 = new waypoint(cocos2d::Vec2(2 * 75 - 10, 5 * 75));
     m_waypointList.pushBack(waypoint1);
 
