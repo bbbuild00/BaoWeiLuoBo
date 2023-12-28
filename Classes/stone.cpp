@@ -12,14 +12,13 @@ void stone::addtower(tower* a) {
 }
 
 void stone::mouse_click() {
-    auto listener = cocos2d::EventListenerMouse::create();
+    auto listener = cocos2d::EventListenerTouchOneByOne::create();
 
-    listener->onMouseDown = [=](cocos2d::Event* event) {
-        auto e = static_cast<cocos2d::EventMouse*>(event);
-        float x = e->getCursorX();
-        float y = e->getCursorY();
-        // 检测鼠标是否点击精灵
-        if (stone_s->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+    listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+        //获取点击位置
+        auto touchLocation = this->convertToNodeSpace(touch->getLocation());
+        // 检测是否点击精灵
+        if (stone_s->getBoundingBox().containsPoint(touchLocation)) {
             // 在这里可以执行你需要的操作
             TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
 
@@ -33,6 +32,7 @@ void stone::mouse_click() {
                 }
             }
         }
+        return true;
         };
     // 注册监听器
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, stone_s);
