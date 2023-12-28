@@ -515,6 +515,16 @@ bool StoneLayer::init() {
     {
         return false;
     }
+    auto stone1 = stone1::create(Vec2(0,0),_pGameScene);
+    auto stone2 = stone1::create(Vec2(0, 0), _pGameScene);
+    auto stone3 = stone1::create(Vec2(0, 0), _pGameScene);
+    auto stone4 = stone1::create(Vec2(0, 0), _pGameScene);
+    auto stone5 = stone1::create(Vec2(0, 0), _pGameScene);
+    this->addChild(stone1);
+    this->addChild(stone2);
+    this->addChild(stone3);
+    this->addChild(stone4);
+    this->addChild(stone5);
 
     return true;
 }
