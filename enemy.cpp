@@ -1,8 +1,24 @@
 #include"enemy.h"
 #include"GameScene.h"
+#include"waypoint.h"
 
-enemy1::enemy1(waypoint* st, GameScene* lay) {
-    mpos = st->getpos();
+cocos2d::Vec2 enemy::getpos()//获得当前位置
+{
+    cocos2d::Vec2 position = monster->getPosition();
+    return position;
+}
+
+void enemy::addtower(tower *a) {
+    Attacktower.pushBack(a);
+}
+
+void enemy::getout(tower* a) {
+    Attacktower.eraseObject(a);
+}
+
+enemy1::enemy1(GameScene* lay) {
+   // mpos = st->getpos();
+    log("Enemy's GameScene p: %p", lay);
     stop = false;
     slowice = false;
     active = false;
@@ -10,8 +26,8 @@ enemy1::enemy1(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-enemy2::enemy2(waypoint* st, GameScene* lay) {
-    mpos = st->getpos();
+enemy2::enemy2(GameScene* lay) {
+    //mpos = st->getpos();
     stop = false;
     slowice = false;
     active = false;
@@ -19,8 +35,8 @@ enemy2::enemy2(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-enemy3::enemy3(waypoint* st, GameScene* lay) {
-    mpos = st->getpos();
+enemy3::enemy3( GameScene* lay) {
+    //mpos = st->getpos();
     stop = false;
     slowice = false;
     active = false;
@@ -28,16 +44,61 @@ enemy3::enemy3(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-static enemy* create(waypoint* st, GameScene* lay) {
-    enemy* layer = new enemy1(st,lay);
-    enemy* layer = new enemy2(st, lay);
-    enemy* layer = new enemy3(st, lay);
+enemy1* enemy1::create( GameScene* lay) {
+    enemy1* layer = new enemy1(lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
     }
     CC_SAFE_DELETE(layer);
     return nullptr;
+}
+
+enemy2* enemy2::create(GameScene* lay) {
+    enemy2* layer = new enemy2(lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+enemy3* enemy3::create(GameScene* lay) {
+    enemy3* layer = new enemy3(lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+void enemy::mouse_click() {
+	auto listener = cocos2d::EventListenerMouse::create();
+
+	listener->onMouseDown = [=](cocos2d::Event* event) {
+		auto e = static_cast<cocos2d::EventMouse*>(event);
+		float x = e->getCursorX();
+		float y = e->getCursorY();
+		// 检测鼠标是否点击精灵
+		if (monster->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+			// 在这里可以执行你需要的操作
+            TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+
+            for (Node* child : pTower->getChildren()) {
+                if (tower* e = dynamic_cast<tower*>(child)) {
+                    bool a = e->check_if_in_range(this->getpos());
+                    if (a) {
+                        e->get_enemy(this);
+                       
+                    }
+                }
+            }
+		}
+		};
+	// 注册监听器
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, monster);
 }
 
 // 初始化函数
@@ -48,27 +109,7 @@ bool enemy::init(){
 
     draw_enemy();
 
-    //点击事件
-    /*auto listener = cocos2d::EventListenerMouse::create();
-
-    listener->onMouseDown = [=](cocos2d::Event* event) {
-        auto e = static_cast<cocos2d::EventMouse*>(event);
-        float x = e->getCursorX();
-        float y = e->getCursorY();
-        // 检测鼠标是否点击精灵
-		if (monster->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
-			//和炮塔层通讯
-			TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
-			pTower->check_if_in_range(cocos2d::Vec2 p);  //判断障碍物是否在我的攻击范围内
-           for (Node* child : towerLayer->getChildren()) { 
-            // // 检查是否是 Tower 类型的子节点 if (Tower* tower = dynamic_cast<Tower*>(child)) { 
-            // // 调用 shoot() 函数 tower->shoot(); }
-        }
-		};
-
-    // 注册监听器
-    cocos2d::_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, monster);
-*/
+    mouse_click();//点击事件
 
     move();
 
@@ -295,7 +336,7 @@ void enemy3::draw_enemy() {
 }
 
 void enemy::move() {
-addWayPoint1(m_waypointList, monster);//走向的航点
+    addWayPoint1(m_waypointList, monster);//走向的航点
     if (slowice) {
         auto moveTo1 = cocos2d::MoveTo::create(2, m_waypointList.at(0)->getpos());
         auto moveTo2 = cocos2d::MoveTo::create(2, m_waypointList.at(1)->getpos());
@@ -392,13 +433,13 @@ addWayPoint1(m_waypointList, monster);//走向的航点
 }
 
 enemy1::~enemy1() {
-    Attacktower.clear();
+   // enemy_killed();
 }
 enemy2::~enemy2() {
-    Attacktower.clear();
+   //enemy_killed();
 }
 enemy3::~enemy3() {
-    Attacktower.clear();
+  // enemy_killed();
 }
 
 
@@ -555,13 +596,32 @@ void enemy::Attacked(int damage) {
     HP -= damage;
     if (HP <= 0) {
         //和炮塔层通讯
-        TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+       /*TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+
+        for (Node* child : pTower->getChildren()) {
+            if (tower* e = dynamic_cast<tower*>(child)) {
+                bool a = e->check_if_in_range(this->getpos());
+                if (a) {
+                    e->get_enemy(this);
+                    Attacktower.pushBack(e);
+                }
+            }
+        }*/ 
+		for (size_t i = 0; i < Attacktower.size(); i++) {
+			tower* e;
+			e = Attacktower.at(i);
+			e->enemy_killed();
+		}
+
+        MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(w->getChildByTag(TagMonster));
         //调用函数：移走石头（防御塔和控制台），添加金币，
-        w->removeMonster(enemy);
-        pTower->enemy_killed();
+        pMonster->removeMonster(this);
+        
+        //pTower->enemy_killed();
         //和金币层通讯
         MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
         pMoney->update(getmoney());
+       
     }
 }
 //添加攻击我的炮塔

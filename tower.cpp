@@ -1,19 +1,22 @@
 #include "tower.h"
 #include "Bullet.h"
-#include "TowerLayer.h"
+#include "GameScene.h"
 #include <string>
 #include "stone.h"
 #include "enemy.h"
 
 
+
 void tower::add_money()
 {
-	scene->_pMoney->updateMoney((grade + 1) * 5);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update((grade + 1) * 5);
 }
 
 void tower::removed()
 {
-	scene->removeTower(this);
+	TowerLayer* ptower = dynamic_cast<TowerLayer*>(this->getParent());
+	ptower->removeTower(this);
 }
 
 void tower::set_rotation(double angle)   //½«ÅÚËþ¶ÔÓ¦µÄ¾«Áé½øÐÐÐý×ª£¬ÒªÇó´«ÈëÒ»¸ö½Ç¶ÈÀ´
@@ -25,6 +28,12 @@ void tower::set_rotation(double angle)   //½«ÅÚËþ¶ÔÓ¦µÄ¾«Áé½øÐÐÐý×ª£¬ÒªÇó´«ÈëÒ»¸
 void tower::rotation()  
 {
 	if ((attack_enemy != NULL) || (attack_stone != NULL)) {     //´æÔÚÖ¸¶¨µÄ¹¥»÷µÐÈË»òÅÚËþ
+		if (attack_enemy != NULL) {
+			enemy_point = attack_enemy->getpos();
+		}
+		else {
+			enemy_point = attack_stone->getpos();
+		}
 		double x = point.x - enemy_point.x;
 		double y = point.y - enemy_point.y;
 		double resultDegrees;
@@ -123,9 +132,11 @@ void tower::check_enemy_in()  //ÉÐÎ´ÊµÏÖ
 			enemy_out();
 		}
 	}
-	else {  
-		for (enemy* child : scene->_pMonsters->getChildren()) {
-			if (enemy* e = dynamic_cast<enemy*>(child)) { 
+	else {
+		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(scene->getChildByTag(TagMonster));
+
+		for (Node* child : pMonster->getChildren()) {
+			if (enemy* e = dynamic_cast<enemy*>(child)) {
 				bool a = check_if_in_range(e->getpos());
 				if (a) {
 					get_enemy(e);
@@ -148,13 +159,15 @@ bool tower::if_continue(int a)
 	return false;
 }
 
-tower_1::tower_1(cocos2d::Vec2& a,TowerLayer* b)
+tower_1::tower_1(cocos2d::Vec2& a,GameScene* b)
 {
+	log("GameScene p: %p", b);
 	point = a;
 	grade = 0;
 	damage = damage_1[0];
 	scene = b;
-	scene->_pMoney->updateMoney(-cost_money_1[0]);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update(-cost_money_1[0]);
 }
 
 void tower_1::upgrade()
@@ -163,13 +176,15 @@ void tower_1::upgrade()
 		turretSprite->setTexture("tower1-2.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_1[1];
-		scene->_pMoney->updateMoney(-cost_money_1[1]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_1[1]);
 	}
 	else if (grade == 1) {
 		turretSprite->setTexture("tower1-3.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_1[2];
-		scene->_pMoney->updateMoney(-cost_money_1[2]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_1[2]);
 	}
 	grade++;
 }
@@ -180,7 +195,7 @@ void tower_1::shoot()
 		Bullet* bullet = Bullet_1::create(point, enemy_point, this, attack_stone); //´´½¨ÁËÒ»¸ö×Óµ¯Àà£¿
 		this->addChild(bullet);
 		bullet->move();  //ÈÃ×Óµ¯¶¯ÆðÀ´
-		
+
 	}
 	if (attack_enemy != NULL) {    //´æÔÚÒª¹¥»÷µÄµÐÈË
 		Bullet* bullet = Bullet_1::create(point, enemy_point, this, attack_enemy); //´´½¨ÁËÒ»¸ö×Óµ¯Àà£¿
@@ -211,7 +226,9 @@ bool tower_1::init()
 			// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 			//ÎÊÒ»ÏÂ¹Ø¹ØÔõÃ´ÈÃ1-aºÍ1-bÒ»Ö±ÏÔÊ¾àÏ
 
-			int allmoney = scene->_pMoney->getMoney();
+
+			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+			int allmoney = pMoney->getMoney();
 			//»­µã»÷ºóÁ¢¼´³öÏÖµÄ¶«Î÷£¨ºÍ¹Ø¹ØÉÌÁ¿Ò»ÏÂÁô°×ÊÂÒË£©
 			if (grade == 0 || grade == 1) {  
 				if ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1)) {   //Èç¹û×ã¹»Éý¼¶µÄ»°
@@ -257,7 +274,7 @@ bool tower_1::init()
 					_eventDispatcher->addEventListenerWithSceneGraphPriority(listene,  upSprite);
 
 
-					
+
 					//¸ãÒ»¸ö¼àÊÓÆ÷àÏ
 					auto listen = cocos2d::EventListenerMouse::create(); 
 					listen->onMouseDown = [=](cocos2d::Event *event){
@@ -269,15 +286,17 @@ bool tower_1::init()
 							// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 							//»¹Ã»ÍêÈ«ÏëºÃ
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_1[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_1[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[1]);
 							}
 							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 							this->removeChild(downSprite);
 							removed();
-							
+
 						}
 					};
 					// ×¢²á¼àÌýÆ÷
@@ -320,15 +339,17 @@ bool tower_1::init()
 							// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 							//»¹Ã»ÍêÈ«ÏëºÃ
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_1[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_1[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update(get_money_1[1]);
 							}
 							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 							this->removeChild(downSprite);
 							removed();
-							
+
 						}
 					};
 					// ×¢²á¼àÌýÆ÷
@@ -357,14 +378,14 @@ bool tower_1::init()
 					if( downSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
 						// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 						//»¹Ã»ÍêÈ«ÏëºÃ
-						
-							scene->_pMoney->updateMoney( get_money_1[2]);
-							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
-							this->removeChild(downSprite);
-							removed();
-					
+						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+						pMoney->update(get_money_1[2]);
+						this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
+						this->removeChild(downSprite);
+						removed();
 
-						
+
+
 					}
 				};
 				// ×¢²á¼àÌýÆ÷
@@ -392,18 +413,19 @@ bool tower_1::init()
 		},  0.01, "ShootScheduler"); //1.0fÎª¼ä¸ôÊ±¼ä£¬"ShootScheduler"Îªµ÷¶ÈÆ÷µÄ±êÇ©Ãû
 
 	return true;
-		
+
 }
 
 
 
-tower_2::tower_2(cocos2d::Vec2& a,TowerLayer*  b)
+tower_2::tower_2(cocos2d::Vec2& a,GameScene*  b)
 {
 	point = a;
 	grade = 0;
 	damage = damage_2[0];
 	scene = b;
-	scene->_pMoney->updateMoney(-cost_money_2[0]);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update(-cost_money_2[0]);
 }
 void tower_2::upgrade()
 {
@@ -411,13 +433,15 @@ void tower_2::upgrade()
 		turretSprite->setTexture("tower2-2.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_2[1];
-		scene->_pMoney->updateMoney(-cost_money_2[1]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_2[1]);
 	}
 	else if (grade == 1) {
 		turretSprite->setTexture("tower2-3.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_2[2];
-		scene->_pMoney->updateMoney(-cost_money_2[2]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update(-cost_money_2[2]);
 	}
 	grade++;
 }
@@ -457,7 +481,8 @@ bool tower_2::init()
 			// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 			//ÎÊÒ»ÏÂ¹Ø¹ØÔõÃ´ÈÃ1-aºÍ1-bÒ»Ö±ÏÔÊ¾àÏ
 
-			int allmoney = scene->_pMoney->getMoney();
+			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+			int allmoney = pMoney->getMoney();
 			//»­µã»÷ºóÁ¢¼´³öÏÖµÄ¶«Î÷£¨ºÍ¹Ø¹ØÉÌÁ¿Ò»ÏÂÁô°×ÊÂÒË£©
 			if (grade == 0 || grade == 1) {  
 				if ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1)) {   //Èç¹û×ã¹»Éý¼¶µÄ»°
@@ -515,10 +540,12 @@ bool tower_2::init()
 							// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 							//»¹Ã»ÍêÈ«ÏëºÃ
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_2[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_2[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[1]);
 							}
 							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 							this->removeChild(downSprite);
@@ -566,10 +593,12 @@ bool tower_2::init()
 							// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 							//»¹Ã»ÍêÈ«ÏëºÃ
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_2[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_2[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_2[1]);
 							}
 							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 							this->removeChild(downSprite);
@@ -603,7 +632,8 @@ bool tower_2::init()
 					if( downSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
 						// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 						//»¹Ã»ÍêÈ«ÏëºÃ
-						scene->_pMoney->updateMoney(get_money_2[2]);
+						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+						pMoney->update( get_money_2[2]);
 						this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 						this->removeChild(downSprite);
 						removed();
@@ -643,13 +673,14 @@ bool tower_2::init()
 
 
 
-tower_3::tower_3(cocos2d::Vec2& a,TowerLayer*  b)
+tower_3::tower_3(cocos2d::Vec2& a,GameScene*  b)
 {
 	point = a;
 	grade = 0;
 	damage = damage_3[0];
 	scene = b;
-	scene->_pMoney->updateMoney(-cost_money_3[0]);
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->update( -cost_money_3[0]);
 }
 void tower_3::upgrade()
 {
@@ -657,13 +688,15 @@ void tower_3::upgrade()
 		turretSprite->setTexture("tower3-2.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_3[1];
-		scene->_pMoney->updateMoney(-cost_money_3[1]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update( -cost_money_3[1]);
 	}
 	else if (grade == 1) {
 		turretSprite->setTexture("tower3-3.png");
 		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 		damage = damage_3[2];
-		scene->_pMoney->updateMoney(-cost_money_3[2]);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->update( -cost_money_3[2]);
 	}
 	grade++;
 }
@@ -702,7 +735,8 @@ bool tower_3::init()
 		if( turretSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
 			// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 			//ÎÊÒ»ÏÂ¹Ø¹ØÔõÃ´ÈÃ1-aºÍ1-bÒ»Ö±ÏÔÊ¾
-			int allmoney = scene->_pMoney->getMoney();
+			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+			int allmoney = pMoney->getMoney();
 			//»­µã»÷ºóÁ¢¼´³öÏÖµÄ¶«Î÷£¨ºÍ¹Ø¹ØÉÌÁ¿Ò»ÏÂÁô°×ÊÂÒË£©
 			if (grade == 0 || grade == 1) {  
 				if ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1)) {   //Èç¹û×ã¹»Éý¼¶µÄ»°
@@ -760,10 +794,12 @@ bool tower_3::init()
 							// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 							//»¹Ã»ÍêÈ«ÏëºÃ
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_3[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_3[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[1]);
 							}
 							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 							this->removeChild(downSprite);
@@ -827,10 +863,12 @@ bool tower_3::init()
 							// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 							//»¹Ã»ÍêÈ«ÏëºÃ
 							if (grade == 0) {
-								scene->_pMoney->updateMoney( get_money_3[0]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[0]);
 							}
 							else {
-								scene->_pMoney->updateMoney( get_money_3[1]);
+								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+								pMoney->update( get_money_3[1]);
 							}
 							this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 							this->removeChild(downSprite);
@@ -878,9 +916,9 @@ bool tower_3::init()
 					if( downSprite ->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
 						// ÔÚÕâÀï¿ÉÒÔÖ´ÐÐÄãÐèÒªµÄ²Ù×÷
 						//»¹Ã»ÍêÈ«ÏëºÃ
-						
-						scene->_pMoney->updateMoney(get_money_3[2]);
-					
+						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+						pMoney->update( get_money_3[2]);
+
 						this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 						this->removeChild(downSprite);
 						removed();
