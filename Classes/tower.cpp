@@ -121,7 +121,8 @@ enemy* tower::get_enemy()
 
 void tower::check_enemy_in()  //尚未实现
 {
-	rotation();
+	if (rotate)
+		rotation();
 	if (attack_stone != NULL); //如果有attack_stone的话，不用进行后面操作
 	else if (attack_enemy != NULL) {
 		enemy_point = attack_enemy->getpos();  //得到要攻击的敌人的位置坐标
@@ -160,6 +161,7 @@ bool tower::if_continue(int a)
 
 tower_1::tower_1(cocos2d::Vec2& a, GameScene* b)
 {
+	rotate = true;
 	point = a;
 	grade = 0;
 	damage = damage_1[0];
@@ -216,11 +218,9 @@ bool tower_1::init()
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
-		auto e = static_cast<cocos2d::EventMouse*>(event);
-		float x = e->getCursorX();
-		float y = e->getCursorY();
+		auto touchlocation = this->convertToNodeSpace(touch->getLocation());
 		// 检测鼠标是否点击精灵
-		if (turretSprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+		if (turretSprite->getBoundingBox().containsPoint(touchlocation)) {
 			// 在这里可以执行你需要的操作
 
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
@@ -254,27 +254,25 @@ bool tower_1::init()
 			//搞一个监视器嘞
 			auto listene = cocos2d::EventListenerTouchOneByOne::create();
 			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
-				auto ee = static_cast<cocos2d::EventMouse*>(event);
-				float ex = ee->getCursorX();
-				float ey = ee->getCursorY();
+				auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 				// 如果鼠标点击了升级并且钱足够
-				if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1))) {
+				if (upSprite->getBoundingBox().containsPoint(touchLocation) && ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1))) {
 					upgrade();   //升级
 				}
 				//如果点击了销毁并且等级为0
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 0) {
+				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 0) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_1[0]);
 					removed();
 				}
 				//如果点击了销毁并且等级为1
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 1) {
+				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 1) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_1[1]);
 					removed();
 				}
 				//如果点击了销毁并且等级为2
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 2) {
+				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 2) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_1[2]);
 					removed();
@@ -311,6 +309,7 @@ bool tower_1::init()
 
 tower_2::tower_2(cocos2d::Vec2& a, GameScene* b)
 {
+	rotate = true;
 	point = a;
 	grade = 0;
 	damage = damage_2[0];
@@ -364,11 +363,9 @@ bool tower_2::init()
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
-		auto e = static_cast<cocos2d::EventMouse*>(event);
-		float x = e->getCursorX();
-		float y = e->getCursorY();
+		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 		// 检测鼠标是否点击精灵
-		if (turretSprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+		if (turretSprite->getBoundingBox().containsPoint(touchLocation)) {
 			// 在这里可以执行你需要的操作
 
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
@@ -402,27 +399,25 @@ bool tower_2::init()
 			//搞一个监视器嘞
 			auto listene = cocos2d::EventListenerTouchOneByOne::create();
 			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
-				auto ee = static_cast<cocos2d::EventMouse*>(event);
-				float ex = ee->getCursorX();
-				float ey = ee->getCursorY();
+				auto touchlocation = this->convertToNodeSpace(touch->getLocation());
 				// 如果鼠标点击了升级并且钱足够
-				if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1))) {
+				if (upSprite->getBoundingBox().containsPoint(touchlocation) && ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1))) {
 					upgrade();   //升级
 				}
 				//如果点击了销毁并且等级为0
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 0) {
+				if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 0) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_2[0]);
 					removed();
 				}
 				//如果点击了销毁并且等级为1
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 1) {
+				if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 1) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_2[1]);
 					removed();
 				}
 				//如果点击了销毁并且等级为2
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 2) {
+				if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 2) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_2[2]);
 					removed();
@@ -457,10 +452,9 @@ bool tower_2::init()
 
 
 
-
-
 tower_3::tower_3(cocos2d::Vec2& a, GameScene* b)
 {
+	rotate = false;
 	point = a;
 	grade = 0;
 	damage = damage_3[0];
@@ -511,16 +505,16 @@ bool tower_3::init()
 	turretSprite = cocos2d::Sprite::create("tower3-1.png");
 	turretSprite->setPosition(point);
 	turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
-	turretSprite->setLocalZOrder(5);
+	//turretSprite->setLocalZOrder(5);
 	this->addChild(turretSprite);
 
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		//获取点击位置
-		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
+		auto touchlocation = this->convertToNodeSpace(touch->getLocation());
 		// 检测鼠标是否点击精灵
-		if (turretSprite->getBoundingBox().containsPoint(touchLocation)) {
+		if (turretSprite->getBoundingBox().containsPoint(touchlocation)) {
 			// 在这里可以执行你需要的操作
 
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
@@ -538,7 +532,7 @@ bool tower_3::init()
 				upSprite->setTexture("tower3-3-a.png");
 			upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
 			upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-			upSprite->setLocalZOrder(-1);
+			//upSprite->setLocalZOrder(-1);
 			this->addChild(upSprite);
 
 			auto downSprite = cocos2d::Sprite::create();
@@ -550,33 +544,31 @@ bool tower_3::init()
 				downSprite->setTexture("tower3-3-a.png");
 			downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
 			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-			downSprite->setLocalZOrder(-1);
+			//downSprite->setLocalZOrder(-1);
 			this->addChild(downSprite);
 
 			//搞一个监视器嘞
 			auto listene = cocos2d::EventListenerTouchOneByOne::create();
 			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
-				auto ee = static_cast<cocos2d::EventMouse*>(event);
-				float ex = ee->getCursorX();
-				float ey = ee->getCursorY();
+				auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 				// 如果鼠标点击了升级并且钱足够
-				if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1))) {
+				if (upSprite->getBoundingBox().containsPoint(touchLocation) && ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1))) {
 					upgrade();   //升级
 				}
 				//如果点击了销毁并且等级为0
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 0) {
+				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 0) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_3[0]);
 					removed();
 				}
 				//如果点击了销毁并且等级为1
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 1) {
+				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 1) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_3[1]);
 					removed();
 				}
 				//如果点击了销毁并且等级为2
-				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 2) {
+				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 2) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_3[2]);
 					removed();

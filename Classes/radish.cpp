@@ -81,10 +81,8 @@ bool radish::init()
 
 	auto listen= cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
 	listen->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
-		auto ee = static_cast<cocos2d::EventMouse*>(event);
-		float ex = ee->getCursorX();
-		float ey = ee->getCursorY();
-		if (!upSprite->isVisible() || !upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
+		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
+		if (!upSprite->isVisible() || !upSprite->getBoundingBox().containsPoint( touchLocation)) {
 			return true;
 		}
 		change_HP(1);
@@ -114,11 +112,9 @@ bool radish::init()
 	auto listener= cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
 
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
-		auto e = static_cast<cocos2d::EventMouse*>(event);
-		float x = e->getCursorX();
-		float y = e->getCursorY();
+		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 		// 检测鼠标是否点击精灵
-		if (MySprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+		if (MySprite->getBoundingBox().containsPoint(touchLocation)) {
 			// 在这里可以执行你需要的操作
 			//在这里建一个点击以后的动画
 

@@ -64,6 +64,7 @@ protected:
 	cocos2d::Vec2 enemy_point; //Òª¹¥»÷µÄ×ø±ê
 	bool stop = false;  //ÔÝÍ£
 	GameScene* scene = NULL;
+	bool rotate;
 };
 
 
