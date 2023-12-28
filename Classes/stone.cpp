@@ -151,7 +151,8 @@ void stone1::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
+   // stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
+    stone_s->setPosition(6*75,6*75);
 
     // 设置精灵初始大小
     stone_s->setScale(0.1f); // 缩小为原来的倍数
@@ -176,7 +177,7 @@ void stone2::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
+    stone_s->setPosition(5*75,4*75);
 
     // 设置精灵初始大小
     stone_s->setScale(0.1f); // 缩小为原来的倍数
@@ -201,7 +202,7 @@ void stone3::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
+    stone_s->setPosition(4*75,6*75);
 
     // 设置精灵初始大小
     stone_s->setScale(0.1f); // 缩小为原来的倍数
@@ -226,7 +227,7 @@ void stone4::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
+    stone_s->setPosition(6*75,2*75);
 
     // 设置精灵初始大小
     stone_s->setScale(0.1f); // 缩小为原来的倍数
@@ -251,7 +252,7 @@ void stone5::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
+    stone_s->setPosition(6*75,1*75);
 
     // 设置精灵初始大小
     stone_s->setScale(0.1f); // 缩小为原来的倍数

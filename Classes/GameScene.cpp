@@ -8,15 +8,15 @@
 
 
 USING_NS_CC;
-int ifSpeedUp;//1Îª¶ş±¶ËÙ
-int ifPause;//1ÎªÔİÍ£
+int ifSpeedUp;//1ä¸ºäºŒå€é€Ÿ
+int ifPause;//1ä¸ºæš‚åœ
 char gameMap[7][12] = { {0,0,0,0,0,0,0,0,0,0,0,0},
                         {0,9,0,0,0,0,0,0,0,0,9,0},
                         {0,9,0,0,0,0,0,0,0,0,9,0},
                         {0,9,0,0,9,9,9,9,0,0,9,0}, 
                         {0,9,9,9,9,0,0,9,9,9,9,0},
                         {9,9,0,0,0,0,0,0,0,0,9,9},
-                        {9,9,9,9,0,0,0,0,0,9,9,9} };//µØÍ¼¿ò¼Ü,0Îª¿Õ£¬1-3ÎªÅÚËş£¬4ÎªÕÏ°­Îï¡¢9ÎªÂ·»ò²»¿ÉÒÆ¶¯ÕÏ°­
+                        {9,9,9,9,0,0,0,0,0,9,9,9} };//åœ°å›¾æ¡†æ¶,0ä¸ºç©ºï¼Œ1-3ä¸ºç‚®å¡”ï¼Œ4ä¸ºéšœç¢ç‰©ã€9ä¸ºè·¯æˆ–ä¸å¯ç§»åŠ¨éšœç¢
 
 
 
@@ -25,17 +25,17 @@ struct mapPos {
     int y;
 };
 
-//°Ñ¿ò¿ò×ø±ê×ª»»ÎªÍ¨ÓÃÎ»ÖÃ×ø±ê£¨´ıµ÷Õû£©
+//æŠŠæ¡†æ¡†åæ ‡è½¬æ¢ä¸ºé€šç”¨ä½ç½®åæ ‡ï¼ˆå¾…è°ƒæ•´ï¼‰
 static Vec2 gridToPosition(int x, int y) {
     Vec2 vec;
     vec.x = 35 + x * 75;
     vec.y = 465 - y * 75;
     return vec;
 }
-//°ÑÍ¨ÓÃÎ»ÖÃ×ø±ê×ª»»Îª¿ò¿ò×ø±ê,ÔÚµØÍ¼ÄÚ·µ»Ø1
+//æŠŠé€šç”¨ä½ç½®åæ ‡è½¬æ¢ä¸ºæ¡†æ¡†åæ ‡,åœ¨åœ°å›¾å†…è¿”å›1
 bool positionToGrid(const Vec2& position, struct mapPos& grid) {
     if (position.x < 35 || position.x>35 + 12 * 75 || position.y < 465 - 6 * 75 || position.y>465 + 75) {
-        return false;//µØÍ¼Íâ£¬·µ»Øfalse
+        return false;//åœ°å›¾å¤–ï¼Œè¿”å›false
     }
     grid.x = static_cast<int>((position.x - 35) / 75);
     grid.y = static_cast<int>((465 - position.y) / 75 + 1);
@@ -60,51 +60,51 @@ bool GameScene::init() {
     visibleSize = Director::getInstance()->getVisibleSize();
     origin = Director::getInstance()->getVisibleOrigin();
     
-    //³õÊ¼Ò»±¶ËÙÔËĞĞ
+    //åˆå§‹ä¸€å€é€Ÿè¿è¡Œ
     ifSpeedUp = 0;
     ifPause = 0;
 
-    //±³¾°
+    //èƒŒæ™¯
     createBackground();
 
     log("GameScene's Address: %p", this);
 
-    //½ğ±Ò
+    //é‡‘å¸
     MoneyLayer* money = dynamic_cast<MoneyLayer*>(MoneyLayer::createLayer(this));
     this->addChild(money);
     money->setTag(TagMoney);
     log("MoneyLayer's Address: %p", this->getChildByTag(TagMoney));
 
-    //²Ëµ¥
+    //èœå•
     MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
     this->addChild(Menu);
     Menu->setTag(TagMenu);
     log("MenuLayer's Address: %p", this->getChildByTag(TagMenu));
 
-    //¹ÖÊŞ²ã
+    //æ€ªå…½å±‚
     MonsterLayer* monsterLayer = dynamic_cast<MonsterLayer*>(MonsterLayer::createLayer(this));
     this->addChild(monsterLayer);
     monsterLayer->setTag(TagMonster);
     log("MonsterLayer's Address: %p", this->getChildByTag(TagMonster));
 
-    //ÅÚËş²ã
+    //ç‚®å¡”å±‚
     TowerLayer* towerLayer = dynamic_cast<TowerLayer*>(TowerLayer::createLayer(this));
     this->addChild(towerLayer);
     towerLayer->setTag(TagTower);
     log("TowerLayer's Address: %p", this->getChildByTag(TagTower));
 
-    //ÕÏ°­Îï²ã
+    //éšœç¢ç‰©å±‚
     StoneLayer* stoneLayer = dynamic_cast<StoneLayer*>(StoneLayer::createLayer(this));
     this->addChild(stoneLayer);
     stoneLayer->setTag(TagStone);
     log("StoneLayer's Address1: %p", stoneLayer);
     log("StoneLayer's Address2: %p", this->getChildByTag(TagStone));
     
-    //µ¹¼ÆÊ±
+    //å€’è®¡æ—¶
     countToStart();
 
-    //Ğ¡¹ÖÎï³öÏÖ
-    monsterLayer->createMonster();//Î´Ğ´Ê±¼ä¼ä¸ô
+    //å°æ€ªç‰©å‡ºç°
+    monsterLayer->createMonster();//æœªå†™æ—¶é—´é—´éš”
 
     return true;
 
@@ -113,8 +113,8 @@ bool GameScene::init() {
 void GameScene::createBackground() {
 
     log("Create GameScene Background.");
-    auto spriteBG = Sprite::create();//ºÏ³É±³¾°
-    auto spriteBackground = Sprite::create("/game/BG1-hd.png");//À¶É«±³¾°
+    auto spriteBG = Sprite::create();//åˆæˆèƒŒæ™¯
+    auto spriteBackground = Sprite::create("/game/BG1-hd.png");//è“è‰²èƒŒæ™¯
     if (spriteBackground == nullptr)
     {
         problemLoading("'/game/BG1-hd.png'");
@@ -127,7 +127,7 @@ void GameScene::createBackground() {
         // add the sprite as a child to this layer
         spriteBG->addChild(spriteBackground);
     }
-    auto spriteRoad = Sprite::create("/game/BG-hd.png");//Ğ¡Â·
+    auto spriteRoad = Sprite::create("/game/BG-hd.png");//å°è·¯
     if (spriteRoad == nullptr)
     {
         problemLoading("'/game/BG-hd.png'");
@@ -149,7 +149,7 @@ void GameScene::countToStart() {
     auto timeLayer = Layer::create();
     this->addChild(timeLayer);
 
-    //ÆÁ±Î´¥ÃşÊÂ¼ş
+    //å±è”½è§¦æ‘¸äº‹ä»¶
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [](Touch* touch, Event* event) {
@@ -157,16 +157,16 @@ void GameScene::countToStart() {
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, timeLayer);
 
-    //µ¹¼ÆÊ±±³¾°ÅÌ
+    //å€’è®¡æ—¶èƒŒæ™¯ç›˜
     auto timeBG = Sprite::create("/game/Items02-hd_165.PNG");
     timeBG->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
     timeLayer->addChild(timeBG);
-    //µ¹¼ÆÊ±Êı×Ö3
+    //å€’è®¡æ—¶æ•°å­—3
     auto number = Sprite::create("/game/Items02-hd_68.PNG");
     number->setPosition(Vec2(origin.x + visibleSize.width / 2 + 5,
         origin.y + visibleSize.height / 2));
     timeLayer->addChild(number);
-    //µ¹¼ÆÊ±×ªÈ¦
+    //å€’è®¡æ—¶è½¬åœˆ
     auto circle = Sprite::create("/game/Items02-hd_50.PNG");
     circle->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
     timeLayer->addChild(circle);
@@ -174,7 +174,7 @@ void GameScene::countToStart() {
     timeBG->runAction(Sequence::create(DelayTime::create(3.6), FadeOut::create(0.1), nullptr));
 
 
-    //µ¹¼ÆÊ±Êı×Ö
+    //å€’è®¡æ—¶æ•°å­—
     Vector<SpriteFrame*> spriteFrameVecCount;
     spriteFrameVecCount.pushBack(SpriteFrame::create("/game/Items02-hd_68.PNG", Rect(0, 0, number->getContentSize().width, number->getContentSize().height)));
     spriteFrameVecCount.pushBack(SpriteFrame::create("/game/Items02-hd_92.PNG", Rect(0, 0, number->getContentSize().width, number->getContentSize().height)));
@@ -183,15 +183,15 @@ void GameScene::countToStart() {
     Animate* animate = Animate::create(ani);
     number->runAction(Sequence::create(animate, FadeOut::create(0.1), nullptr));
 
-    //µ¹¼ÆÊ±GO
-    auto* fadeIn = FadeIn::create(0.1f);//³öÏÖ
+    //å€’è®¡æ—¶GO
+    auto* fadeIn = FadeIn::create(0.1f);//å‡ºç°
     auto rotate = RotateBy::create(0.2f, 360);
     auto scaleUp = ScaleTo::create(0.15f, 1.5f);
     auto scaleDown = ScaleTo::create(0.15f, 1.0f);
     auto* fadeOut = FadeOut::create(0.1f);
     Sequence* sequence = Sequence::create(DelayTime::create(3), fadeIn, rotate, scaleUp, scaleDown, fadeOut, nullptr);
     auto spriteGo = Sprite::create("/game/ItemsGo-hd.PNG");
-    spriteGo->setOpacity(0);//³õÊ¼²»¿É¼û
+    spriteGo->setOpacity(0);//åˆå§‹ä¸å¯è§
     spriteGo->setPosition(number->getPosition());
     timeLayer->addChild(spriteGo);
     spriteGo->runAction(sequence);
@@ -216,7 +216,7 @@ bool MoneyLayer::init() {
     {
         return false;
     }
-    //½ğ±ÒÀ¸
+    //é‡‘å¸æ 
     log("Create MoneyLabel.");
     MoneyLabel = Label::createWithTTF(StringUtils::toString(getMoney()), "/fonts/Marker Felt.ttf", 32);
     if (!MoneyLabel) {
@@ -227,13 +227,13 @@ bool MoneyLayer::init() {
     MoneyLabel->setPosition(Vec2(origin.x + MoneyLabel->getContentSize().width * 2, origin.y + visibleSize.height - MoneyLabel->getContentSize().height * 1.5));
     
     this->addChild(MoneyLabel);
-    //MoneyLabel->setString(StringUtils::toString(666));//·Ç³£·ËÒÄËùË¼£¬²»ÖªµÀÎªÊ²Ã´»»²»ÁË
+    //MoneyLabel->setString(StringUtils::toString(666));//éå¸¸åŒªå¤·æ‰€æ€ï¼Œä¸çŸ¥é“ä¸ºä»€ä¹ˆæ¢ä¸äº†
     return true;
 }
 
 void MoneyLayer::updateMoney(const int& changedCoins) {
     coins += changedCoins;
-    //Í¬²½¸ü¸Ä·ÖÊıÏÔÊ¾À¸
+    //åŒæ­¥æ›´æ”¹åˆ†æ•°æ˜¾ç¤ºæ 
     auto LabelPos = MoneyLabel->getPosition();
     MoneyLabel->removeFromParent();
     MoneyLabel = Label::createWithTTF(StringUtils::toString(getMoney()), "/fonts/Marker Felt.ttf", 32);
@@ -258,7 +258,7 @@ bool MenuLayer::init() {
     }
 
     
-    //×¢²á´¥ÃşÊÂ¼ş¼àÌıÆ÷
+    //æ³¨å†Œè§¦æ‘¸äº‹ä»¶ç›‘å¬å™¨
     auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
     touchListener->setSwallowTouches(true);
     touchListener->onTouchBegan = CC_CALLBACK_2(MenuLayer::touchBegan, this);
@@ -269,7 +269,7 @@ bool MenuLayer::init() {
     
     
 
-    //¸ñ×Ó²âÊÔ
+    //æ ¼å­æµ‹è¯•
     //Sprite* grid[7][12];
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
@@ -293,8 +293,8 @@ bool MenuLayer::init() {
 
 void MenuLayer::buildTower(int row, int col) {
     auto layerBuild = Layer::create();
-    layerBuild->setName("layerBuild");//Menu layerÖĞµÄÒ»¸ö²ã£¬ºóÃæÓÃÃû×ÖÀ´µ÷ÓÃ
-    //¿ò¿ò
+    layerBuild->setName("layerBuild");//Menu layerä¸­çš„ä¸€ä¸ªå±‚ï¼Œåé¢ç”¨åå­—æ¥è°ƒç”¨
+    //æ¡†æ¡†
     gridBuiding = &grid[row][col];
     if (gridBuiding) {
         Grid grid = *gridBuiding;
@@ -302,15 +302,15 @@ void MenuLayer::buildTower(int row, int col) {
         grid.spriteGrid->setVisible(true);
         
     }
-    //ÅÚËşÑ¡Ïî
+    //ç‚®å¡”é€‰é¡¹
     auto greenBottle = Sprite::create();
     greenBottle->setName("greenBottle");
     auto shit = Sprite::create();
     shit->setName("shit");
 
-    //ºÍÅÚËş²ãÍ¨Ñ¶
+    //å’Œç‚®å¡”å±‚é€šè®¯
     TowerLayer* pTower = dynamic_cast<TowerLayer*>(_pGameScene->getChildByTag(TagTower));
-    //ÂÌÆ¿×Ó
+    //ç»¿ç“¶å­
     if (!(pTower->ifAvailable(GREEN_BOTTLE))) {
         greenBottle->setTexture("/game/green_CanClick0.PNG");
     }
@@ -320,7 +320,7 @@ void MenuLayer::buildTower(int row, int col) {
     Vec2 vec = gridToPosition(col, row);
     greenBottle->setPosition(Vec2(vec.x - greenBottle->getContentSize().width / 2 + 40, vec.y + greenBottle->getContentSize().height + 40));
     layerBuild->addChild(greenBottle);
-    //±ã±ã
+    //ä¾¿ä¾¿
     if (!(pTower->ifAvailable(SHIT))) {
         shit->setTexture("/game/shit_CanClick0.PNG");
     }
@@ -335,36 +335,36 @@ void MenuLayer::buildTower(int row, int col) {
 }
 bool MenuLayer::touchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 {
-    //»ñÈ¡µã»÷Î»ÖÃ
+    //è·å–ç‚¹å‡»ä½ç½®
     auto touchLocation = this->convertToNodeSpace(touch->getLocation());
     mapPos gridPosition;
-    //µã»÷Î»ÖÃÔÚµØÍ¼Íâ£¬²»´¦Àí
+    //ç‚¹å‡»ä½ç½®åœ¨åœ°å›¾å¤–ï¼Œä¸å¤„ç†
     if (!positionToGrid(touchLocation, gridPosition)) {
         return true;
     }
 
-    //µã»÷Î»ÖÃÔÚµØÍ¼ÄÚµÄ´¦Àí
+    //ç‚¹å‡»ä½ç½®åœ¨åœ°å›¾å†…çš„å¤„ç†
 
-    //ºÍÅÚËş²ãÍ¨Ñ¶
+    //å’Œç‚®å¡”å±‚é€šè®¯
     TowerLayer* pTower = dynamic_cast<TowerLayer*>(_pGameScene->getChildByTag(TagTower));
 
     if (!ifBuildLayer) {
-        //Ñ¡ÖĞ¿ÕµØÔòµ¯³ö½¨ËşÈ¦È¦
+        //é€‰ä¸­ç©ºåœ°åˆ™å¼¹å‡ºå»ºå¡”åœˆåœˆ
         if (gameMap[gridPosition.y][gridPosition.x] == 0) {
             //log("build layer: gameMap[%d][%d] = %d", gridPosition.y, gridPosition.x, (int)gameMap[gridPosition.y][gridPosition.x]);
             buildTower(gridPosition.y, gridPosition.x);
-            ifBuildLayer = 1;//µ±Ç°´¦ÓÚÑ¡Ôñ½¨Ëş×´Ì¬
+            ifBuildLayer = 1;//å½“å‰å¤„äºé€‰æ‹©å»ºå¡”çŠ¶æ€
         }
     }
-    else {//½¨Ëş»òÈ¡Ïû½¨ËşÈ¦È¦
-        //»ñÈ¡½¨ÅÚËş²ã
+    else {//å»ºå¡”æˆ–å–æ¶ˆå»ºå¡”åœˆåœˆ
+        //è·å–å»ºç‚®å¡”å±‚
         auto buildTower = this->getChildByName("layerBuild");
         auto towerGreen = buildTower->getChildByName("greenBottle");
         auto towerShit = buildTower->getChildByName("shit");
-        //»ñÈ¡µ±Ç°½¨Ëş¿ò
+        //è·å–å½“å‰å»ºå¡”æ¡†
         Grid grid = *gridBuiding;
         //log("build tower: gameMap[%d][%d] = %d", grid.y, grid.x, (int)gameMap[grid.y][grid.x]);
-        //ÅĞ¶Ïµã»÷Î»ÖÃÊÇ·ñÔÚÅÚËşÑ¡ÏîÍ¼±êÄÚ
+        //åˆ¤æ–­ç‚¹å‡»ä½ç½®æ˜¯å¦åœ¨ç‚®å¡”é€‰é¡¹å›¾æ ‡å†…
         if (towerGreen->getBoundingBox().containsPoint(touchLocation)) {
             if (pTower->ifAvailable(GREEN_BOTTLE)) {
                 pTower->buidTower(GREEN_BOTTLE, grid.x, grid.y);
@@ -375,12 +375,12 @@ bool MenuLayer::touchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
                 pTower->buidTower(SHIT, grid.x, grid.y);
             }
         }
-        this->removeChildByName("layerBuild");//ÒÆ³ı²Ëµ¥
-        grid.spriteGrid->setVisible(false);//Òş²ØÌØÊâ¿ò
+        this->removeChildByName("layerBuild");//ç§»é™¤èœå•
+        grid.spriteGrid->setVisible(false);//éšè—ç‰¹æ®Šæ¡†
         gridBuiding = nullptr;
-        ifBuildLayer = 0;//»Øµ½·Ç½¨Ëş×´Ì¬
+        ifBuildLayer = 0;//å›åˆ°éå»ºå¡”çŠ¶æ€
     }
-    //Ñ¡µ½Ğ¡Â·¡¢±³¾°¡¢ÕÏ°­ÉÏ»¹µÃÏÔÊ¾½ûÇøÍ¼±ê£¬µ«ÊÇÒª×¢ÒâºÍ¹ÖÊŞµÄ³åÍ»´¦Àí
+    //é€‰åˆ°å°è·¯ã€èƒŒæ™¯ã€éšœç¢ä¸Šè¿˜å¾—æ˜¾ç¤ºç¦åŒºå›¾æ ‡ï¼Œä½†æ˜¯è¦æ³¨æ„å’Œæ€ªå…½çš„å†²çªå¤„ç†
     return true;
 }
 
@@ -402,12 +402,12 @@ bool TowerLayer::init() {
 
 bool TowerLayer::ifAvailable(int Type) {
 
-    //ºÍ½ğ±Ò²ãÍ¨Ñ¶
+    //å’Œé‡‘å¸å±‚é€šè®¯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     switch (Type)
     {
         case GREEN_BOTTLE:
-            if (pMoney->getMoney() >= 100)//ÕâÀïÓĞÎÊÌâ Òı·¢ÁËÒì³£: ¶ÁÈ¡·ÃÎÊÈ¨ÏŞ³åÍ»¡£this->_pTower->_pMoney ÊÇ 0xDDDDDDDD¡£
+            if (pMoney->getMoney() >= 100)//è¿™é‡Œæœ‰é—®é¢˜ å¼•å‘äº†å¼‚å¸¸: è¯»å–è®¿é—®æƒé™å†²çªã€‚this->_pTower->_pMoney æ˜¯ 0xDDDDDDDDã€‚
                 //pMoney->update(-120);
                 return true;
             else
@@ -432,14 +432,14 @@ void TowerLayer::buidTower(int Type, int gridx, int gridy) {
     log("build tower position : (%fl, %fl)", position.x, position.y);
     //tower newTower;
     if (Type == GREEN_BOTTLE) {
-        //½¨tower1
+        //å»ºtower1
         auto newTower = tower_1::create(position, _pGameScene);
         this->addChild(newTower);
         //TowerLayer* ptower = dynamic_cast<TowerLayer*>(newTower->getParent());
         //ptower->removeTower(this);
     }
     else if (Type == SHIT) {
-        //½¨tower3
+        //å»ºtower3
         auto newTower = tower_3::create(position, _pGameScene);
         this->addChild(newTower);
     }
@@ -451,7 +451,7 @@ bool TowerLayer::removeTower(tower* Tower) {
         return false;
     }
    
-    /*ÎŞĞ§µÄgetposition
+    /*æ— æ•ˆçš„getposition
     Vec2 position0 = Tower->getPosition();
     Vec2 position = Vec2(position0.x - 75 / 2, position0.y - 75 / 2);
     log("remove tower position : (% d, % d)", position0.x, position0.y);
@@ -460,7 +460,7 @@ bool TowerLayer::removeTower(tower* Tower) {
     gameMap[mappos.y][mappos.x] = 0;*/
     
     
-    //´Ó²ãÉÏÒÆµôËş
+    //ä»å±‚ä¸Šç§»æ‰å¡”
     removeChild(dynamic_cast<Layer*>(Tower));
     
     MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(_pGameScene->getChildByTag(TagMonster));
@@ -495,7 +495,7 @@ bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
         return false;
     }
     removeChild(dynamic_cast<Layer*>(Enemy));
-    //ºÍ½ğ±Ò²ãÍ¨Ñ¶
+    //å’Œé‡‘å¸å±‚é€šè®¯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     pMoney->updateMoney(coins);
     
@@ -516,10 +516,10 @@ bool StoneLayer::init() {
         return false;
     }
     auto stone1 = stone1::create(Vec2(0,0),_pGameScene);
-    auto stone2 = stone1::create(Vec2(0, 0), _pGameScene);
-    auto stone3 = stone1::create(Vec2(0, 0), _pGameScene);
-    auto stone4 = stone1::create(Vec2(0, 0), _pGameScene);
-    auto stone5 = stone1::create(Vec2(0, 0), _pGameScene);
+    auto stone2 = stone2::create(Vec2(0, 0), _pGameScene);
+    auto stone3 = stone3::create(Vec2(0, 0), _pGameScene);
+    auto stone4 = stone4::create(Vec2(0, 0), _pGameScene);
+    auto stone5 = stone5::create(Vec2(0, 0), _pGameScene);
     this->addChild(stone1);
     this->addChild(stone2);
     this->addChild(stone3);
@@ -535,7 +535,7 @@ bool StoneLayer::removeStone(stone* Stone, int coins) {
     }
     removeChild(dynamic_cast<Layer*>(Stone));
 
-    //ºÍ½ğ±Ò²ãÍ¨Ñ¶
+    //å’Œé‡‘å¸å±‚é€šè®¯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     pMoney->updateMoney(coins);
     return true;

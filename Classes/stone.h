@@ -19,6 +19,7 @@ public:
     void addtower(tower* a);
     void mouse_click();
 protected:
+
     cocos2d::Sprite* stone_s = NULL;//ÕÏ°­Îï1
     cocos2d::Sprite* Brush;//ÑªÌõ
     int q;
