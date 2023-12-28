@@ -104,7 +104,7 @@ bool GameScene::init() {
     countToStart();
 
     //小怪物出现
-    monsterLayer->createMonster();
+    monsterLayer->createMonster();//未写时间间隔
 
     return true;
 
@@ -490,11 +490,15 @@ void MonsterLayer::createMonster() {
     
 }
 
-bool MonsterLayer::removeMonster(enemy* Enemy) {
+bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
     if (!Enemy) {
         return false;
     }
-    removeChild(dynamic_cast<Layer*>(Enemy));//有定义后可以直接指
+    removeChild(dynamic_cast<Layer*>(Enemy));
+    //和金币层通讯
+    MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
+    pMoney->updateMoney(coins);
+    
     return true;
 }
 
@@ -511,14 +515,28 @@ bool StoneLayer::init() {
     {
         return false;
     }
+    auto stone1 = stone1::create(Vec2(0,0),_pGameScene);
+    auto stone2 = stone2::create(Vec2(0, 0), _pGameScene);
+   auto stone3 = stone3::create(Vec2(0, 0), _pGameScene);
+    auto stone4 = stone4::create(Vec2(0, 0), _pGameScene);
+    auto stone5 = stone5::create(Vec2(0, 0), _pGameScene);
+   this->addChild(stone1);
+   this->addChild(stone2);
+    this->addChild(stone3);
+    this->addChild(stone4);
+    this->addChild(stone5);
 
     return true;
 }
 
-bool StoneLayer::removeStone(stone* Stone) {
+bool StoneLayer::removeStone(stone* Stone, int coins) {
     if (!Stone) {
         return false;
     }
-    removeChild(dynamic_cast<Layer*>(Stone));//有定义后可以直接指
+    removeChild(dynamic_cast<Layer*>(Stone));
+
+    //和金币层通讯
+    MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
+    pMoney->updateMoney(coins);
     return true;
 }

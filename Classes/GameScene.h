@@ -90,7 +90,7 @@ public:
     virtual bool init();
     CREATE_FUNC(MonsterLayer);
     void createMonster();//生成小怪兽
-    bool removeMonster(enemy* Enemy);
+    bool removeMonster(enemy* Enemy, int coins);//移掉小怪兽，增加金币
 
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
@@ -125,7 +125,7 @@ public:
     static cocos2d::Layer* createLayer(GameScene* pScene);
     virtual bool init();
     CREATE_FUNC(StoneLayer);
-    bool removeStone(stone* Stone);
+    bool removeStone(stone* Stone, int coins);
 
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
