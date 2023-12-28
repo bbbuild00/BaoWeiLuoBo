@@ -2,8 +2,23 @@
 #include"GameScene.h"
 #include"waypoint.h"
 
-enemy1::enemy1(waypoint* st, GameScene* lay) {
-    mpos = st->getpos();
+cocos2d::Vec2 enemy::getpos()//获得当前位置
+{
+    cocos2d::Vec2 position = monster->getPosition();
+    return position;
+}
+
+void enemy::addtower(tower* a) {
+    Attacktower.pushBack(a);
+}
+
+void enemy::getout(tower* a) {
+    Attacktower.eraseObject(a);
+}
+
+enemy1::enemy1(GameScene* lay) {
+    // mpos = st->getpos();
+    log("Enemy's GameScene p: %p", lay);
     stop = false;
     slowice = false;
     active = false;
@@ -11,8 +26,8 @@ enemy1::enemy1(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-enemy2::enemy2(waypoint* st, GameScene* lay) {
-    mpos = st->getpos();
+enemy2::enemy2(GameScene* lay) {
+    //mpos = st->getpos();
     stop = false;
     slowice = false;
     active = false;
@@ -20,8 +35,8 @@ enemy2::enemy2(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-enemy3::enemy3(waypoint* st, GameScene* lay) {
-    mpos = st->getpos();
+enemy3::enemy3(GameScene* lay) {
+    //mpos = st->getpos();
     stop = false;
     slowice = false;
     active = false;
@@ -29,8 +44,8 @@ enemy3::enemy3(waypoint* st, GameScene* lay) {
     //mpos=st->getpos();
 }
 
-enemy1* enemy1::create(waypoint* st, GameScene* lay) {
-    enemy1* layer = new enemy1(st,lay);
+enemy1* enemy1::create(GameScene* lay) {
+    enemy1* layer = new enemy1(lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -39,8 +54,8 @@ enemy1* enemy1::create(waypoint* st, GameScene* lay) {
     return nullptr;
 }
 
-enemy2* enemy2::create(waypoint* st, GameScene* lay) {
-    enemy2* layer = new enemy2(st, lay);
+enemy2* enemy2::create(GameScene* lay) {
+    enemy2* layer = new enemy2(lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -49,8 +64,8 @@ enemy2* enemy2::create(waypoint* st, GameScene* lay) {
     return nullptr;
 }
 
-enemy3* enemy3::create(waypoint* st, GameScene* lay) {
-    enemy3* layer = new enemy3(st, lay);
+enemy3* enemy3::create(GameScene* lay) {
+    enemy3* layer = new enemy3(lay);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -58,8 +73,8 @@ enemy3* enemy3::create(waypoint* st, GameScene* lay) {
     CC_SAFE_DELETE(layer);
     return nullptr;
 }
-/*
-void q() {
+
+void enemy::mouse_click() {
     auto listener = cocos2d::EventListenerMouse::create();
 
     listener->onMouseDown = [=](cocos2d::Event* event) {
@@ -67,26 +82,34 @@ void q() {
         float x = e->getCursorX();
         float y = e->getCursorY();
         // 检测鼠标是否点击精灵
-        if (cocos2d::sprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+        if (monster->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
             // 在这里可以执行你需要的操作
+            TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+
+            for (Node* child : pTower->getChildren()) {
+                if (tower* e = dynamic_cast<tower*>(child)) {
+                    bool a = e->check_if_in_range(this->getpos());
+                    if (a) {
+                        e->get_enemy(this);
+
+                    }
+                }
+            }
         }
         };
-
     // 注册监听器
-    cocos2d::_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cocos2d::sprite);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, monster);
 }
-*/
+
 // 初始化函数
-bool enemy::init(){
+bool enemy::init() {
     if (!Layer::init()) {
         return false;
     }
 
     draw_enemy();
 
-    //点击事件
-
-
+    mouse_click();//点击事件
 
     move();
 
@@ -105,35 +128,35 @@ void enemy1::cartoon(float dt) {
 
     // 获取纹理缓存
     auto textureCache = cocos2d::Director::getInstance()->getTextureCache();
-        // 加载图片纹理
-        cocos2d::Texture2D* texture = textureCache->addImage("monster1_1.png");
+    // 加载图片纹理
+    cocos2d::Texture2D* texture = textureCache->addImage("monster1_1.png");
 
-        // 获取纹理的宽度和高度
-        float width_1 = texture->getContentSize().width;
-        float height_1 = texture->getContentSize().height;
+    // 获取纹理的宽度和高度
+    float width_1 = texture->getContentSize().width;
+    float height_1 = texture->getContentSize().height;
 
-        // 获取纹理缓存
-        textureCache = cocos2d::Director::getInstance()->getTextureCache();
+    // 获取纹理缓存
+    textureCache = cocos2d::Director::getInstance()->getTextureCache();
 
-        // 加载图片纹理
-        texture = textureCache->addImage("monster1_2.png");
+    // 加载图片纹理
+    texture = textureCache->addImage("monster1_2.png");
 
-        // 获取纹理的宽度和高度
-        float width_2 = texture->getContentSize().width;
-        float height_2 = texture->getContentSize().height;
+    // 获取纹理的宽度和高度
+    float width_2 = texture->getContentSize().width;
+    float height_2 = texture->getContentSize().height;
 
-        // 将不同方向的精灵帧添加到容器中
-        animFrames.pushBack(cocos2d::SpriteFrame::create("monster1_1.png", cocos2d::Rect(0, 0, width_1, height_1)));
-        animFrames.pushBack(cocos2d::SpriteFrame::create("monster1_2.png", cocos2d::Rect(0, 0, width_2, height_2)));
+    // 将不同方向的精灵帧添加到容器中
+    animFrames.pushBack(cocos2d::SpriteFrame::create("monster1_1.png", cocos2d::Rect(0, 0, width_1, height_1)));
+    animFrames.pushBack(cocos2d::SpriteFrame::create("monster1_2.png", cocos2d::Rect(0, 0, width_2, height_2)));
 
-        // 使用精灵帧容器创建一个动画对象，每一帧间隔为 0.2 秒
-        cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, dt);
+    // 使用精灵帧容器创建一个动画对象，每一帧间隔为 0.2 秒
+    cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, dt);
 
-        // 使用动画对象创建一个动作对象
-        cocos2d::Animate* animate = cocos2d::Animate::create(animation);
+    // 使用动画对象创建一个动作对象
+    cocos2d::Animate* animate = cocos2d::Animate::create(animation);
 
-        // 将动作对象添加到精灵上，并使其永久重复播放
-        monster->runAction(cocos2d::RepeatForever::create(animate));
+    // 将动作对象添加到精灵上，并使其永久重复播放
+    monster->runAction(cocos2d::RepeatForever::create(animate));
 }
 
 void enemy1::draw_enemy() {
@@ -154,7 +177,7 @@ void enemy1::draw_enemy() {
     // 设置精灵初始大小
     monster->setScale(0.05f); // 缩小为原来的倍数
 
-	cartoon(0.2f);//加载两帧动画
+    cartoon(0.2f);//加载两帧动画
 
     // 在初始化函数中创建矩形精灵
     brush = cocos2d::Sprite::create("brush.png");
@@ -173,38 +196,38 @@ void enemy2::cartoon(float dt) {
     cocos2d::Vector<cocos2d::SpriteFrame*> animFrames;
     animFrames.reserve(2);
 
-        // 获取纹理缓存
-        auto textureCache = cocos2d::Director::getInstance()->getTextureCache();
+    // 获取纹理缓存
+    auto textureCache = cocos2d::Director::getInstance()->getTextureCache();
 
-        // 加载图片纹理
-        cocos2d::Texture2D* texture = textureCache->addImage("monster2_1.png");
+    // 加载图片纹理
+    cocos2d::Texture2D* texture = textureCache->addImage("monster2_1.png");
 
-        // 获取纹理的宽度和高度
-        float width_1 = texture->getContentSize().width;
-        float height_1 = texture->getContentSize().height;
+    // 获取纹理的宽度和高度
+    float width_1 = texture->getContentSize().width;
+    float height_1 = texture->getContentSize().height;
 
-        // 获取纹理缓存
-        textureCache = cocos2d::Director::getInstance()->getTextureCache();
+    // 获取纹理缓存
+    textureCache = cocos2d::Director::getInstance()->getTextureCache();
 
-        // 加载图片纹理
-        texture = textureCache->addImage("monster2_2.png");
+    // 加载图片纹理
+    texture = textureCache->addImage("monster2_2.png");
 
-        // 获取纹理的宽度和高度
-        float width_2 = texture->getContentSize().width;
-        float height_2 = texture->getContentSize().height;
+    // 获取纹理的宽度和高度
+    float width_2 = texture->getContentSize().width;
+    float height_2 = texture->getContentSize().height;
 
-        // 将不同方向的精灵帧添加到容器中
-        animFrames.pushBack(cocos2d::SpriteFrame::create("monster2_1.png", cocos2d::Rect(0, 0, width_1, height_1)));
-        animFrames.pushBack(cocos2d::SpriteFrame::create("monster2_2.png", cocos2d::Rect(0, 0, width_2, height_2)));
+    // 将不同方向的精灵帧添加到容器中
+    animFrames.pushBack(cocos2d::SpriteFrame::create("monster2_1.png", cocos2d::Rect(0, 0, width_1, height_1)));
+    animFrames.pushBack(cocos2d::SpriteFrame::create("monster2_2.png", cocos2d::Rect(0, 0, width_2, height_2)));
 
-        // 使用精灵帧容器创建一个动画对象，每一帧间隔为 0.2 秒
-        cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames,dt);
+    // 使用精灵帧容器创建一个动画对象，每一帧间隔为 0.2 秒
+    cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, dt);
 
-        // 使用动画对象创建一个动作对象
-        cocos2d::Animate* animate = cocos2d::Animate::create(animation);
+    // 使用动画对象创建一个动作对象
+    cocos2d::Animate* animate = cocos2d::Animate::create(animation);
 
-        // 将动作对象添加到精灵上，并使其永久重复播放
-        monster->runAction(cocos2d::RepeatForever::create(animate));
+    // 将动作对象添加到精灵上，并使其永久重复播放
+    monster->runAction(cocos2d::RepeatForever::create(animate));
 }
 
 void enemy2::draw_enemy() {
@@ -244,40 +267,40 @@ void enemy3::cartoon(float dt) {
     cocos2d::Vector<cocos2d::SpriteFrame*> animFrames;
     animFrames.reserve(2);
 
-    
-        // 获取纹理缓存
-        auto textureCache = cocos2d::Director::getInstance()->getTextureCache();
 
-        // 加载图片纹理
-        cocos2d::Texture2D* texture = textureCache->addImage("monster3_1.png");
+    // 获取纹理缓存
+    auto textureCache = cocos2d::Director::getInstance()->getTextureCache();
 
-        // 获取纹理的宽度和高度
-        float width_1 = texture->getContentSize().width;
-        float height_1 = texture->getContentSize().height;
+    // 加载图片纹理
+    cocos2d::Texture2D* texture = textureCache->addImage("monster3_1.png");
 
-        // 获取纹理缓存
-        textureCache = cocos2d::Director::getInstance()->getTextureCache();
+    // 获取纹理的宽度和高度
+    float width_1 = texture->getContentSize().width;
+    float height_1 = texture->getContentSize().height;
 
-        // 加载图片纹理
-        texture = textureCache->addImage("monster3_2.png");
+    // 获取纹理缓存
+    textureCache = cocos2d::Director::getInstance()->getTextureCache();
 
-        // 获取纹理的宽度和高度
-        float width_2 = texture->getContentSize().width;
-        float height_2 = texture->getContentSize().height;
+    // 加载图片纹理
+    texture = textureCache->addImage("monster3_2.png");
 
-        // 将不同方向的精灵帧添加到容器中
-        animFrames.pushBack(cocos2d::SpriteFrame::create("monster3_1.png", cocos2d::Rect(0, 0, width_1, height_1)));
-        animFrames.pushBack(cocos2d::SpriteFrame::create("monster3_2.png", cocos2d::Rect(0, 0, width_2, height_2)));
+    // 获取纹理的宽度和高度
+    float width_2 = texture->getContentSize().width;
+    float height_2 = texture->getContentSize().height;
 
-        // 使用精灵帧容器创建一个动画对象，每一帧间隔为 0.2 秒
-        cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, dt);
+    // 将不同方向的精灵帧添加到容器中
+    animFrames.pushBack(cocos2d::SpriteFrame::create("monster3_1.png", cocos2d::Rect(0, 0, width_1, height_1)));
+    animFrames.pushBack(cocos2d::SpriteFrame::create("monster3_2.png", cocos2d::Rect(0, 0, width_2, height_2)));
 
-        // 使用动画对象创建一个动作对象
-        cocos2d::Animate* animate = cocos2d::Animate::create(animation);
+    // 使用精灵帧容器创建一个动画对象，每一帧间隔为 0.2 秒
+    cocos2d::Animation* animation = cocos2d::Animation::createWithSpriteFrames(animFrames, dt);
 
-        // 将动作对象添加到精灵上，并使其永久重复播放
-        monster->runAction(cocos2d::RepeatForever::create(animate));
-   
+    // 使用动画对象创建一个动作对象
+    cocos2d::Animate* animate = cocos2d::Animate::create(animation);
+
+    // 将动作对象添加到精灵上，并使其永久重复播放
+    monster->runAction(cocos2d::RepeatForever::create(animate));
+
 }
 
 void enemy3::draw_enemy() {
@@ -313,7 +336,7 @@ void enemy3::draw_enemy() {
 }
 
 void enemy::move() {
-   // addWayPoint1(m_waypointList, monster);//走向的航点
+    addWayPoint1(m_waypointList, monster);//走向的航点
     if (slowice) {
         auto moveTo1 = cocos2d::MoveTo::create(2, m_waypointList.at(0)->getpos());
         auto moveTo2 = cocos2d::MoveTo::create(2, m_waypointList.at(1)->getpos());
@@ -360,7 +383,7 @@ void enemy::move() {
         monster->runAction(sequence1);
         brush->runAction(sequence2);
     }
-    
+
     else {
         auto moveTo1 = cocos2d::MoveTo::create(1, m_waypointList.at(0)->getpos());
         auto moveTo2 = cocos2d::MoveTo::create(1, m_waypointList.at(1)->getpos());
@@ -410,13 +433,13 @@ void enemy::move() {
 }
 
 enemy1::~enemy1() {
-   // enemy_killed();
+    // enemy_killed();
 }
 enemy2::~enemy2() {
-   //enemy_killed();
+    //enemy_killed();
 }
 enemy3::~enemy3() {
-  // enemy_killed();
+    // enemy_killed();
 }
 
 
@@ -464,7 +487,7 @@ void enemy1::slowdown() {
     // 将动作对象添加到精灵上，并使其永久重复播放
     monster->runAction(cocos2d::RepeatForever::create(animate));
 
-	this->scheduleOnce(schedule_selector(enemy1::cartoon), 2.0f);  // 2秒后执行
+    this->scheduleOnce(schedule_selector(enemy1::cartoon), 2.0f);  // 2秒后执行
 
     speed *= 0.75;
     slowice = true;
@@ -573,16 +596,32 @@ void enemy::Attacked(int damage) {
     HP -= damage;
     if (HP <= 0) {
         //和炮塔层通讯
-        TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
-        
+       /*TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+
+        for (Node* child : pTower->getChildren()) {
+            if (tower* e = dynamic_cast<tower*>(child)) {
+                bool a = e->check_if_in_range(this->getpos());
+                if (a) {
+                    e->get_enemy(this);
+                    Attacktower.pushBack(e);
+                }
+            }
+        }*/
+        for (size_t i = 0; i < Attacktower.size(); i++) {
+            tower* e;
+            e = Attacktower.at(i);
+            e->enemy_killed();
+        }
+
         MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(w->getChildByTag(TagMonster));
         //调用函数：移走石头（防御塔和控制台），添加金币，
         pMonster->removeMonster(this);
-        
+
         //pTower->enemy_killed();
         //和金币层通讯
         MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
         pMoney->update(getmoney());
+
     }
 }
 //添加攻击我的炮塔
