@@ -89,7 +89,7 @@ bool radish::init()
 		}
 		change_HP(1);
 		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-		pMoney->update(-UPMONEY);
+		pMoney->updateMoney(-UPMONEY);
 		upSprite->setVisible(false);
 	};
 

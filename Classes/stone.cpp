@@ -53,12 +53,8 @@ void stone::Attacked(int damage) {
 
         StoneLayer* pStone = dynamic_cast<StoneLayer*>(w->getChildByTag(TagStone));
         //调用函数：移走石头（防御塔和控制台），添加金币，
-        pStone->removeStone(this);
+        pStone->removeStone(this, getmoney());
 
-        //pTower->enemy_killed();
-        //和金币层通讯
-        StoneLayer* pMoney = dynamic_cast<StoneLayer*>(w->getChildByTag(TagStone));
-        pMoney->update(getmoney());
     }
 }
 

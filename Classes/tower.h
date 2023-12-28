@@ -85,6 +85,7 @@ public:
 	virtual bool init() override;
 	tower_1::~tower_1(){
 		this->unschedule("ShootScheduler");
+		this->unschedule("ShootScheduler2");
 	}
 };
 

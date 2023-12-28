@@ -593,6 +593,7 @@ void enemy3::slowdown() {
 
 
 void enemy::Attacked(int damage) {
+    log("Attacked pScene: %p", w);
     HP -= damage;
     if (HP <= 0) {
         //和炮塔层通讯
@@ -615,12 +616,7 @@ void enemy::Attacked(int damage) {
 
         MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(w->getChildByTag(TagMonster));
         //调用函数：移走石头（防御塔和控制台），添加金币，
-        pMonster->removeMonster(this);
-
-        //pTower->enemy_killed();
-        //和金币层通讯
-        MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(w->getChildByTag(TagMoney));
-        pMoney->update(getmoney());
+        pMonster->removeMonster(this,getmoney());
 
     }
 }

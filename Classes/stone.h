@@ -25,7 +25,7 @@ protected:
     int HP;
     int fullHP;
     cocos2d::Vec2 point;//实际位置
-    int money;
+    int money = 20;
 
     GameScene* w;
     //记录有哪些炮塔在攻击它，当小怪兽死去后，到对应的炮塔里，把炮塔对应的该攻击对象删除
