@@ -38,7 +38,7 @@ public:
 	cocos2d::Vec2 getpos();//获得当前位置
 
 protected:
-	int HP;//血量
+	int HP=100;//血量
 	int fullHP;//满血
 	double speed;//速度
 	bool stop;//暂停
@@ -51,7 +51,7 @@ protected:
 	bool active;//是否移动
 	//cocos2d::Vec2 mpos;//当前位置
 	waypoint* walktowards;//走向的航点
-	int money; //打败小怪兽奖励的金币
+	int money=50; //打败小怪兽奖励的金币
 
 	cocos2d::Vector<waypoint*>m_waypointList;//走向的航点
 

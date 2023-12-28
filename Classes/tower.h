@@ -64,6 +64,7 @@ protected:
 	cocos2d::Vec2 enemy_point; //Òª¹¥»÷µÄ×ø±ê
 	bool stop = false;  //ÔÝÍ£
 	GameScene* scene = NULL;
+	bool rotate;
 };
 
 
@@ -84,7 +85,8 @@ public:
 	}
 	virtual bool init() override;
 	tower_1::~tower_1(){
-		this->unschedule("ShootScheduler");
+		this->unschedule("ShootScheduler1");
+		this->unschedule("ShootScheduler2");
 	}
 };
 
@@ -106,7 +108,8 @@ public:
 	}
 	virtual bool init() override;
 	~tower_2(){
-		this->unschedule("ShootScheduler");
+		this->unschedule("ShootScheduler1");
+		this->unschedule("ShootScheduler2");
 	}
 };
 
@@ -128,6 +131,7 @@ public:
 	}
 	virtual bool init() override;
 	~tower_3(){
-		this->unschedule("ShootScheduler");
+		this->unschedule("ShootScheduler1");
+		this->unschedule("ShootScheduler2");
 	}
 };
