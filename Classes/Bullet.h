@@ -2,8 +2,8 @@
 #include "cocos2d.h"
 #include "tower.h"
 
-#define size_of_Bullet 30  //子弹图片大小
-#define time_bei 0.001 //距离与时间的倍数
+#define size_of_Bullet 15  //子弹图片大小
+
 
 class enemy;
 class Widget;

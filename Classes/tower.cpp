@@ -21,7 +21,7 @@ void tower::removed()
 
 void tower::set_rotation(double angle)   //将炮塔对应的精灵进行旋转，要求传入一个角度来
 {
-	auto rotateTo = cocos2d::RotateTo::create(1.0f, angle);  //在1s内旋转了angle角度
+	auto rotateTo = cocos2d::RotateTo::create(0.05, angle);  //在0.05s内旋转了angle角度
 	turretSprite->runAction(rotateTo);
 }
 
@@ -121,10 +121,9 @@ enemy* tower::get_enemy()
 
 void tower::check_enemy_in()  //尚未实现
 {
-	log("check_enemy_in, %p",scene);
 	rotation();
 	if (attack_stone != NULL); //如果有attack_stone的话，不用进行后面操作
-	else if (attack_enemy) {
+	else if (attack_enemy != NULL) {
 		enemy_point = attack_enemy->getpos();  //得到要攻击的敌人的位置坐标
 		double dx = point.x - enemy_point.x;
 		double dy = point.y - enemy_point.y;
@@ -135,10 +134,8 @@ void tower::check_enemy_in()  //尚未实现
 	}
 	else {
 		MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(scene->getChildByTag(TagMonster));
-		log("Tower的敌人遍历, pMonster: %p", pMonster);
 		for (Node* child : pMonster->getChildren()) {
 			if (enemy* e = dynamic_cast<enemy*>(child)) {
-				log("找到敌人, penemy: %p", e);
 				bool a = check_if_in_range(e->getpos());
 				if (a) {
 					get_enemy(e);
@@ -163,7 +160,6 @@ bool tower::if_continue(int a)
 
 tower_1::tower_1(cocos2d::Vec2& a, GameScene* b)
 {
-	log("GameScene p: %p", b);
 	point = a;
 	grade = 0;
 	damage = damage_1[0];
@@ -217,202 +213,95 @@ bool tower_1::init()
 	turretSprite->setPosition(point);
 	turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 	this->addChild(turretSprite);
-	auto listener = cocos2d::EventListenerMouse::create();
-	//搞一个监听器嘞
-	listener->onMouseDown = [=](cocos2d::Event* event) {
+	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
+	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto e = static_cast<cocos2d::EventMouse*>(event);
 		float x = e->getCursorX();
 		float y = e->getCursorY();
 		// 检测鼠标是否点击精灵
 		if (turretSprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
 			// 在这里可以执行你需要的操作
-			//问一下关关怎么让1-a和1-b一直显示嘞
-
 
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 			int allmoney = pMoney->getMoney();
-			//画点击后立即出现的东西（和关关商量一下留白事宜）
-			if (grade == 0 || grade == 1) {
-				if ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1)) {   //如果足够升级的话
-					std::string pic_1;
-					if (grade == 0) {
-						pic_1 = "tower1-1-a.png";
-					}
-					else {
-						pic_1 = "tower1-2-a.png";
-					}
-					auto upSprite = cocos2d::Sprite::create(pic_1);
-					upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-					upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(upSprite);
+			auto upSprite = cocos2d::Sprite::create();
+			if (allmoney >= cost_money_1[1] && grade == 0)
+				upSprite->setTexture("tower1-1-a.png");
+			else if (allmoney >= cost_money_1[2] && grade == 1)
+				upSprite->setTexture("tower1-2-a.png");
+			else if (grade == 0)
+				upSprite->setTexture("tower1-1-b.png");
+			else if(grade==1)
+				upSprite->setTexture("tower1-2-b.png");
+			else 
+				upSprite->setTexture("tower1-3-a.png");
+			upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
+			upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			this->addChild(upSprite);
 
-					std::string pic_2;
-					if (grade == 0) {
-						pic_2 = "tower1-1-c.png";
-					}
-					else {
-						pic_2 = "tower1-2-c.png";
-					}
-					auto downSprite = cocos2d::Sprite::create(pic_2);
-					downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-					downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(downSprite);
+			auto downSprite = cocos2d::Sprite::create();
+			if (grade == 0)
+				downSprite->setTexture("tower1-1-c.png");
+			else if (grade == 1)
+				downSprite->setTexture("tower1-2-c.png");
+			else 
+				downSprite->setTexture("tower1-3-a.png");
+			downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
+			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			this->addChild(downSprite);
 
-
-					//搞一个监视器嘞
-					auto listene = cocos2d::EventListenerMouse::create();
-					listene->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							upgrade();   //升级
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
-
-
-
-					//搞一个监视器嘞
-					auto listen = cocos2d::EventListenerMouse::create();
-					listen->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							// 在这里可以执行你需要的操作
-							//还没完全想好
-							if (grade == 0) {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_1[0]);
-							}
-							else {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_1[1]);
-							}
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
+			//搞一个监视器嘞
+			auto listene = cocos2d::EventListenerTouchOneByOne::create();
+			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+				auto ee = static_cast<cocos2d::EventMouse*>(event);
+				float ex = ee->getCursorX();
+				float ey = ee->getCursorY();
+				// 如果鼠标点击了升级并且钱足够
+				if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1))) {
+					upgrade();   //升级
 				}
-				else {  //钱不够升级啊
-					std::string pic_1;
-					if (grade == 0) {
-						pic_1 = "tower1-1-b.png";
-					}
-					else {
-						pic_1 = "tower1-2-b.png";
-					}
-					auto upSprite = cocos2d::Sprite::create(pic_1);
-					upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-					upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(upSprite);
-
-
-					std::string pic_2;
-					if (grade == 0) {
-						pic_2 = "tower1-1-c.png";
-					}
-					else {
-						pic_2 = "tower1-2-c.png";
-					}
-					auto downSprite = cocos2d::Sprite::create(pic_2);
-					downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-					downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(downSprite);
-					//搞一个监视器嘞
-					auto listen = cocos2d::EventListenerMouse::create();
-					listen->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							// 在这里可以执行你需要的操作
-							//还没完全想好
-							if (grade == 0) {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_1[0]);
-							}
-							else {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_1[1]);
-							}
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
-
+				//如果点击了销毁并且等级为0
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 0) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_1[0]);
+					removed();
 				}
-			}
-			else {  //已经到了最高级
-				auto upSprite = cocos2d::Sprite::create("tower1-3-a.png");
-				upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-				upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-				this->addChild(upSprite);
-				auto downSprite = cocos2d::Sprite::create("tower1-3-b.png");
-				downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-				downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-				this->addChild(downSprite);
-
-				//搞一个监视器嘞
-				auto listen = cocos2d::EventListenerMouse::create();
-				listen->onMouseDown = [=](cocos2d::Event* event) {
-					auto ee = static_cast<cocos2d::EventMouse*>(event);
-					float ex = ee->getCursorX();
-					float ey = ee->getCursorY();
-					// 检测鼠标是否点击精灵
-					if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-						// 在这里可以执行你需要的操作
-						//还没完全想好
-						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-						pMoney->updateMoney(get_money_1[2]);
-						this->removeChild(upSprite);  //把这个精灵摘除喽
-						this->removeChild(downSprite);
-						removed();
-
-
-
-					}
-					};
-				// 注册监听器
-				_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
-			}
-
-
+				//如果点击了销毁并且等级为1
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 1) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_1[1]);
+					removed();
+				}
+				//如果点击了销毁并且等级为2
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 2) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_1[2]);
+					removed();
+				}
+				this->removeChild(upSprite);  //把这个精灵摘除喽
+				this->removeChild(downSprite);
+				return true;
+			};
+			// 注册监听器
+			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
 
 		}
-		};
+		return true;
+	};
 
 	// 注册监听器
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, turretSprite);
 
 
-
 	//计时器
 	this->schedule([this](float dt) {
 		this->shoot();
-		}, internal, "ShootScheduler"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
+		}, internal, "ShootScheduler1"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	this->schedule([this](float dt) {
 		this->check_enemy_in();
-		}, 0.01, "ShootScheduler2"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
+		}, 0.1, "ShootScheduler2"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	return true;
 
@@ -472,204 +361,99 @@ bool tower_2::init()
 	turretSprite->setPosition(point);
 	turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 	this->addChild(turretSprite);
-	auto listener = cocos2d::EventListenerMouse::create();
-	//搞一个监听器嘞
-	listener->onMouseDown = [=](cocos2d::Event* event) {
+	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
+	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto e = static_cast<cocos2d::EventMouse*>(event);
 		float x = e->getCursorX();
 		float y = e->getCursorY();
 		// 检测鼠标是否点击精灵
 		if (turretSprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
 			// 在这里可以执行你需要的操作
-			//问一下关关怎么让1-a和1-b一直显示嘞
 
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 			int allmoney = pMoney->getMoney();
-			//画点击后立即出现的东西（和关关商量一下留白事宜）
-			if (grade == 0 || grade == 1) {
-				if ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1)) {   //如果足够升级的话
-					std::string pic_1;
-					if (grade == 0) {
-						pic_1 = "tower2-1-a.png";
-					}
-					else {
-						pic_1 = "tower2-2-a.png";
-					}
-					auto upSprite = cocos2d::Sprite::create(pic_1);
-					upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-					upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(upSprite);
+			auto upSprite = cocos2d::Sprite::create();
+			if (allmoney >= cost_money_2[1] && grade == 0)
+				upSprite->setTexture("tower2-1-a.png");
+			else if (allmoney >= cost_money_2[2] && grade == 1)
+				upSprite->setTexture("tower2-2-a.png");
+			else if (grade == 0)
+				upSprite->setTexture("tower2-1-b.png");
+			else if(grade==1)
+				upSprite->setTexture("tower2-2-b.png");
+			else 
+				upSprite->setTexture("tower2-3-a.png");
+			upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
+			upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			this->addChild(upSprite);
 
-					std::string pic_2;
-					if (grade == 0) {
-						pic_2 = "tower2-1-c.png";
-					}
-					else {
-						pic_2 = "tower2-2-c.png";
-					}
-					auto downSprite = cocos2d::Sprite::create(pic_2);
-					downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-					downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(downSprite);
+			auto downSprite = cocos2d::Sprite::create();
+			if (grade == 0)
+				downSprite->setTexture("tower2-1-c.png");
+			else if (grade == 1)
+				downSprite->setTexture("tower2-2-c.png");
+			else 
+				downSprite->setTexture("tower2-3-a.png");
+			downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
+			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			this->addChild(downSprite);
 
-
-					//搞一个监视器嘞
-					auto listene = cocos2d::EventListenerMouse::create();
-					listene->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							upgrade();   //升级
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
-
-
-
-					//搞一个监视器嘞
-					auto listen = cocos2d::EventListenerMouse::create();
-					listen->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							// 在这里可以执行你需要的操作
-							//还没完全想好
-							if (grade == 0) {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_2[0]);
-							}
-							else {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_2[1]);
-							}
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
+			//搞一个监视器嘞
+			auto listene = cocos2d::EventListenerTouchOneByOne::create();
+			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+				auto ee = static_cast<cocos2d::EventMouse*>(event);
+				float ex = ee->getCursorX();
+				float ey = ee->getCursorY();
+				// 如果鼠标点击了升级并且钱足够
+				if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1))) {
+					upgrade();   //升级
 				}
-				else {  //钱不够升级啊
-					std::string pic_1;
-					if (grade == 0) {
-						pic_1 = "tower2-1-b.png";
-					}
-					else {
-						pic_1 = "tower2-2-b.png";
-					}
-					auto upSprite = cocos2d::Sprite::create(pic_1);
-					upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-					upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(upSprite);
-
-
-					std::string pic_2;
-					if (grade == 0) {
-						pic_2 = "tower2-1-c.png";
-					}
-					else {
-						pic_2 = "tower2-2-c.png";
-					}
-					auto downSprite = cocos2d::Sprite::create(pic_2);
-					downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-					downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(downSprite);
-					//搞一个监视器嘞
-					auto listen = cocos2d::EventListenerMouse::create();
-					listen->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							// 在这里可以执行你需要的操作
-							//还没完全想好
-							if (grade == 0) {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_2[0]);
-							}
-							else {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_2[1]);
-							}
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
-
+				//如果点击了销毁并且等级为0
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 0) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_2[0]);
+					removed();
 				}
-			}
-			else {  //已经到了最高级
-				auto upSprite = cocos2d::Sprite::create("tower2-3-a.png");
-				upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-				upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-				this->addChild(upSprite);
-				auto downSprite = cocos2d::Sprite::create("tower2-3-b.png");
-				downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-				downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-				this->addChild(downSprite);
-
-				//搞一个监视器嘞
-				auto listen = cocos2d::EventListenerMouse::create();
-				listen->onMouseDown = [=](cocos2d::Event* event) {
-					auto ee = static_cast<cocos2d::EventMouse*>(event);
-					float ex = ee->getCursorX();
-					float ey = ee->getCursorY();
-					// 检测鼠标是否点击精灵
-					if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-						// 在这里可以执行你需要的操作
-						//还没完全想好
-						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-						pMoney->updateMoney(get_money_2[2]);
-						this->removeChild(upSprite);  //把这个精灵摘除喽
-						this->removeChild(downSprite);
-						removed();
-
-					}
-					};
-				// 注册监听器
-				_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
-			}
-
-
+				//如果点击了销毁并且等级为1
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 1) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_2[1]);
+					removed();
+				}
+				//如果点击了销毁并且等级为2
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 2) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_2[2]);
+					removed();
+				}
+				this->removeChild(upSprite);  //把这个精灵摘除喽
+				this->removeChild(downSprite);
+				return true;
+			};
+			// 注册监听器
+			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
 
 		}
-		};
+		return true;
+	};
 
 	// 注册监听器
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, turretSprite);
 
 
-
 	//计时器
 	this->schedule([this](float dt) {
 		this->shoot();
-		}, internal, "ShootScheduler"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
+		}, internal, "ShootScheduler1"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	this->schedule([this](float dt) {
 		this->check_enemy_in();
-		}, 0.01, "ShootScheduler"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
+		}, 0.1, "ShootScheduler2"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	return true;
 
 }
-
 
 
 
@@ -717,6 +501,49 @@ void tower_3::shoot()
 
 	}
 }
+tower_2::tower_2(cocos2d::Vec2& a, GameScene* b)
+{
+	point = a;
+	grade = 0;
+	damage = damage_2[0];
+	scene = b;
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	pMoney->updateMoney(-cost_money_2[0]);
+}
+void tower_2::upgrade()
+{
+	if (grade == 0) {
+		turretSprite->setTexture("tower2-2.png");
+		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
+		damage = damage_2[1];
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->updateMoney(-cost_money_2[1]);
+	}
+	else if (grade == 1) {
+		turretSprite->setTexture("tower2-3.png");
+		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
+		damage = damage_2[2];
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		pMoney->updateMoney(-cost_money_2[2]);
+	}
+	grade++;
+}
+void tower_2::shoot()
+{
+	if (attack_stone != NULL) {    //存在要攻击的障碍物
+		Bullet* bullet = Bullet_2::create(point, enemy_point, this, attack_stone); //创建了一个子弹类？
+		this->addChild(bullet);
+		bullet->move();  //让子弹动起来
+
+	}
+	if (attack_enemy != NULL) {    //存在要攻击的敌人
+		Bullet* bullet = Bullet_2::create(point, enemy_point, this, attack_enemy); //创建了一个子弹类？
+		this->addChild(bullet);
+		bullet->move();  //让子弹动起来
+
+	}
+}
+
 bool tower_3::init()
 {
 	if (!Layer::init()) {
@@ -727,231 +554,96 @@ bool tower_3::init()
 	turretSprite->setPosition(point);
 	turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 	this->addChild(turretSprite);
-	auto listener = cocos2d::EventListenerMouse::create();
-	//搞一个监听器嘞
-	listener->onMouseDown = [=](cocos2d::Event* event) {
+	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
+	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto e = static_cast<cocos2d::EventMouse*>(event);
 		float x = e->getCursorX();
 		float y = e->getCursorY();
 		// 检测鼠标是否点击精灵
 		if (turretSprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
 			// 在这里可以执行你需要的操作
-			//问一下关关怎么让1-a和1-b一直显示
+
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 			int allmoney = pMoney->getMoney();
-			//画点击后立即出现的东西（和关关商量一下留白事宜）
-			if (grade == 0 || grade == 1) {
-				if ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1)) {   //如果足够升级的话
-					std::string pic_1;
-					if (grade == 0) {
-						pic_1 = "tower3-1-a.png";
-					}
-					else {
-						pic_1 = "tower3-2-a.png";
-					}
-					auto upSprite = cocos2d::Sprite::create(pic_1);
-					upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-					upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(upSprite);
+			auto upSprite = cocos2d::Sprite::create();
+			if (allmoney >= cost_money_3[1] && grade == 0)
+				upSprite->setTexture("tower3-1-a.png");
+			else if (allmoney >= cost_money_3[2] && grade == 1)
+				upSprite->setTexture("tower3-2-a.png");
+			else if (grade == 0)
+				upSprite->setTexture("tower3-1-b.png");
+			else if(grade==1)
+				upSprite->setTexture("tower3-2-b.png");
+			else 
+				upSprite->setTexture("tower3-3-a.png");
+			upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
+			upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			this->addChild(upSprite);
 
-					std::string pic_2;
-					if (grade == 0) {
-						pic_2 = "tower3-1-c.png";
-					}
-					else {
-						pic_2 = "tower3-2-c.png";
-					}
-					auto downSprite = cocos2d::Sprite::create(pic_2);
-					downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-					downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(downSprite);
+			auto downSprite = cocos2d::Sprite::create();
+			if (grade == 0)
+				downSprite->setTexture("tower3-1-c.png");
+			else if (grade == 1)
+				downSprite->setTexture("tower3-2-c.png");
+			else 
+				downSprite->setTexture("tower3-3-a.png");
+			downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
+			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			this->addChild(downSprite);
 
-
-					//搞一个监视器嘞
-					auto listene = cocos2d::EventListenerMouse::create();
-					listene->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							upgrade();   //升级
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
-
-
-
-					//搞一个监视器嘞
-					auto listen = cocos2d::EventListenerMouse::create();
-					listen->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							// 在这里可以执行你需要的操作
-							//还没完全想好
-							if (grade == 0) {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_3[0]);
-							}
-							else {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_3[1]);
-							}
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
+			//搞一个监视器嘞
+			auto listene = cocos2d::EventListenerTouchOneByOne::create();
+			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+				auto ee = static_cast<cocos2d::EventMouse*>(event);
+				float ex = ee->getCursorX();
+				float ey = ee->getCursorY();
+				// 如果鼠标点击了升级并且钱足够
+				if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1))) {
+					upgrade();   //升级
 				}
-				else {  //钱不够升级啊
-					std::string pic_1;
-					if (grade == 0) {
-						pic_1 = "tower3-1-b.png";
-					}
-					else {
-						pic_1 = "tower3-2-b.png";
-					}
-					auto upSprite = cocos2d::Sprite::create(pic_1);
-					upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-					upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(upSprite);
-
-
-					std::string pic_2;
-					if (grade == 0) {
-						pic_2 = "tower3-1-c.png";
-					}
-					else {
-						pic_2 = "tower3-2-c.png";
-					}
-					auto downSprite = cocos2d::Sprite::create(pic_2);
-					downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-					downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-					this->addChild(downSprite);
-
-					//搞一个监视器嘞
-					auto listene = cocos2d::EventListenerMouse::create();
-					listene->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
-
-					//搞一个监视器嘞
-					auto listen = cocos2d::EventListenerMouse::create();
-					listen->onMouseDown = [=](cocos2d::Event* event) {
-						auto ee = static_cast<cocos2d::EventMouse*>(event);
-						float ex = ee->getCursorX();
-						float ey = ee->getCursorY();
-						// 检测鼠标是否点击精灵
-						if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-							// 在这里可以执行你需要的操作
-							//还没完全想好
-							if (grade == 0) {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_3[0]);
-							}
-							else {
-								MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-								pMoney->updateMoney(get_money_3[1]);
-							}
-							this->removeChild(upSprite);  //把这个精灵摘除喽
-							this->removeChild(downSprite);
-							removed();
-
-						}
-						};
-					// 注册监听器
-					_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
-
+				//如果点击了销毁并且等级为0
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 0) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_3[0]);
+					removed();
 				}
-			}
-			else {  //已经到了最高级
-				auto upSprite = cocos2d::Sprite::create("tower3-3-a.png");
-				upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
-				upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-				this->addChild(upSprite);
-				auto downSprite = cocos2d::Sprite::create("tower3-3-b.png");
-				downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
-				downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
-				this->addChild(downSprite);
-
-
-				//搞一个监视器嘞
-				auto listene = cocos2d::EventListenerMouse::create();
-				listene->onMouseDown = [=](cocos2d::Event* event) {
-					auto ee = static_cast<cocos2d::EventMouse*>(event);
-					float ex = ee->getCursorX();
-					float ey = ee->getCursorY();
-					// 检测鼠标是否点击精灵
-					if (upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-						this->removeChild(upSprite);  //把这个精灵摘除喽
-						this->removeChild(downSprite);
-					}
-					};
-
-				//搞一个监视器嘞
-				auto listen = cocos2d::EventListenerMouse::create();
-				listen->onMouseDown = [=](cocos2d::Event* event) {
-					auto ee = static_cast<cocos2d::EventMouse*>(event);
-					float ex = ee->getCursorX();
-					float ey = ee->getCursorY();
-					// 检测鼠标是否点击精灵
-					if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-						// 在这里可以执行你需要的操作
-						//还没完全想好
-						MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-						pMoney->updateMoney(get_money_3[2]);
-
-						this->removeChild(upSprite);  //把这个精灵摘除喽
-						this->removeChild(downSprite);
-						removed();
-
-					}
-					};
-				// 注册监听器
-				_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, downSprite);
-
-			}
-
-
+				//如果点击了销毁并且等级为1
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 1) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_3[1]);
+					removed();
+				}
+				//如果点击了销毁并且等级为2
+				if (downSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey)) && grade == 2) {
+					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+					pMoney->updateMoney(get_money_3[2]);
+					removed();
+				}
+				this->removeChild(upSprite);  //把这个精灵摘除喽
+				this->removeChild(downSprite);
+				return true;
+			};
+			// 注册监听器
+			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
 
 		}
-		};
+		return true;
+	};
 
 	// 注册监听器
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, turretSprite);
 
 
-
 	//计时器
 	this->schedule([this](float dt) {
 		this->shoot();
-		}, internal, "ShootScheduler"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
+		}, internal, "ShootScheduler1"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	this->schedule([this](float dt) {
 		this->check_enemy_in();
-		}, 0.01, "ShootScheduler"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
-
+		}, 0.1, "ShootScheduler2"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
 	return true;
-}
 
+}

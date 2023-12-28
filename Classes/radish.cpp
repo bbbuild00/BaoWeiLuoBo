@@ -79,18 +79,19 @@ bool radish::init()
 	this->addChild(upSprite);
 	upSprite->setVisible(false);  //将精灵设置为不可见
 
-	auto listen = cocos2d::EventListenerMouse::create();  //新建了一个监听器
-	listen->onMouseDown = [=](cocos2d::Event* event) {
+	auto listen= cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
+	listen->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto ee = static_cast<cocos2d::EventMouse*>(event);
 		float ex = ee->getCursorX();
 		float ey = ee->getCursorY();
 		if (!upSprite->isVisible() || !upSprite->getBoundingBox().containsPoint(cocos2d::Vec2(ex, ey))) {
-			return;
+			return true;
 		}
 		change_HP(1);
 		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-		pMoney->updateMoney(-UPMONEY);
+		pMoney->update(-UPMONEY);
 		upSprite->setVisible(false);
+		return true;
 	};
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listen, upSprite);
@@ -110,9 +111,9 @@ bool radish::init()
 
 
 
-	auto listener = cocos2d::EventListenerMouse::create();
+	auto listener= cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
 
-	listener->onMouseDown = [=](cocos2d::Event* event) {
+	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto e = static_cast<cocos2d::EventMouse*>(event);
 		float x = e->getCursorX();
 		float y = e->getCursorY();
@@ -132,7 +133,7 @@ bool radish::init()
 		}
 
 
-
+		return true;
 	};
 
 	// 注册监听器
