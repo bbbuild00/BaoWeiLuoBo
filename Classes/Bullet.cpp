@@ -24,10 +24,7 @@ Bullet::Bullet(cocos2d::Vec2 p1, cocos2d::Vec2 p2, tower* t, stone* e)
 
 void Bullet::move()
 {
-	double dx = start_point.x - target_point.x;
-	double dy = start_point.y - target_point.y;
-	double dis = sqrt(dx * dx + dy * dy);  //计算攻击敌人和炮塔之间的距离
-	auto moveTo = cocos2d::MoveTo::create(2.0,target_point);//在规定时间内子弹发射到敌人的位置进行攻击
+	auto moveTo = cocos2d::MoveTo::create(0.8,target_point);//在规定时间内子弹发射到敌人的位置进行攻击
 	auto callFunc = cocos2d::CallFunc::create([=](){
 		hittarget();
 		});

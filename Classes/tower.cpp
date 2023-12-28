@@ -501,48 +501,6 @@ void tower_3::shoot()
 
 	}
 }
-tower_2::tower_2(cocos2d::Vec2& a, GameScene* b)
-{
-	point = a;
-	grade = 0;
-	damage = damage_2[0];
-	scene = b;
-	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-	pMoney->updateMoney(-cost_money_2[0]);
-}
-void tower_2::upgrade()
-{
-	if (grade == 0) {
-		turretSprite->setTexture("tower2-2.png");
-		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
-		damage = damage_2[1];
-		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-		pMoney->updateMoney(-cost_money_2[1]);
-	}
-	else if (grade == 1) {
-		turretSprite->setTexture("tower2-3.png");
-		turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
-		damage = damage_2[2];
-		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-		pMoney->updateMoney(-cost_money_2[2]);
-	}
-	grade++;
-}
-void tower_2::shoot()
-{
-	if (attack_stone != NULL) {    //存在要攻击的障碍物
-		Bullet* bullet = Bullet_2::create(point, enemy_point, this, attack_stone); //创建了一个子弹类？
-		this->addChild(bullet);
-		bullet->move();  //让子弹动起来
-
-	}
-	if (attack_enemy != NULL) {    //存在要攻击的敌人
-		Bullet* bullet = Bullet_2::create(point, enemy_point, this, attack_enemy); //创建了一个子弹类？
-		this->addChild(bullet);
-		bullet->move();  //让子弹动起来
-
-	}
-}
 
 bool tower_3::init()
 {
@@ -553,15 +511,16 @@ bool tower_3::init()
 	turretSprite = cocos2d::Sprite::create("tower3-1.png");
 	turretSprite->setPosition(point);
 	turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
+	turretSprite->setLocalZOrder(5);
 	this->addChild(turretSprite);
+
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
-		auto e = static_cast<cocos2d::EventMouse*>(event);
-		float x = e->getCursorX();
-		float y = e->getCursorY();
+		//获取点击位置
+		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 		// 检测鼠标是否点击精灵
-		if (turretSprite->getBoundingBox().containsPoint(cocos2d::Vec2(x, y))) {
+		if (turretSprite->getBoundingBox().containsPoint(touchLocation)) {
 			// 在这里可以执行你需要的操作
 
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
@@ -579,6 +538,7 @@ bool tower_3::init()
 				upSprite->setTexture("tower3-3-a.png");
 			upSprite->setPosition(cocos2d::Vec2(point.x, point.y + (size_of_tower / 2) + (size_of_up / 2)));
 			upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			upSprite->setLocalZOrder(-1);
 			this->addChild(upSprite);
 
 			auto downSprite = cocos2d::Sprite::create();
@@ -590,6 +550,7 @@ bool tower_3::init()
 				downSprite->setTexture("tower3-3-a.png");
 			downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
 			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
+			downSprite->setLocalZOrder(-1);
 			this->addChild(downSprite);
 
 			//搞一个监视器嘞

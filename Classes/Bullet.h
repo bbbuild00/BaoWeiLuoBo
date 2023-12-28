@@ -52,7 +52,7 @@ public:
 		}
 		// 在这里进行更多的初始化操作
 		my_picture = cocos2d::Sprite::create("bullet-1.png");
-		my_picture->setPosition(target_point);
+		my_picture->setPosition(start_point);
 		my_picture->setContentSize(cocos2d::Size(size_of_Bullet, size_of_Bullet));
 		this->addChild(my_picture);
 		move();
@@ -94,7 +94,7 @@ public:
 		}
 		// 在这里进行更多的初始化操作
 		my_picture = cocos2d::Sprite::create("bullet-2.png");
-		my_picture->setPosition(target_point);
+		my_picture->setPosition(start_point);
 		my_picture->setContentSize(cocos2d::Size(size_of_Bullet, size_of_Bullet));
 		this->addChild(my_picture);
 		move();
@@ -136,7 +136,7 @@ public:
 		}
 		// 在这里进行更多的初始化操作
 		my_picture = cocos2d::Sprite::create("bullet-3.png");
-		my_picture->setPosition(target_point);
+		my_picture->setPosition(start_point);
 		my_picture->setContentSize(cocos2d::Size(size_of_Bullet, size_of_Bullet));
 		this->addChild(my_picture);
 		move();
