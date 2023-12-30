@@ -378,7 +378,7 @@ bool tower_2::init()
 		// 检测鼠标是否点击精灵
 		if (turretSprite->getBoundingBox().containsPoint(touchLocation)) {
 			// 在这里可以执行你需要的操作
-
+			listener->setSwallowTouches(true);
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 			int allmoney = pMoney->getMoney();
 			auto upSprite = cocos2d::Sprite::create();
@@ -415,25 +415,31 @@ bool tower_2::init()
 				// 如果鼠标点击了升级并且钱足够
 				if (upSprite->getBoundingBox().containsPoint(touchlocation) && ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1))) {
 					upgrade();   //升级
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为0
-				if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 0) {
+				else if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 0) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_2[0]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为1
-				if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 1) {
+				else if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 1) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_2[1]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为2
-				if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 2) {
+				else if (downSprite->getBoundingBox().containsPoint(touchlocation) && grade == 2) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_2[2]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
+				else
+					listener->setSwallowTouches(false);
 				this->removeChild(upSprite);  //把这个精灵摘除喽
 				this->removeChild(downSprite);
 				return false;
@@ -529,7 +535,7 @@ bool tower_3::init()
 		// 检测鼠标是否点击精灵
 		if (turretSprite->getBoundingBox().containsPoint(touchlocation)) {
 			// 在这里可以执行你需要的操作
-
+			listener->setSwallowTouches(true);
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 			int allmoney = pMoney->getMoney();
 			auto upSprite = cocos2d::Sprite::create();
@@ -568,25 +574,31 @@ bool tower_3::init()
 				// 如果鼠标点击了升级并且钱足够
 				if (upSprite->getBoundingBox().containsPoint(touchLocation) && ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1))) {
 					upgrade();   //升级
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为0
-				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 0) {
+				else if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 0) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_3[0]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为1
-				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 1) {
+				else if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 1) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_3[1]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为2
-				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 2) {
+				else if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 2) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_3[2]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
+				else
+					listener->setSwallowTouches(true);
 				this->removeChild(upSprite);  //把这个精灵摘除喽
 				this->removeChild(downSprite);
 				return false;
