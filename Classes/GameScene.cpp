@@ -79,32 +79,32 @@ bool GameScene::init() {
     MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
     this->addChild(Menu);
     Menu->setTag(TagMenu);
-    log("MenuLayer's Address: %p", this->getChildByTag(TagMenu));
+    //log("MenuLayer's Address: %p", this->getChildByTag(TagMenu));
 
     //怪兽层
     MonsterLayer* monsterLayer = dynamic_cast<MonsterLayer*>(MonsterLayer::createLayer(this));
     this->addChild(monsterLayer);
     monsterLayer->setTag(TagMonster);
-    log("MonsterLayer's Address: %p", this->getChildByTag(TagMonster));
+    //log("MonsterLayer's Address: %p", this->getChildByTag(TagMonster));
 
     //炮塔层
     TowerLayer* towerLayer = dynamic_cast<TowerLayer*>(TowerLayer::createLayer(this));
     this->addChild(towerLayer);
     towerLayer->setTag(TagTower);
-    log("TowerLayer's Address: %p", this->getChildByTag(TagTower));
+    //log("TowerLayer's Address: %p", this->getChildByTag(TagTower));
 
     //障碍物层
     StoneLayer* stoneLayer = dynamic_cast<StoneLayer*>(StoneLayer::createLayer(this));
     this->addChild(stoneLayer);
     stoneLayer->setTag(TagStone);
-    log("StoneLayer's Address1: %p", stoneLayer);
-    log("StoneLayer's Address2: %p", this->getChildByTag(TagStone));
+    //log("StoneLayer's Address1: %p", stoneLayer);
+    //log("StoneLayer's Address2: %p", this->getChildByTag(TagStone));
 
     //萝卜层
-   RadishLayer* radishLayer = dynamic_cast<RadishLayer*>(RadishLayer::createLayer(this));
-    this->addChild(radishLayer);
-    radishLayer->setTag(TagRadish);
-    
+    radish* Radish = dynamic_cast<radish*>(radish::create(Vec2(11 * 75, 6 * 75),this));
+    this->addChild(Radish);
+    Radish->setTag(TagRadish);
+
     //倒计时
     countToStart();
 
@@ -409,6 +409,7 @@ bool TowerLayer::ifAvailable(int Type) {
 
     //和金币层通讯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
+    
     switch (Type)
     {
         case GREEN_BOTTLE:
@@ -467,7 +468,15 @@ bool TowerLayer::removeTower(tower* Tower) {
     
     //从层上移掉塔
     removeChild(dynamic_cast<Layer*>(Tower));
-    
+
+    /*
+    //内存释放测试
+    Tower->release();
+    removeChild(dynamic_cast<Layer*>(Tower));
+    log("removeTower: released? %p", Tower);
+    */
+
+
     MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(_pGameScene->getChildByTag(TagMonster));
     return true;
 }
@@ -515,7 +524,9 @@ bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
     if (!Enemy) {
         return false;
     }
+    Enemy->release();
     removeChild(dynamic_cast<Layer*>(Enemy));
+    log("removeMonster: released? %p", Enemy);
     //和金币层通讯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     pMoney->updateMoney(coins);
@@ -570,21 +581,4 @@ bool StoneLayer::removeStone(stone* Stone, int coins) {
     return true;
 }
 
-cocos2d::Layer* RadishLayer::createLayer(GameScene* pScene)
-{
-    RadishLayer* layer = dynamic_cast<RadishLayer*>(RadishLayer::create());
-    layer->_pGameScene = pScene;
 
-    return layer;
-}
-
-bool RadishLayer::init() {
-    if (!Layer::init())
-    {
-        return false;
-    }
-    auto radush = radish::create(Vec2(11*75,6*75), _pGameScene);
-    this->addChild(radush);
-
-    return true;
-}

@@ -14,11 +14,11 @@ public:
 	static radish* create(cocos2d::Vec2& a, GameScene* b);
 	virtual bool init();
 	int change_HP(int a);  //改命，当返回值为1时，已经死了，游戏要结束
-	//void if_money();
+	void if_money();
 	~radish() {
 		this->unschedule("ShootScheduler");
 	}
-	//void cartoon(float dt);
+	cocos2d::Vec2 getpos() { return rpoint; }
 private:
 	cocos2d::Vec2 rpoint; //子弹刚开始的位置
 	int grade; //等级

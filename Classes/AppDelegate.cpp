@@ -96,8 +96,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object ´´½¨³¡¾°
-    //auto scene = GameScene::createGameScene();
-    auto scene = WelcomeScene::createWelcomeScene();
+    auto scene = GameScene::createGameScene();
+    //auto scene = WelcomeScene::createWelcomeScene();
     // run
     director->runWithScene(scene);
 

@@ -19,7 +19,7 @@ void enemy::getout(tower* a) {
 
 enemy1::enemy1(GameScene* lay) {
     // mpos = st->getpos();
-    log("Enemy's GameScene p: %p", lay);
+    //log("Enemy's GameScene p: %p", lay);
     stop = false;
     slowice = false;
     active = false;
@@ -591,7 +591,7 @@ void enemy::draw_hp() {
 }
 
 void enemy::Attacked(int damage) {
-    log("Attacked pScene: %p", w);
+    //log("Attacked pScene: %p", w);
 	if (HP - damage < 0)
 		HP = 0;
 	else

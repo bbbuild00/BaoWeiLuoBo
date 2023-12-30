@@ -17,7 +17,10 @@
 #define TagMonster 3
 #define TagMoney 4
 #define TagStone 5
-#define TagRadish 5
+#define TagRadish 6
+
+#define LEVEL1 1
+#define LEVEL2 2
 
 class GameScene : public cocos2d::Scene
 {
@@ -47,7 +50,7 @@ public:
     int getMoney();
 
 private:
-    int coins = 450;
+    int coins = 11450;
     cocos2d::Label* MoneyLabel = nullptr;
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
 };
@@ -138,17 +141,6 @@ private:
 //创建萝卜管理层StoneLayer
 //刘文美和闫雯晴写的bool removeStone(stone* Stone)
 //刘文美和闫雯晴调用的create
-class radish;
-class RadishLayer : public cocos2d::Layer
-{
-public:
-    static cocos2d::Layer* createLayer(GameScene* pScene);
-    virtual bool init();
-    CREATE_FUNC(RadishLayer);
-
-private:
-    GameScene* _pGameScene = nullptr;//通过场景的通讯方式
-};
 
 
 #endif // __GAME_SCENE_H__
