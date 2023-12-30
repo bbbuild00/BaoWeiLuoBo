@@ -18,6 +18,7 @@ public:
     void stone::Attacked(int damage);
     void addtower(tower* a);
     void mouse_click();
+    void draw_hp();
 protected:
 
     cocos2d::Sprite* stone_s = NULL;//’œ∞≠ŒÔ1
@@ -65,5 +66,33 @@ class stone5 :public stone {
 public:
     stone5(cocos2d::Vec2 p, GameScene* lay);
     static stone5* create(cocos2d::Vec2 po, GameScene* lay);
+    virtual void draw_stone();
+};
+
+class stone6 :public stone {
+public:
+    stone6(cocos2d::Vec2 p, GameScene* lay);
+    static stone6* create(cocos2d::Vec2 po, GameScene* lay);
+    virtual void draw_stone();
+};
+
+class stone7 :public stone {
+public:
+    stone7(cocos2d::Vec2 p, GameScene* lay);
+    static stone7* create(cocos2d::Vec2 po, GameScene* lay);
+    virtual void draw_stone();
+};
+
+class stone8 :public stone {
+public:
+    stone8(cocos2d::Vec2 p, GameScene* lay);
+    static stone8* create(cocos2d::Vec2 po, GameScene* lay);
+    virtual void draw_stone();
+};
+
+class stone9 :public stone {
+public:
+    stone9(cocos2d::Vec2 p, GameScene* lay);
+    static stone9* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };

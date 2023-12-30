@@ -487,7 +487,6 @@ void MonsterLayer::createMonster() {
     
     auto monster = enemy1::create(_pGameScene);
     this->addChild(monster);
-    
 }
 
 bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
@@ -520,11 +519,19 @@ bool StoneLayer::init() {
     auto stone3 = stone3::create(Vec2(0, 0), _pGameScene);
     auto stone4 = stone4::create(Vec2(0, 0), _pGameScene);
     auto stone5 = stone5::create(Vec2(0, 0), _pGameScene);
+    auto stone6 = stone6::create(Vec2(0, 0), _pGameScene);
+    auto stone7 = stone7::create(Vec2(0, 0), _pGameScene);
+    auto stone8 = stone8::create(Vec2(0, 0), _pGameScene);
+    auto stone9 = stone9::create(Vec2(0, 0), _pGameScene);
     this->addChild(stone1);
     this->addChild(stone2);
     this->addChild(stone3);
     this->addChild(stone4);
     this->addChild(stone5);
+    this->addChild(stone6);
+    this->addChild(stone7);
+    this->addChild(stone8);
+    this->addChild(stone9);
 
     return true;
 }
