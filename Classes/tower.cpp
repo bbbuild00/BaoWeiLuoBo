@@ -251,9 +251,8 @@ bool tower_1::init()
 			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
 			this->addChild(downSprite);
 
-			//¸ãÒ»¸ö¼àÊÓÆ÷àÏ
-			auto listene = cocos2d::EventListenerTouchOneByOne::create();
-			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+		
+			listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
 				auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 				// Èç¹ûÊó±êµã»÷ÁËÉý¼¶²¢ÇÒÇ®×ã¹»
 				if (upSprite->getBoundingBox().containsPoint(touchLocation) && ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1))) {
@@ -279,17 +278,15 @@ bool tower_1::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return true;
+				return false;   //Ö»Ò»´Î
 			};
-			// ×¢²á¼àÌýÆ÷
-			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
 
 		}
 		return true;
 	};
 
 	// ×¢²á¼àÌýÆ÷
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, turretSprite);
+	_eventDispatcher->addEventListenerWithFixedPriority(listenr, 10);
 
 
 	//¼ÆÊ±Æ÷
@@ -396,9 +393,7 @@ bool tower_2::init()
 			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
 			this->addChild(downSprite);
 
-			//¸ãÒ»¸ö¼àÊÓÆ÷àÏ
-			auto listene = cocos2d::EventListenerTouchOneByOne::create();
-			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+			listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
 				auto touchlocation = this->convertToNodeSpace(touch->getLocation());
 				// Èç¹ûÊó±êµã»÷ÁËÉý¼¶²¢ÇÒÇ®×ã¹»
 				if (upSprite->getBoundingBox().containsPoint(touchlocation) && ((allmoney >= cost_money_2[1] && grade == 0) || (allmoney >= cost_money_2[2] && grade == 1))) {
@@ -424,18 +419,15 @@ bool tower_2::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return true;
+				return false;
 			};
-			// ×¢²á¼àÌýÆ÷
-			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
 
 		}
 		return true;
 	};
 
 	// ×¢²á¼àÌýÆ÷
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, turretSprite);
-
+	_eventDispatcher->addEventListenerWithFixedPriority(listenr, 10);
 
 	//¼ÆÊ±Æ÷
 	this->schedule([this](float dt) {
@@ -547,9 +539,8 @@ bool tower_3::init()
 			//downSprite->setLocalZOrder(-1);
 			this->addChild(downSprite);
 
-			//¸ãÒ»¸ö¼àÊÓÆ÷àÏ
-			auto listene = cocos2d::EventListenerTouchOneByOne::create();
-			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+			
+			listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
 				auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 				// Èç¹ûÊó±êµã»÷ÁËÉý¼¶²¢ÇÒÇ®×ã¹»
 				if (upSprite->getBoundingBox().containsPoint(touchLocation) && ((allmoney >= cost_money_3[1] && grade == 0) || (allmoney >= cost_money_3[2] && grade == 1))) {
@@ -575,17 +566,14 @@ bool tower_3::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return true;
+				return false;
 			};
-			// ×¢²á¼àÌýÆ÷
-			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
-
 		}
 		return true;
 	};
 
 	// ×¢²á¼àÌýÆ÷
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, turretSprite);
+	_eventDispatcher->addEventListenerWithFixedPriority(listenr, 10);
 
 
 	//¼ÆÊ±Æ÷
