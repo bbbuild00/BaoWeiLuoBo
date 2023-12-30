@@ -97,12 +97,22 @@ void tower::enemy_killed()
 	if (attack_enemy != NULL) {
 		attack_enemy = NULL;
 	}
+	for (Node* child : this->getChildren()) {
+		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
+			this->removeChild(e);
+		}
+	}
 }
 
 void tower::stone_killed()
 {
 	if (attack_stone != NULL) {
 		attack_stone = NULL;
+	}
+	for (Node* child : this->getChildren()) {
+		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
+			this->removeChild(e);
+		}
 	}
 }
 
@@ -111,6 +121,11 @@ void tower::enemy_out()
 	if (attack_enemy != NULL) {
 		attack_enemy->getout(this);
 		attack_enemy = NULL;
+	}
+	for (Node* child : this->getChildren()) {
+		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
+			this->removeChild(e);
+		}
 	}
 }
 
@@ -150,13 +165,6 @@ void tower::check_enemy_in()  //ипн╢й╣ож
 int tower::get_damage()
 {
 	return damage;
-}
-
-bool tower::if_continue(int a)
-{
-	if ((a == 1 && attack_stone != NULL) || (a == 2 && attack_enemy != NULL))
-		return true;
-	return false;
 }
 
 tower_1::tower_1(cocos2d::Vec2& a, GameScene* b)
