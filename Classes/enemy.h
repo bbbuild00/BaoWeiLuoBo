@@ -36,10 +36,10 @@ public:
 	void mouse_click();//鼠标点击敌人，扫描所有炮塔，加入链表
 	void getout(tower* a);
 	cocos2d::Vec2 getpos();//获得当前位置
-
+	void draw_hp();
 protected:
-	int HP=100;//血量
-	int fullHP;//满血
+	float HP=150;//血量
+	float fullHP=150;//满血
 	double speed;//速度
 	bool stop;//暂停
 

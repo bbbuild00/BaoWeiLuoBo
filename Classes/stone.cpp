@@ -41,6 +41,7 @@ void stone::mouse_click() {
 
 void stone::Attacked(int damage) {
     HP -= damage;
+    draw_hp();
     if (HP <= 0) {
         //调用函数：移走石头（防御塔和控制台），添加金币，
         //和炮塔层通讯
@@ -108,6 +109,46 @@ stone5* stone5::create(cocos2d::Vec2 po, GameScene* lay) {
     return nullptr;
 }
 
+stone6* stone6::create(cocos2d::Vec2 po, GameScene* lay) {
+    stone6* layer = new stone6(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+stone7* stone7::create(cocos2d::Vec2 po, GameScene* lay) {
+    stone7* layer = new stone7(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+stone8* stone8::create(cocos2d::Vec2 po, GameScene* lay) {
+    stone8* layer = new stone8(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
+stone9* stone9::create(cocos2d::Vec2 po, GameScene* lay) {
+    stone9* layer = new stone9(po, lay);
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
+
 stone1::stone1(cocos2d::Vec2 p, GameScene* lay) {
     point = p;
     w = lay;
@@ -143,6 +184,47 @@ stone5::stone5(cocos2d::Vec2 p, GameScene* lay) {
     fullHP = 100;
 }
 
+stone6::stone6(cocos2d::Vec2 p, GameScene* lay) {
+    point = p;
+    w = lay;
+    HP = 100;
+    fullHP = 100;
+}
+
+stone7::stone7(cocos2d::Vec2 p, GameScene* lay) {
+    point = p;
+    w = lay;
+    HP = 100;
+    fullHP = 100;
+}
+
+stone8::stone8(cocos2d::Vec2 p, GameScene* lay) {
+    point = p;
+    w = lay;
+    HP = 100;
+    fullHP = 100;
+}
+
+stone9::stone9(cocos2d::Vec2 p, GameScene* lay) {
+    point = p;
+    w = lay;
+    HP = 100;
+    fullHP = 100;
+}
+
+void stone::draw_hp() {
+    // 在初始化函数中创建矩形精灵
+    Brush = cocos2d::Sprite::create("brush.png");
+    Brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
+    Brush->setPosition(stone_s->getPosition().x, stone_s->getPosition().x+20); // 设置位置
+    // 设置精灵初始大小
+    Brush->setScale(0.02f); // 缩小为原来的倍数
+
+    // 更新血条
+    int percentage = HP / fullHP;
+    Brush->setScaleX(0.02f * percentage);
+}
+
 void stone1::draw_stone() {
     // 创建 Sprite
     stone_s = cocos2d::Sprite::create("balloon.png");
@@ -152,15 +234,15 @@ void stone1::draw_stone() {
 
     // 设置位置
    // stone_s->setPosition(cocos2d::Director::getInstance()->getVisibleSize() / 2);
-    stone_s->setPosition(6*75,6*75);
+    stone_s->setPosition(6*75+40,6*75+20);
 
     // 设置精灵初始大小
-    stone_s->setScale(0.1f); // 缩小为原来的倍数
+    stone_s->setScale(0.15f); // 缩小为原来的倍数
 
     // 在初始化函数中创建矩形精灵
     Brush = cocos2d::Sprite::create("brush.png");
     Brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
-    Brush->setPosition(cocos2d::Vec2(cocos2d::Director::getInstance()->getVisibleSize().width / 2 - 20, cocos2d::Director::getInstance()->getVisibleSize().height / 2 + 40)); // 设置位置
+    Brush->setPosition(6 * 75 + 40 - 20, 6 * 75 + 20+ 40); // 设置位置
     // 设置精灵初始大小
     Brush->setScale(0.02f); // 缩小为原来的倍数
 
@@ -177,10 +259,10 @@ void stone2::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(5*75,4*75);
+    stone_s->setPosition(5*75,4*75+50);
 
     // 设置精灵初始大小
-    stone_s->setScale(0.1f); // 缩小为原来的倍数
+    stone_s->setScale(0.08f); // 缩小为原来的倍数
 
     // 在初始化函数中创建矩形精灵
     Brush = cocos2d::Sprite::create("brush.png");
@@ -227,10 +309,10 @@ void stone4::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(6*75,2*75);
+    stone_s->setPosition(6*75+20,2*75+45);
 
     // 设置精灵初始大小
-    stone_s->setScale(0.1f); // 缩小为原来的倍数
+    stone_s->setScale(0.085f); // 缩小为原来的倍数
 
     // 在初始化函数中创建矩形精灵
     Brush = cocos2d::Sprite::create("brush.png");
@@ -252,10 +334,110 @@ void stone5::draw_stone() {
     cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
     // 设置位置
-    stone_s->setPosition(6*75,1*75);
+    stone_s->setPosition(6*75+30,1*75+25);
+
+    // 设置精灵初始大小
+    stone_s->setScale(0.09f); // 缩小为原来的倍数
+
+    // 在初始化函数中创建矩形精灵
+    Brush = cocos2d::Sprite::create("brush.png");
+    Brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
+    Brush->setPosition(cocos2d::Vec2(cocos2d::Director::getInstance()->getVisibleSize().width / 2 - 20, cocos2d::Director::getInstance()->getVisibleSize().height / 2 + 40)); // 设置位置
+    // 设置精灵初始大小
+    Brush->setScale(0.02f); // 缩小为原来的倍数
+
+    // 更新血条
+    int percentage = HP / fullHP;
+    Brush->setScaleX(0.02f * percentage);
+}
+
+void stone6::draw_stone() {
+    // 创建 Sprite
+    stone_s = cocos2d::Sprite::create("ball.png");
+
+    // 获取屏幕可见区域的大小
+    cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+
+    // 设置位置
+    stone_s->setPosition(8 * 75, 4 * 75 + 50);
+
+    // 设置精灵初始大小
+    stone_s->setScale(0.08f); // 缩小为原来的倍数
+
+    // 在初始化函数中创建矩形精灵
+    Brush = cocos2d::Sprite::create("brush.png");
+    Brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
+    Brush->setPosition(cocos2d::Vec2(cocos2d::Director::getInstance()->getVisibleSize().width / 2 - 20, cocos2d::Director::getInstance()->getVisibleSize().height / 2 + 40)); // 设置位置
+    // 设置精灵初始大小
+    Brush->setScale(0.02f); // 缩小为原来的倍数
+
+    // 更新血条
+    int percentage = HP / fullHP;
+    Brush->setScaleX(0.02f * percentage);
+}
+
+void stone7::draw_stone() {
+    // 创建 Sprite
+    stone_s = cocos2d::Sprite::create("cloud.png");
+
+    // 获取屏幕可见区域的大小
+    cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+
+    // 设置位置
+    stone_s->setPosition(9 * 75, 6 * 75 );
 
     // 设置精灵初始大小
     stone_s->setScale(0.1f); // 缩小为原来的倍数
+
+    // 在初始化函数中创建矩形精灵
+    Brush = cocos2d::Sprite::create("brush.png");
+    Brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
+    Brush->setPosition(cocos2d::Vec2(cocos2d::Director::getInstance()->getVisibleSize().width / 2 - 20, cocos2d::Director::getInstance()->getVisibleSize().height / 2 + 40)); // 设置位置
+    // 设置精灵初始大小
+    Brush->setScale(0.02f); // 缩小为原来的倍数
+
+    // 更新血条
+    int percentage = HP / fullHP;
+    Brush->setScaleX(0.02f * percentage);
+}
+
+void stone8::draw_stone() {
+    // 创建 Sprite
+    stone_s = cocos2d::Sprite::create("cloud.png");
+
+    // 获取屏幕可见区域的大小
+    cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+
+    // 设置位置
+    stone_s->setPosition(3* 75, 3 * 75 +40);
+
+    // 设置精灵初始大小
+    stone_s->setScale(0.05f); // 缩小为原来的倍数
+
+    // 在初始化函数中创建矩形精灵
+    Brush = cocos2d::Sprite::create("brush.png");
+    Brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
+    Brush->setPosition(cocos2d::Vec2(cocos2d::Director::getInstance()->getVisibleSize().width / 2 - 20, cocos2d::Director::getInstance()->getVisibleSize().height / 2 + 40)); // 设置位置
+    // 设置精灵初始大小
+    Brush->setScale(0.02f); // 缩小为原来的倍数
+
+    // 更新血条
+    int percentage = HP / fullHP;
+    Brush->setScaleX(0.02f * percentage);
+}
+
+void stone9::draw_stone() {
+    // 创建 Sprite
+    stone_s = cocos2d::Sprite::create("cloud.png");
+
+    // 获取屏幕可见区域的大小
+    cocos2d::Size visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+
+    // 设置位置
+    stone_s->setPosition(10 * 75, 3 * 75 + 40);
+
+    // 设置精灵初始大小
+    stone_s->setScale(0.05f); // 缩小为原来的倍数
 
     // 在初始化函数中创建矩形精灵
     Brush = cocos2d::Sprite::create("brush.png");

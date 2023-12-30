@@ -23,6 +23,7 @@ enemy1::enemy1(GameScene* lay) {
     slowice = false;
     active = false;
     w = lay;
+    
     //mpos=st->getpos();
 }
 
@@ -182,13 +183,10 @@ void enemy1::draw_enemy() {
     // 在初始化函数中创建矩形精灵
     brush = cocos2d::Sprite::create("brush.png");
     brush->setAnchorPoint(cocos2d::Vec2(0, 0.5)); // 设置锚点在左侧中心
-    brush->setPosition(cocos2d::Vec2(2 * 75 - 30, 6 * 75 + 40)); // 设置位置
+    brush->setPosition(2 * 75 - 10-20, 6 * 75+40); // 设置位置
     // 设置精灵初始大小
     brush->setScale(0.02f); // 缩小为原来的倍数
 
-    // 更新血条
-    int percentage = HP / fullHP;
-    brush->setScaleX(0.02f * percentage);
 }
 
 void enemy2::cartoon(float dt) {
@@ -257,9 +255,6 @@ void enemy2::draw_enemy() {
     // 设置精灵初始大小
     brush->setScale(0.02f); // 缩小为原来的倍数
 
-    // 更新血条
-    int percentage = HP / fullHP;
-    brush->setScaleX(0.02f * percentage);
 }
 
 void enemy3::cartoon(float dt) {
@@ -330,9 +325,6 @@ void enemy3::draw_enemy() {
     // 设置精灵初始大小
     brush->setScale(0.02f); // 缩小为原来的倍数
 
-    // 更新血条
-    int percentage = HP / fullHP;
-    brush->setScaleX(0.02f * percentage);
 }
 
 void enemy::move() {
@@ -428,7 +420,7 @@ void enemy::move() {
             moveTo15b, moveTo16b, moveTo17b, NULL);
 
         monster->runAction(sequence1);
-        brush->runAction(sequence2);
+       brush->runAction(sequence2);
     }
 }
 
@@ -591,10 +583,17 @@ void enemy3::slowdown() {
     slowice = true;
 }
 
+void enemy::draw_hp() {
+    // 更新血条
+    float percentage = HP / fullHP;
+    brush->setScaleX(0.02f*percentage);
+
+}
 
 void enemy::Attacked(int damage) {
     log("Attacked pScene: %p", w);
     HP -= damage;
+    draw_hp();
     if (HP <= 0) {
         //和炮塔层通讯
        /*TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
@@ -620,31 +619,3 @@ void enemy::Attacked(int damage) {
 
     }
 }
-//添加攻击我的炮塔
-//删除攻击我的炮塔
-
-/*void enemy::move() {
-    if (!active) {//不能移动时直接返回
-        return;
-    }
-    if (crash(mpos, walktowards->getpos())) {//判断是否到达航点
-        if (walktowards->getNext()) {//存在下一航点，将目标换成下一个
-            mpos = walktowards->getpos();
-            walktowards = walktowards->getNext();
-        }
-        else {//不存在下一个航点，意味着吃到萝卜
-           // w->reducelife();
-         //   w->removeenemy(this);
-            active = false;
-            return;
-        }
-    }
-    else {
-        cocos2d::Vec2 target= walktowards->getpos();
-        double m_speed = speed;
-        //获取两点间路线并移动
-        cocos2d::Vec2 normailized(target - mpos);
-      //  normailized.normailize();
-      //  mpos += (normailized.toPoint()*m_speed);
-    }
-}*/
