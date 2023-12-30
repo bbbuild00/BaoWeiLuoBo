@@ -1,6 +1,7 @@
 #include"enemy.h"
 #include"GameScene.h"
 #include"waypoint.h"
+#include"radish.h"
 #define MOVESPEED 1.2
 
 cocos2d::Vec2 enemy::getpos()//获得当前位置
@@ -17,37 +18,39 @@ void enemy::getout(tower* a) {
     Attacktower.eraseObject(a);
 }
 
-enemy1::enemy1(GameScene* lay) {
+enemy1::enemy1(GameScene* lay,int le) {
     // mpos = st->getpos();
-    //log("Enemy's GameScene p: %p", lay);
+    log("Enemy's GameScene p: %p", lay);
     stop = false;
     slowice = false;
     active = false;
     w = lay;
-    
+    leval = le;
     //mpos=st->getpos();
 }
 
-enemy2::enemy2(GameScene* lay) {
+enemy2::enemy2(GameScene* lay, int le) {
     //mpos = st->getpos();
     stop = false;
     slowice = false;
     active = false;
     w = lay;
+    leval = le;
     //mpos=st->getpos();
 }
 
-enemy3::enemy3(GameScene* lay) {
+enemy3::enemy3(GameScene* lay, int le) {
     //mpos = st->getpos();
     stop = false;
     slowice = false;
     active = false;
     w = lay;
+    leval = le;
     //mpos=st->getpos();
 }
 
-enemy1* enemy1::create(GameScene* lay) {
-    enemy1* layer = new enemy1(lay);
+enemy1* enemy1::create(GameScene* lay, int le) {
+    enemy1* layer = new enemy1(lay, le);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -56,8 +59,8 @@ enemy1* enemy1::create(GameScene* lay) {
     return nullptr;
 }
 
-enemy2* enemy2::create(GameScene* lay) {
-    enemy2* layer = new enemy2(lay);
+enemy2* enemy2::create(GameScene* lay, int le) {
+    enemy2* layer = new enemy2(lay,  le);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -66,8 +69,8 @@ enemy2* enemy2::create(GameScene* lay) {
     return nullptr;
 }
 
-enemy3* enemy3::create(GameScene* lay) {
-    enemy3* layer = new enemy3(lay);
+enemy3* enemy3::create(GameScene* lay, int le) {
+    enemy3* layer = new enemy3(lay, le);
     if (layer && layer->init()) {
         layer->autorelease();
         return layer;
@@ -76,7 +79,7 @@ enemy3* enemy3::create(GameScene* lay) {
     return nullptr;
 }
 
-void enemy::mouse_click() {
+/*void enemy::mouse_click() {
     auto listener = cocos2d::EventListenerTouchOneByOne::create();
 
     listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
@@ -101,6 +104,37 @@ void enemy::mouse_click() {
         };
     // 注册监听器
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, monster);
+}*/
+
+void enemy::mouse_click() {
+
+    auto listener = cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
+
+    listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+        auto touchLocation = this->convertToNodeSpace(touch->getLocation());
+        // 检测鼠标是否点击精灵
+        if (monster->getBoundingBox().containsPoint(touchLocation)) {
+            // 在这里可以执行你需要的操作
+            //在这里建一个点击以后的动画
+
+            TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
+
+            for (Node* child : pTower->getChildren()) {
+                if (tower* e = dynamic_cast<tower*>(child)) {
+                    bool a = e->check_if_in_range(this->getpos());
+                    if (a) {
+                        e->get_enemy(this);
+
+                    }
+                }
+            }
+
+        }
+        return false;
+        };
+
+    // 注册监听器
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, monster);
 }
 
 // 初始化函数
@@ -112,6 +146,12 @@ bool enemy::init() {
     draw_enemy();
 
     mouse_click();//点击事件
+
+   
+    this->schedule([this](float dt) {
+        RadishLayer* pRadish = dynamic_cast<RadishLayer*>(this->getChildByTag(TagRadish));
+      //  crash(pRadish->getpos(),;
+        }, 0.1, "ShootScheduler2"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
     move();
 
@@ -329,7 +369,10 @@ void enemy3::draw_enemy() {
 }
 
 void enemy::move() {
-    addWayPoint1(m_waypointList, monster);//走向的航点
+	if (leval == 1)
+		addWayPoint1(m_waypointList, monster);//走向的航点
+	else if (leval == 2)
+		addWayPoint2(m_waypointList, monster);//走向的航点
     if (slowice) {
         auto moveTo1 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(0)->getpos());
         auto moveTo2 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(1)->getpos());
@@ -378,50 +421,108 @@ void enemy::move() {
     }
 
     else {
-        auto moveTo1 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(0)->getpos());
-        auto moveTo2 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(1)->getpos());
-        auto moveTo3 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(2)->getpos());
-        auto moveTo4 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(3)->getpos());
-        auto moveTo5 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(4)->getpos());
-        auto moveTo6 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(5)->getpos());
-        auto moveTo7 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(6)->getpos());
-        auto moveTo8 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(7)->getpos());
-        auto moveTo9 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(8)->getpos());
-        auto moveTo10 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(9)->getpos());
-        auto moveTo11 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(10)->getpos());
-        auto moveTo12 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(11)->getpos());
-        auto moveTo13 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(12)->getpos());
-        auto moveTo14 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(13)->getpos());
-        auto moveTo15 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(14)->getpos());
-        auto moveTo16 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(15)->getpos());
-        auto moveTo17 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(16)->getpos());
+        if (leval == 1) {
+            auto moveTo1 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(0)->getpos());
+            auto moveTo2 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(1)->getpos());
+            auto moveTo3 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(2)->getpos());
+            auto moveTo4 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(3)->getpos());
+            auto moveTo5 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(4)->getpos());
+            auto moveTo6 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(5)->getpos());
+            auto moveTo7 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(6)->getpos());
+            auto moveTo8 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(7)->getpos());
+            auto moveTo9 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(8)->getpos());
+            auto moveTo10 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(9)->getpos());
+            auto moveTo11 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(10)->getpos());
+            auto moveTo12 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(11)->getpos());
+            auto moveTo13 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(12)->getpos());
+            auto moveTo14 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(13)->getpos());
+            auto moveTo15 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(14)->getpos());
+            auto moveTo16 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(15)->getpos());
+            auto moveTo17 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(16)->getpos());
 
-        auto moveTo1b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(0)->getpos().x - 20, m_waypointList.at(0)->getpos().y + 40));
-        auto moveTo2b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(1)->getpos().x - 20, m_waypointList.at(1)->getpos().y + 40));
-        auto moveTo3b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(2)->getpos().x - 20, m_waypointList.at(2)->getpos().y + 40));
-        auto moveTo4b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(3)->getpos().x - 20, m_waypointList.at(3)->getpos().y + 40));
-        auto moveTo5b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(4)->getpos().x - 20, m_waypointList.at(4)->getpos().y + 40));
-        auto moveTo6b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(5)->getpos().x - 20, m_waypointList.at(5)->getpos().y + 40));
-        auto moveTo7b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(6)->getpos().x - 20, m_waypointList.at(6)->getpos().y + 40));
-        auto moveTo8b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(7)->getpos().x - 20, m_waypointList.at(7)->getpos().y + 40));
-        auto moveTo9b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(8)->getpos().x - 20, m_waypointList.at(8)->getpos().y + 40));
-        auto moveTo10b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(9)->getpos().x - 20, m_waypointList.at(9)->getpos().y + 40));
-        auto moveTo11b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(10)->getpos().x - 20, m_waypointList.at(10)->getpos().y + 40));
-        auto moveTo12b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(11)->getpos().x - 20, m_waypointList.at(11)->getpos().y + 40));
-        auto moveTo13b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(12)->getpos().x - 20, m_waypointList.at(12)->getpos().y + 40));
-        auto moveTo14b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(13)->getpos().x - 20, m_waypointList.at(13)->getpos().y + 40));
-        auto moveTo15b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(14)->getpos().x - 20, m_waypointList.at(14)->getpos().y + 40));
-        auto moveTo16b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(15)->getpos().x - 20, m_waypointList.at(15)->getpos().y + 40));
-        auto moveTo17b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(16)->getpos().x - 20, m_waypointList.at(16)->getpos().y + 40));
+            auto moveTo1b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(0)->getpos().x - 20, m_waypointList.at(0)->getpos().y + 40));
+            auto moveTo2b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(1)->getpos().x - 20, m_waypointList.at(1)->getpos().y + 40));
+            auto moveTo3b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(2)->getpos().x - 20, m_waypointList.at(2)->getpos().y + 40));
+            auto moveTo4b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(3)->getpos().x - 20, m_waypointList.at(3)->getpos().y + 40));
+            auto moveTo5b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(4)->getpos().x - 20, m_waypointList.at(4)->getpos().y + 40));
+            auto moveTo6b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(5)->getpos().x - 20, m_waypointList.at(5)->getpos().y + 40));
+            auto moveTo7b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(6)->getpos().x - 20, m_waypointList.at(6)->getpos().y + 40));
+            auto moveTo8b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(7)->getpos().x - 20, m_waypointList.at(7)->getpos().y + 40));
+            auto moveTo9b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(8)->getpos().x - 20, m_waypointList.at(8)->getpos().y + 40));
+            auto moveTo10b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(9)->getpos().x - 20, m_waypointList.at(9)->getpos().y + 40));
+            auto moveTo11b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(10)->getpos().x - 20, m_waypointList.at(10)->getpos().y + 40));
+            auto moveTo12b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(11)->getpos().x - 20, m_waypointList.at(11)->getpos().y + 40));
+            auto moveTo13b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(12)->getpos().x - 20, m_waypointList.at(12)->getpos().y + 40));
+            auto moveTo14b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(13)->getpos().x - 20, m_waypointList.at(13)->getpos().y + 40));
+            auto moveTo15b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(14)->getpos().x - 20, m_waypointList.at(14)->getpos().y + 40));
+            auto moveTo16b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(15)->getpos().x - 20, m_waypointList.at(15)->getpos().y + 40));
+            auto moveTo17b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(16)->getpos().x - 20, m_waypointList.at(16)->getpos().y + 40));
 
-        // 创建一个空的动作序列
-        auto sequence1 = cocos2d::Sequence::create(moveTo1, moveTo2, moveTo3, moveTo4, moveTo5, moveTo6, moveTo7, moveTo8, moveTo9, moveTo10, moveTo11, moveTo12, moveTo13, moveTo14,
-            moveTo15, moveTo16, moveTo17, NULL);
-        auto sequence2 = cocos2d::Sequence::create(moveTo1b, moveTo2b, moveTo3b, moveTo4b, moveTo5b, moveTo6b, moveTo7b, moveTo8b, moveTo9b, moveTo10b, moveTo11b, moveTo12b, moveTo13b, moveTo14b,
-            moveTo15b, moveTo16b, moveTo17b, NULL);
+            // 创建一个空的动作序列
+            auto sequence1 = cocos2d::Sequence::create(moveTo1, moveTo2, moveTo3, moveTo4, moveTo5, moveTo6, moveTo7, moveTo8, moveTo9, moveTo10, moveTo11, moveTo12, moveTo13, moveTo14,
+                moveTo15, moveTo16, moveTo17, NULL);
+            auto sequence2 = cocos2d::Sequence::create(moveTo1b, moveTo2b, moveTo3b, moveTo4b, moveTo5b, moveTo6b, moveTo7b, moveTo8b, moveTo9b, moveTo10b, moveTo11b, moveTo12b, moveTo13b, moveTo14b,
+                moveTo15b, moveTo16b, moveTo17b, NULL);
 
-        monster->runAction(sequence1);
-       brush->runAction(sequence2);
+            monster->runAction(sequence1);
+            brush->runAction(sequence2);
+        }
+        else if (leval == 2) {
+            auto moveTo1 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(0)->getpos());
+            auto moveTo2 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(1)->getpos());
+            auto moveTo3 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(2)->getpos());
+            auto moveTo4 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(3)->getpos());
+            auto moveTo5 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(4)->getpos());
+            auto moveTo6 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(5)->getpos());
+            auto moveTo7 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(6)->getpos());
+            auto moveTo8 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(7)->getpos());
+            auto moveTo9 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(8)->getpos());
+            auto moveTo10 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(9)->getpos());
+            auto moveTo11 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(10)->getpos());
+            auto moveTo12 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(11)->getpos());
+            auto moveTo13 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(12)->getpos());
+            auto moveTo14 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(13)->getpos());
+            auto moveTo15 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(14)->getpos());
+            auto moveTo16 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(15)->getpos());
+            auto moveTo17 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(16)->getpos());
+            auto moveTo18 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(17)->getpos());
+            auto moveTo19 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(18)->getpos());
+            auto moveTo20 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(19)->getpos());
+            auto moveTo21 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(20)->getpos());
+            auto moveTo22 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(21)->getpos());
+
+            auto moveTo1b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(0)->getpos().x - 20, m_waypointList.at(0)->getpos().y + 40));
+            auto moveTo2b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(1)->getpos().x - 20, m_waypointList.at(1)->getpos().y + 40));
+            auto moveTo3b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(2)->getpos().x - 20, m_waypointList.at(2)->getpos().y + 40));
+            auto moveTo4b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(3)->getpos().x - 20, m_waypointList.at(3)->getpos().y + 40));
+            auto moveTo5b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(4)->getpos().x - 20, m_waypointList.at(4)->getpos().y + 40));
+            auto moveTo6b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(5)->getpos().x - 20, m_waypointList.at(5)->getpos().y + 40));
+            auto moveTo7b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(6)->getpos().x - 20, m_waypointList.at(6)->getpos().y + 40));
+            auto moveTo8b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(7)->getpos().x - 20, m_waypointList.at(7)->getpos().y + 40));
+            auto moveTo9b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(8)->getpos().x - 20, m_waypointList.at(8)->getpos().y + 40));
+            auto moveTo10b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(9)->getpos().x - 20, m_waypointList.at(9)->getpos().y + 40));
+            auto moveTo11b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(10)->getpos().x - 20, m_waypointList.at(10)->getpos().y + 40));
+            auto moveTo12b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(11)->getpos().x - 20, m_waypointList.at(11)->getpos().y + 40));
+            auto moveTo13b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(12)->getpos().x - 20, m_waypointList.at(12)->getpos().y + 40));
+            auto moveTo14b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(13)->getpos().x - 20, m_waypointList.at(13)->getpos().y + 40));
+            auto moveTo15b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(14)->getpos().x - 20, m_waypointList.at(14)->getpos().y + 40));
+            auto moveTo16b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(15)->getpos().x - 20, m_waypointList.at(15)->getpos().y + 40));
+            auto moveTo17b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(16)->getpos().x - 20, m_waypointList.at(16)->getpos().y + 40));
+            auto moveTo18b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(17)->getpos().x - 20, m_waypointList.at(17)->getpos().y + 40));
+            auto moveTo19b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(18)->getpos().x - 20, m_waypointList.at(18)->getpos().y + 40));
+            auto moveTo20b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(19)->getpos().x - 20, m_waypointList.at(19)->getpos().y + 40));
+            auto moveTo21b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(20)->getpos().x - 20, m_waypointList.at(20)->getpos().y + 40));
+            auto moveTo22b = cocos2d::MoveTo::create(MOVESPEED, cocos2d::Vec2(m_waypointList.at(21)->getpos().x - 20, m_waypointList.at(21)->getpos().y + 40));
+
+            // 创建一个空的动作序列
+            auto sequence1 = cocos2d::Sequence::create(moveTo1, moveTo2, moveTo3, moveTo4, moveTo5, moveTo6, moveTo7, moveTo8, moveTo9, moveTo10, moveTo11, moveTo12, moveTo13, moveTo14,
+                moveTo15, moveTo16, moveTo17, moveTo18, moveTo19, moveTo20, moveTo21, moveTo22, NULL);
+            auto sequence2 = cocos2d::Sequence::create(moveTo1b, moveTo2b, moveTo3b, moveTo4b, moveTo5b, moveTo6b, moveTo7b, moveTo8b, moveTo9b, moveTo10b, moveTo11b, moveTo12b, moveTo13b, moveTo14b,
+                moveTo15b, moveTo16b, moveTo17b, moveTo18b, moveTo19b, moveTo20b, moveTo21b, moveTo22b, NULL);
+
+            monster->runAction(sequence1);
+            brush->runAction(sequence2);
+        }
     }
 }
 
@@ -591,7 +692,7 @@ void enemy::draw_hp() {
 }
 
 void enemy::Attacked(int damage) {
-    //log("Attacked pScene: %p", w);
+    log("Attacked pScene: %p", w);
 	if (HP - damage < 0)
 		HP = 0;
 	else
