@@ -14,7 +14,7 @@ public:
 	static radish* create(cocos2d::Vec2& a, GameScene* b);
 	virtual bool init();
 	int change_HP(int a);  //改命，当返回值为1时，已经死了，游戏要结束
-	void if_money();
+	//void if_money();
 	~radish() {
 		this->unschedule("ShootScheduler");
 	}
@@ -25,6 +25,6 @@ private:
 	int HP;    //剩余的命
 	cocos2d::Sprite* MySprite = NULL;
 	cocos2d::Sprite* upSprite = NULL;
-	
+	cocos2d::Label* label = NULL;
 	GameScene* scene = NULL;
 };

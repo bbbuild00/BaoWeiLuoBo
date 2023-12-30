@@ -1,6 +1,6 @@
 ﻿#include "radish.h"
 #include "GameScene.h"
-
+#include <string>
 radish::radish(cocos2d::Vec2& a,GameScene* b)
 {
 	rpoint = a;
@@ -23,6 +23,19 @@ radish* radish::create(cocos2d::Vec2& a,GameScene* b)
 int radish::change_HP(int a)
 {
 	HP += a;
+	std::string str;
+	if (a < 10) {
+		char t = a + '0';
+		str += t;
+	}
+	else {
+		char t = a/10 + '0';
+		str += t;
+		t = a % 10 + '0';
+		str += t;
+	}
+
+	label->setString(str);
 	if (HP == 9) {
 		MySprite = cocos2d::Sprite::create("/radish/HP9.png");
 	}
@@ -134,8 +147,10 @@ bool radish::init()
 	bloodSprite->setContentSize(cocos2d::Size(size_of_blood, size_of_blood));
 	this->addChild(bloodSprite);
 
-
-
+	//画血量的数字
+	label = cocos2d::Label::createWithSystemFont("10", "Arial", 30);
+	label->setPosition({cocos2d::Vec2(rpoint.x + size_of_radish / 2 + size_of_blood +15, rpoint.y);
+	this->addChild(label);
 
 	//每隔0.1s,监测一下如果钱足够，就出现升级标识
 	upSprite = cocos2d::Sprite::create("/radish/updata.png");
@@ -195,7 +210,25 @@ bool radish::init()
 
 			//cartoon(0.2f);//加载两帧动画
 
+			auto swingAction = cocos2d::Sequence::create(
+				cocos2d::RotateBy::create(0.3f, 30.0f),
+				cocos2d::RotateBy::create(0.3f, -30.0f),
+				cocos2d::RotateBy::create(0.3f, -30.0f),
+				cocos2d::RotateBy::create(0.3f, 30.0f),
+				nullptr
+			);
 
+			auto standAction = cocos2d::RotateTo::create(0.3f, 0.0f);
+			auto rotateAction = cocos2d::RepeatForever::create(
+				cocos2d::Sequence::create(
+					swingAction,
+					cocos2d::DelayTime::create(6.0f),
+					standAction,
+					nullptr
+				)
+			);
+
+			MySprite->runAction(rotateAction);
 			
 			
 
