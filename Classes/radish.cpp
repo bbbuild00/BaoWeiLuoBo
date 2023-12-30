@@ -1,4 +1,4 @@
-#include "radish.h"
+ï»¿#include "radish.h"
 #include "GameScene.h"
 
 radish::radish(cocos2d::Vec2& a,GameScene* b)
@@ -56,9 +56,18 @@ int radish::change_HP(int a)
 	MySprite->setPosition(rpoint);
 	MySprite->setContentSize(cocos2d::Size(size_of_radish, size_of_radish));
 	if (HP == 0) {
-		return 1;   //ÑªÁ¿ÇåÁã£¬ÓÎÏ·½áÊø£¬·µ»ØÖµÎª1
+		return 1;   //è¡€é‡æ¸…é›¶ï¼Œæ¸¸æˆç»“æŸï¼Œè¿”å›å€¼ä¸º1
 	}
 	return 0;
+}
+
+void radish::if_money()
+{
+	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+	int allmoney = pMoney->getMoney();
+	if (allmoney >= UPMONEY) {
+		upSprite->setVisible(true);
+	}
 }
 
 bool radish::init()
@@ -66,20 +75,35 @@ bool radish::init()
 	if (!Layer::init()) {
 		return false;
 	}
-	// ÔÚÕâÀï½øĞĞ¸ü¶àµÄ³õÊ¼»¯²Ù×÷
+	// åœ¨è¿™é‡Œè¿›è¡Œæ›´å¤šçš„åˆå§‹åŒ–æ“ä½œ
 	MySprite = cocos2d::Sprite::create("/radish/HP10.png");
 	MySprite->setPosition(rpoint);
 	MySprite->setContentSize(cocos2d::Size(size_of_radish, size_of_radish));
 	this->addChild(MySprite);
 
-	//Ã¿¸ô0.1s,¼à²âÒ»ÏÂÈç¹ûÇ®×ã¹»£¬¾Í³öÏÖÉı¼¶±êÊ¶
-	auto upSprite = cocos2d::Sprite::create("/radish/updata.png");
+	//ç”»è¡€é‡çš„å°çˆ±å¿ƒâ¤
+	auto bloodSprite = cocos2d::Sprite::create("/radish/blood.png");
+	upSprite->setPosition(cocos2d::Vec2(rpoint.x+ size_of_radish / 2 +size_of_blood/2, rpoint.y + (size_of_radish / 2) + (size_of_up / 2)));
+	upSprite->setContentSize(cocos2d::Size(size_of_blood, size_of_blood));
+	this->addChild(upSprite);
+
+
+
+
+	//æ¯éš”0.1s,ç›‘æµ‹ä¸€ä¸‹å¦‚æœé’±è¶³å¤Ÿï¼Œå°±å‡ºç°å‡çº§æ ‡è¯†
+	upSprite = cocos2d::Sprite::create("/radish/updata.png");
 	upSprite->setPosition(cocos2d::Vec2(rpoint.x, rpoint.y + (size_of_radish / 2) + (size_of_up / 2)));
 	upSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
 	this->addChild(upSprite);
-	upSprite->setVisible(false);  //½«¾«ÁéÉèÖÃÎª²»¿É¼û
+	upSprite->setVisible(false);  //å°†ç²¾çµè®¾ç½®ä¸ºä¸å¯è§
 
-	auto listen= cocos2d::EventListenerTouchOneByOne::create();//ĞÂ½¨ÁËÒ»¸ö¼àÌıÆ÷
+	this->schedule([this](float dt) {
+		this->if_money();
+		}, 0.1, "ShootScheduler"); //1.0fä¸ºé—´éš”æ—¶é—´ï¼Œ"ShootScheduler"ä¸ºè°ƒåº¦å™¨çš„æ ‡ç­¾å
+
+
+
+	auto listen= cocos2d::EventListenerTouchOneByOne::create();//æ–°å»ºäº†ä¸€ä¸ªç›‘å¬å™¨
 	listen->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 		if (!upSprite->isVisible() || !upSprite->getBoundingBox().containsPoint( touchLocation)) {
@@ -88,7 +112,11 @@ bool radish::init()
 		change_HP(1);
 		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 		pMoney->update(-UPMONEY);
-		upSprite->setVisible(false);
+		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
+		int allmoney = pMoney->getMoney();
+		if (allmoney < UPMONEY) {
+			upSprite->setVisible(false);
+		}
 		return true;
 	};
 
@@ -109,14 +137,14 @@ bool radish::init()
 
 
 
-	auto listener= cocos2d::EventListenerTouchOneByOne::create();//ĞÂ½¨ÁËÒ»¸ö¼àÌıÆ÷
+	auto listener= cocos2d::EventListenerTouchOneByOne::create();//æ–°å»ºäº†ä¸€ä¸ªç›‘å¬å™¨
 
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
-		// ¼ì²âÊó±êÊÇ·ñµã»÷¾«Áé
+		// æ£€æµ‹é¼ æ ‡æ˜¯å¦ç‚¹å‡»ç²¾çµ
 		if (MySprite->getBoundingBox().containsPoint(touchLocation)) {
-			// ÔÚÕâÀï¿ÉÒÔÖ´ĞĞÄãĞèÒªµÄ²Ù×÷
-			//ÔÚÕâÀï½¨Ò»¸öµã»÷ÒÔºóµÄ¶¯»­
+			// åœ¨è¿™é‡Œå¯ä»¥æ‰§è¡Œä½ éœ€è¦çš„æ“ä½œ
+			//åœ¨è¿™é‡Œå»ºä¸€ä¸ªç‚¹å‡»ä»¥åçš„åŠ¨ç”»
 
 
 			
@@ -132,7 +160,7 @@ bool radish::init()
 		return true;
 	};
 
-	// ×¢²á¼àÌıÆ÷
+	// æ³¨å†Œç›‘å¬å™¨
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, MySprite);
 
 	return true;
