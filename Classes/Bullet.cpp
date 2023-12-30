@@ -51,14 +51,7 @@ void Bullet_1::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二
 		
 	}
 	this->removeChild(my_picture);
-	auto sprite = Sprite::create("moneyupup.png");
-	sprite->setPosition(target_point);
-	my_picture->setContentSize(cocos2d::Size(size_of_Moneyup, size_of_Moneyup));
-	this->addChild(my_picture);
-	this->addChild(sprite);
-	this->scheduleOnce([sprite](float delta) {
-		sprite->setVisible(false);
-		}, 1, "hideSprite_key");
+
 }
 
 
@@ -80,14 +73,7 @@ void Bullet_2::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二
 
 	}
 	this->removeChild(my_picture);
-	auto sprite = Sprite::create("moneyupup.png");
-	sprite->setPosition(target_point);
-	my_picture->setContentSize(cocos2d::Size(size_of_Moneyup, size_of_Moneyup));
-	this->addChild(my_picture);
-	this->addChild(sprite);
-	this->scheduleOnce([sprite](float delta) {
-		sprite->setVisible(false);
-		}, 1, "hideSprite_key");
+	
 }
 
 
@@ -110,12 +96,11 @@ void Bullet_3::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二
 
 	}
 	this->removeChild(my_picture);
-	auto sprite = Sprite::create("moneyupup.png");
-	sprite->setPosition(target_point);
-	my_picture->setContentSize(cocos2d::Size(size_of_Moneyup, size_of_Moneyup));
-	this->addChild(my_picture);
+	auto sprite = cocos2d::Sprite::create("moneyupup.png");
+	sprite->setPosition(cocos2d::Vec2(1*75,7*75+50));
+	sprite->setContentSize(cocos2d::Size(size_of_Moneyup, size_of_Moneyup));
 	this->addChild(sprite);
 	this->scheduleOnce([sprite](float delta) {
 		sprite->setVisible(false);
-		}, 1, "hideSprite_key");
+		}, 0.1, "hideSprite_key");
 }

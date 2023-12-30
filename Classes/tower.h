@@ -14,7 +14,7 @@ class QTimer;
 class stone;
 class GameScene;
 
-const float internal_time = 1.0;   //炮塔两次攻击之间的间隔时间
+const float internal_time = 1.5;   //炮塔两次攻击之间的间隔时间
 
 const int range_all = 500; //炮塔的攻击范围
 const int damage_1[3] = { 10,20,40 };//第一种炮塔的伤害

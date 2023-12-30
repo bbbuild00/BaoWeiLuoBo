@@ -3,7 +3,7 @@
 #include "tower.h"
 
 #define size_of_Bullet 15  //子弹图片大小
-#define size_of_Moneyup 20  //子弹图片大小
+#define size_of_Moneyup 35  //子弹图片大小
 
 class enemy;
 class Widget;

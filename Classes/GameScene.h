@@ -17,6 +17,7 @@
 #define TagMonster 3
 #define TagMoney 4
 #define TagStone 5
+#define TagRadish 5
 
 class GameScene : public cocos2d::Scene
 {
@@ -54,6 +55,7 @@ private:
 class TowerLayer;
 class MonsterLayer;
 class StoneLayer;
+class RadishLayer;
 struct Grid
 {
     cocos2d::Sprite* spriteGrid = nullptr;
@@ -91,9 +93,11 @@ public:
     CREATE_FUNC(MonsterLayer);
     void createMonster();//生成小怪兽
     bool removeMonster(enemy* Enemy, int coins);//移掉小怪兽，增加金币
-
+    void spawnMonster(float dt);
+    void moveMonster(float dt);
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
+    std::queue<enemy*> monsterQueue;
 };
 
 //创建炮塔管理层TowerLayer
@@ -130,4 +134,23 @@ public:
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
 };
+
+//创建萝卜管理层StoneLayer
+//刘文美和闫雯晴写的bool removeStone(stone* Stone)
+//刘文美和闫雯晴调用的create
+class radish;
+class RadishLayer : public cocos2d::Layer
+{
+public:
+    static cocos2d::Layer* createLayer(GameScene* pScene);
+    virtual bool init();
+    CREATE_FUNC(RadishLayer);
+
+private:
+    GameScene* _pGameScene = nullptr;//通过场景的通讯方式
+};
+
+
 #endif // __GAME_SCENE_H__
+
+

@@ -5,7 +5,7 @@
 #include"tower.h"
 #include"enemy.h"
 #include"stone.h"
-
+#include"radish.h"
 
 USING_NS_CC;
 int ifSpeedUp;//1为二倍速
@@ -99,6 +99,11 @@ bool GameScene::init() {
     stoneLayer->setTag(TagStone);
     log("StoneLayer's Address1: %p", stoneLayer);
     log("StoneLayer's Address2: %p", this->getChildByTag(TagStone));
+
+    //萝卜层
+   RadishLayer* radishLayer = dynamic_cast<RadishLayer*>(RadishLayer::createLayer(this));
+    this->addChild(radishLayer);
+    radishLayer->setTag(TagRadish);
     
     //倒计时
     countToStart();
@@ -475,12 +480,29 @@ cocos2d::Layer* MonsterLayer::createLayer(GameScene* pScene)
 }
 
 bool MonsterLayer::init() {
-    if (!Layer::init())
-    {
+    if (!Layer::init()) {
         return false;
     }
+    schedule(schedule_selector(MonsterLayer::spawnMonster), 2.0f); // 每2秒生成一个怪物
+    schedule(schedule_selector(MonsterLayer::moveMonster), 22.0f);   // 每22秒移动一个怪物
 
     return true;
+}
+
+void MonsterLayer::spawnMonster(float dt) {
+    // 仅创建并添加怪物到队列
+    auto monster = enemy1::create(_pGameScene);
+    this->addChild(monster);
+    monsterQueue.push(monster);
+}
+
+void MonsterLayer::moveMonster(float dt) {
+    // 移动队列中的第一个怪物
+    if (!monsterQueue.empty()) {
+        enemy* firstMonster = monsterQueue.front();
+        firstMonster->move();
+        monsterQueue.pop(); // 移除已经移动的怪物
+    }
 }
 
 void MonsterLayer::createMonster() {
@@ -545,5 +567,24 @@ bool StoneLayer::removeStone(stone* Stone, int coins) {
     //和金币层通讯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     pMoney->updateMoney(coins);
+    return true;
+}
+
+cocos2d::Layer* RadishLayer::createLayer(GameScene* pScene)
+{
+    RadishLayer* layer = dynamic_cast<RadishLayer*>(RadishLayer::create());
+    layer->_pGameScene = pScene;
+
+    return layer;
+}
+
+bool RadishLayer::init() {
+    if (!Layer::init())
+    {
+        return false;
+    }
+    auto radush = radish::create(Vec2(11*75,6*75), _pGameScene);
+    this->addChild(radush);
+
     return true;
 }

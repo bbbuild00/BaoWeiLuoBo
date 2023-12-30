@@ -38,8 +38,8 @@ public:
 	cocos2d::Vec2 getpos();//获得当前位置
 	void draw_hp();
 protected:
-	float HP=150;//血量
-	float fullHP=150;//满血
+	float HP=100;//血量
+	float fullHP=100;//满血
 	double speed;//速度
 	bool stop;//暂停
 

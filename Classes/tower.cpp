@@ -575,7 +575,7 @@ bool tower_3::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return false
+				return false;
 			};
 			// ×¢²á¼àÌýÆ÷
 			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
