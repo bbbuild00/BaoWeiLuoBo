@@ -303,8 +303,11 @@ void MenuLayer::buildTower(int row, int col) {
     gridBuiding = &grid[row][col];
     if (gridBuiding) {
         Grid grid = *gridBuiding;
-        grid.spriteGrid->setTexture("/game/Grid.png");
-        grid.spriteGrid->setVisible(true);
+        if (grid.spriteGrid) {
+            grid.spriteGrid->setTexture("/game/Grid.png");
+            grid.spriteGrid->setVisible(true);
+        }
+        
         
     }
     //炮塔选项
@@ -413,7 +416,7 @@ bool TowerLayer::ifAvailable(int Type) {
     switch (Type)
     {
         case GREEN_BOTTLE:
-            if (pMoney->getMoney() >= 100)//这里有问题 引发了异常: 读取访问权限冲突。this->_pTower->_pMoney 是 0xDDDDDDDD。
+            if (pMoney->getMoney() >= 100)
                 //pMoney->update(-120);
                 return true;
             else
@@ -456,14 +459,15 @@ bool TowerLayer::removeTower(tower* Tower) {
     if (!Tower) {
         return false;
     }
-   
-    /*无效的getposition
-    Vec2 position0 = Tower->getPosition();
+    
+    
+    //Vec2 position0 = Tower->getPosition();
+    Vec2 position0 = Tower->getpos();
     Vec2 position = Vec2(position0.x - 75 / 2, position0.y - 75 / 2);
-    log("remove tower position : (% d, % d)", position0.x, position0.y);
+    log("remove tower position : (% fl, % fl)", position0.x, position0.y);
     mapPos mappos;
     positionToGrid(position, mappos);
-    gameMap[mappos.y][mappos.x] = 0;*/
+    gameMap[mappos.y][mappos.x] = 0;
     
     
     //从层上移掉塔

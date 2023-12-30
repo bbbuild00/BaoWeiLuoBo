@@ -97,22 +97,12 @@ void tower::enemy_killed()
 	if (attack_enemy != NULL) {
 		attack_enemy = NULL;
 	}
-	for (Node* child : this->getChildren()) {
-		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
-			this->removeChild(e);
-		}
-	}
 }
 
 void tower::stone_killed()
 {
 	if (attack_stone != NULL) {
 		attack_stone = NULL;
-	}
-	for (Node* child : this->getChildren()) {
-		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
-			this->removeChild(e);
-		}
 	}
 }
 
@@ -121,11 +111,6 @@ void tower::enemy_out()
 	if (attack_enemy != NULL) {
 		attack_enemy->getout(this);
 		attack_enemy = NULL;
-	}
-	for (Node* child : this->getChildren()) {
-		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
-			this->removeChild(e);
-		}
 	}
 }
 
@@ -165,6 +150,13 @@ void tower::check_enemy_in()  //尚未实现
 int tower::get_damage()
 {
 	return damage;
+}
+
+bool tower::if_continue(int a)
+{
+	if ((a == 1 && attack_stone != NULL) || (a == 2 && attack_enemy != NULL))
+		return true;
+	return false;
 }
 
 tower_1::tower_1(cocos2d::Vec2& a, GameScene* b)
@@ -225,12 +217,13 @@ bool tower_1::init()
 	this->addChild(turretSprite);
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
+	
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto touchlocation = this->convertToNodeSpace(touch->getLocation());
 		// 检测鼠标是否点击精灵
 		if (turretSprite->getBoundingBox().containsPoint(touchlocation)) {
 			// 在这里可以执行你需要的操作
-
+			listener->setSwallowTouches(true);
 			MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 			int allmoney = pMoney->getMoney();
 			auto upSprite = cocos2d::Sprite::create();
@@ -261,29 +254,37 @@ bool tower_1::init()
 
 			//搞一个监视器嘞
 			auto listene = cocos2d::EventListenerTouchOneByOne::create();
+			listene->setSwallowTouches(true);
 			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
 				auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 				// 如果鼠标点击了升级并且钱足够
 				if (upSprite->getBoundingBox().containsPoint(touchLocation) && ((allmoney >= cost_money_1[1] && grade == 0) || (allmoney >= cost_money_1[2] && grade == 1))) {
 					upgrade();   //升级
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为0
-				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 0) {
+				else if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 0) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_1[0]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为1
-				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 1) {
+				else if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 1) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_1[1]);
 					removed();
+					listener->setSwallowTouches(true);
 				}
 				//如果点击了销毁并且等级为2
-				if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 2) {
+				else if (downSprite->getBoundingBox().containsPoint(touchLocation) && grade == 2) {
 					MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 					pMoney->updateMoney(get_money_1[2]);
 					removed();
+					listener->setSwallowTouches(true);
+				}
+				else {
+					listener->setSwallowTouches(false);
 				}
 				this->removeChild(upSprite);  //把这个精灵摘除喽
 				this->removeChild(downSprite);
@@ -293,6 +294,7 @@ bool tower_1::init()
 			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
 
 		}
+		
 		return true;
 	};
 
@@ -369,6 +371,7 @@ bool tower_2::init()
 	turretSprite->setContentSize(cocos2d::Size(size_of_tower, size_of_tower));
 	this->addChild(turretSprite);
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+	
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
@@ -406,6 +409,7 @@ bool tower_2::init()
 
 			//搞一个监视器嘞
 			auto listene = cocos2d::EventListenerTouchOneByOne::create();
+			listene->setSwallowTouches(true);
 			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
 				auto touchlocation = this->convertToNodeSpace(touch->getLocation());
 				// 如果鼠标点击了升级并且钱足够
@@ -517,6 +521,7 @@ bool tower_3::init()
 	this->addChild(turretSprite);
 
 	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+
 	//搞一个监听器嘞 最外层监听器：点击了炮塔的图片
 	listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		//获取点击位置
@@ -557,6 +562,7 @@ bool tower_3::init()
 
 			//搞一个监视器嘞
 			auto listene = cocos2d::EventListenerTouchOneByOne::create();
+			listene->setSwallowTouches(true);
 			listene->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
 				auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 				// 如果鼠标点击了升级并且钱足够

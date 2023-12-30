@@ -26,14 +26,15 @@ int radish::change_HP(int a)
 {
 	HP += a;
 	std::string str;
-	if (a < 10) {
+	if (HP < 10) {
 		char t = a + '0';
 		str += t;
 	}
 	else {
-		char t = a/10 + '0';
+		
+	    char t = HP/ 10 + '0';
 		str += t;
-		t = a % 10 + '0';
+		t = HP % 10 + '0';
 		str += t;
 	}
 
@@ -78,7 +79,7 @@ int radish::change_HP(int a)
 
 void radish::if_money()
 {
-	log("if_money: radish's pscene: %p", scene);
+	//log("if_money: radish's pscene: %p", scene);
 	MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
 	int allmoney = pMoney->getMoney();
 	if (allmoney >= UPMONEY) {
@@ -123,14 +124,17 @@ bool radish::init()
 
 
 	auto listen= cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
+	
 	listen->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event){
 		auto touchLocation = this->convertToNodeSpace(touch->getLocation());
 		if (!upSprite->isVisible() || !upSprite->getBoundingBox().containsPoint( touchLocation)) {
+			listen->setSwallowTouches(false);
 			return true;
 		}
+		listen->setSwallowTouches(true);
 		change_HP(1);
 		MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(scene->getChildByTag(TagMoney));
-		pMoney->update(-UPMONEY);
+		pMoney->updateMoney(-UPMONEY);
 		int allmoney = pMoney->getMoney();
 		if (allmoney < UPMONEY) {
 			upSprite->setVisible(false);
@@ -163,8 +167,7 @@ bool radish::init()
 		if (MySprite->getBoundingBox().containsPoint(touchLocation)) {
 			// 在这里可以执行你需要的操作
 			//在这里建一个点击以后的动画
-
-
+			listen->setSwallowTouches(true);
 			//cartoon(0.2f);//加载两帧动画
 
 			auto swingAction = cocos2d::Sequence::create(
@@ -190,6 +193,9 @@ bool radish::init()
 			
 
 
+		}
+		else {
+			setSwallowsTouches(true);
 		}
 
 		
