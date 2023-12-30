@@ -9,6 +9,7 @@ class waypoint ;
 bool crash(cocos2d::Vec2 a, cocos2d::Vec2 b);//判断两点是否相撞
 
 void addWayPoint1(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* monster);//添加初始化所有的航点
+void addWayPoint2(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* monster);//添加初始化所有的航点
 
 class waypoint :public cocos2d::Ref {
 public:

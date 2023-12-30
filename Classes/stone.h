@@ -24,8 +24,8 @@ protected:
     cocos2d::Sprite* stone_s = NULL;//障碍物1
     cocos2d::Sprite* Brush;//血条
     int q;
-    int HP;
-    int fullHP;
+    float HP;
+    float fullHP;
     cocos2d::Vec2 point;//实际位置
     int money = 20;
 
@@ -34,6 +34,7 @@ protected:
     cocos2d::Vector<tower*>Attacktower;
 };
 
+//第一关的相关障碍物
 class stone1 :public stone {
 public:
     stone1(cocos2d::Vec2 p, GameScene* lay);
@@ -96,3 +97,6 @@ public:
     static stone9* create(cocos2d::Vec2 po, GameScene* lay);
     virtual void draw_stone();
 };
+
+//第二关的相关障碍物
+

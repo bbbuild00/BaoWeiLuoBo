@@ -19,7 +19,9 @@ public:
 	virtual void draw_enemy() = 0;//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt) = 0;//在冰冻攻击后变换图片
 	virtual void slowdown() = 0;//判断速度（被减速）//关关或刘姐姐调用
-
+	virtual ~enemy() {
+		this->unschedule("ShootScheduler1");
+	}
 	void move();//小怪兽的移动
 
 	void Attackedby(tower* mtower);//受到炮塔攻击
@@ -38,6 +40,7 @@ public:
 	cocos2d::Vec2 getpos();//获得当前位置
 	void draw_hp();
 protected:
+	int leval;//判断关卡
 	float HP=100;//血量
 	float fullHP=100;//满血
 	double speed;//速度
@@ -62,8 +65,8 @@ protected:
 
 class enemy1 :public enemy {
 public:
-	enemy1(GameScene* lay);
-	static enemy1* create(GameScene* lay);
+	enemy1(GameScene* lay,int le);
+	static enemy1* create(GameScene* lay, int le);
 	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
@@ -73,8 +76,8 @@ public:
 
 class enemy2 :public enemy {
 public:
-	enemy2(GameScene* lay);
-	static enemy2* create(GameScene* lay);
+	enemy2(GameScene* lay, int le);
+	static enemy2* create(GameScene* lay, int le);
 	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
@@ -84,8 +87,8 @@ public:
 
 class enemy3 :public enemy {
 public:
-	enemy3(GameScene* lay);
-	static enemy3* create(GameScene* lay);
+	enemy3(GameScene* lay, int le);
+	static enemy3* create(GameScene* lay, int le);
 	//void draw_enemy();
 	virtual void draw_enemy();//纯虚函数//绘制小怪兽
 	virtual void cartoon(float dt);//在冰冻攻击后变换图片
