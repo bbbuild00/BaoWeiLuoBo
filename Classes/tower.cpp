@@ -279,7 +279,7 @@ bool tower_1::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return true;
+				return false;
 			};
 			// ×¢²á¼àÌýÆ÷
 			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
@@ -424,7 +424,7 @@ bool tower_2::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return true;
+				return false;
 			};
 			// ×¢²á¼àÌýÆ÷
 			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
@@ -575,7 +575,7 @@ bool tower_3::init()
 				}
 				this->removeChild(upSprite);  //°ÑÕâ¸ö¾«ÁéÕª³ýà¶
 				this->removeChild(downSprite);
-				return true;
+				return false
 			};
 			// ×¢²á¼àÌýÆ÷
 			_eventDispatcher->addEventListenerWithSceneGraphPriority(listene, upSprite);
