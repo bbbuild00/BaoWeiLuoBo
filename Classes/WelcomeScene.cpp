@@ -2,7 +2,7 @@
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
-
+//using namespace CocosDenshion;
 Scene* WelcomeScene::createWelcomeScene()
 {
     //创建一个以WelcomeScene的Layer为结点的Scene（可能这样比直接创建scene好一点？）
@@ -31,6 +31,10 @@ bool WelcomeScene::init()
     {
         return false;
     }
+    /*播放音乐*/
+    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("/welcome/BGMusic.mp3", true);
+
+
 
     //获取当前layer大小
     auto wndSize = getContentSize();
@@ -42,7 +46,7 @@ bool WelcomeScene::init()
     spritecache->addSpriteFramesWithFile("welcome_scene-hd.plist");
     失败地解压图层
     */
-    
+
     /***背景***/
     auto spriteBackground = Sprite::create("/welcome/MainBG.PNG");
     if (spriteBackground == nullptr)
@@ -191,7 +195,7 @@ bool WelcomeScene::init()
     carrot_leaf2->runAction(RepeatForever::create(Sequence::create(pRotate, pRotate->reverse(), pRotate, pRotate->reverse(), pDelay, NULL)));
     //中间叶子的晃动
     carrot_leaf3->runAction(RepeatForever::create(Sequence::create(pDelay, pRotate, pRotate->reverse(), pRotate, pRotate->reverse(), pDelay, NULL)));
-   
+
 
     /***标题***/
     auto title = Sprite::create("/welcome/MainTitle.PNG");
@@ -206,7 +210,7 @@ bool WelcomeScene::init()
 
     /*****************************************************************菜单界面************************************************************************/
     auto menu = Menu::create();
-    menu->setPosition(Vec2(0,0));
+    menu->setPosition(Vec2(0, 0));
     //退出游戏按钮
     auto closeItem = MenuItemImage::create(
         "CloseNormal.png",//正常时
@@ -275,7 +279,7 @@ bool WelcomeScene::init()
         }
         menu->addChild(boss_item);
     }
-    //怪物窝
+    //怪物窝，锁定啦，暂时不搞啦
     auto nest_item = MenuItemImage::create("/welcome/Btn_MonsterNest.PNG", "/welcome/Btn_MonsterNestLight.PNG", CC_CALLBACK_1(WelcomeScene::nestCallback, this));
     if (nest_item == nullptr) {
         problemLoading("'nest_item'");
@@ -285,21 +289,35 @@ bool WelcomeScene::init()
         nest_item->setPosition(Vec2(origin.x + visibleSize.width / 2 + nest_item->getContentSize().width,
             origin.y + visibleSize.height / 8));
         menu->addChild(nest_item);
-    }
-    this->addChild(menu);
+        auto nest_lock = Sprite::create("/MenuScene/lock.png");
+        if (nest_lock == nullptr) {
+            problemLoading("'lock.png'");
+        }
+        else {
+            nest_lock->setName("nest_lock");
+            nest_lock->setScale(1.4);
+            nest_lock->setPosition(Vec2(origin.x + visibleSize.width / 2 + nest_item->getContentSize().width * 1.44,
+                origin.y + visibleSize.height / 8 - nest_item->getContentSize().height / 5));
+            this->addChild(nest_lock, 1);
+        }
+        this->addChild(menu);
 
-    return true;
+        return true;
+    }
 }
 
 void WelcomeScene::adventureCallback(Ref* pSender)
 {
     auto scene = GameScene::createGameScene();
+    //停止背景音乐
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->replaceScene(scene);
 }
 
 void WelcomeScene::menuCloseCallback(Ref* pSender)
 {
-
+    //停止背景音乐
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->end();//跳转到“结束”场景（即程序结束）
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)

@@ -447,6 +447,7 @@ void TowerLayer::buidTower(int Type, int gridx, int gridy) {
         //TowerLayer* ptower = dynamic_cast<TowerLayer*>(newTower->getParent());
         //ptower->removeTower(this);
     }
+
     else if (Type == SHIT) {
         //建tower3
         auto newTower = tower_3::create(position, _pGameScene);

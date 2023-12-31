@@ -1,5 +1,6 @@
 ﻿#include "radish.h"
 #include "GameScene.h"
+#include"WelcomeScene.h"
 #include <string>
 radish::radish(cocos2d::Vec2& a,GameScene* b)
 {
@@ -72,6 +73,8 @@ int radish::change_HP(int a)
 	MySprite->setPosition(rpoint);
 	MySprite->setContentSize(cocos2d::Size(size_of_radish, size_of_radish));
 	if (HP == 0) {
+		// 切换到下一个场景
+		cocos2d::Director::getInstance()->replaceScene(WelcomeScene::createWelcomeScene());
 		return 1;   //血量清零，游戏结束，返回值为1
 	}
 	return 0;
