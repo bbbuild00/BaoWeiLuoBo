@@ -10,13 +10,13 @@
 USING_NS_CC;
 int ifSpeedUp;//1为二倍速
 int ifPause;//1为暂停
-char gameMap[7][12] = { {0,0,0,0,0,0,0,0,0,0,0,0},
-                        {0,9,0,0,0,0,0,0,0,0,9,0},
-                        {0,9,0,0,0,0,0,0,0,0,9,0},
-                        {0,9,0,0,9,9,9,9,0,0,9,0}, 
-                        {0,9,9,9,9,0,0,9,9,9,9,0},
-                        {9,9,0,0,0,0,0,0,0,0,9,9},
-                        {9,9,9,9,0,0,0,0,0,9,9,9} };//地图框架,0为空，1-3为炮塔，4为障碍物、9为路或不可移动障碍
+char gameMap[7][12] = { {0,0,4,4,4,4,4,4,4,4,0,0},
+                        {0,9,4,4,4,4,4,4,4,4,9,0},
+                        {0,9,0,0,4,0,0,4,0,0,9,0},
+                        {0,9,4,0,9,9,9,9,0,4,9,0}, 
+                        {0,9,9,9,9,4,4,9,9,9,9,0},
+                        {9,9,0,0,0,4,4,0,0,0,9,9},
+                        {9,9,9,9,0,4,4,0,0,9,9,9} };//地图框架,0为空，1-3为炮塔，4为障碍物、9为路或不可移动障碍
 
 
 
@@ -75,23 +75,6 @@ bool GameScene::init() {
     money->setTag(TagMoney);
     log("MoneyLayer's Address: %p", this->getChildByTag(TagMoney));
 
-    //菜单
-    MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
-    this->addChild(Menu);
-    Menu->setTag(TagMenu);
-    //log("MenuLayer's Address: %p", this->getChildByTag(TagMenu));
-
-    //怪兽层
-    MonsterLayer* monsterLayer = dynamic_cast<MonsterLayer*>(MonsterLayer::createLayer(this));
-    this->addChild(monsterLayer);
-    monsterLayer->setTag(TagMonster);
-    //log("MonsterLayer's Address: %p", this->getChildByTag(TagMonster));
-
-    //炮塔层
-    TowerLayer* towerLayer = dynamic_cast<TowerLayer*>(TowerLayer::createLayer(this));
-    this->addChild(towerLayer);
-    towerLayer->setTag(TagTower);
-    //log("TowerLayer's Address: %p", this->getChildByTag(TagTower));
 
     //障碍物层
     StoneLayer* stoneLayer = dynamic_cast<StoneLayer*>(StoneLayer::createLayer(this));
@@ -99,6 +82,24 @@ bool GameScene::init() {
     stoneLayer->setTag(TagStone);
     //log("StoneLayer's Address1: %p", stoneLayer);
     //log("StoneLayer's Address2: %p", this->getChildByTag(TagStone));
+
+    //菜单
+    MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
+    this->addChild(Menu);
+    Menu->setTag(TagMenu);
+    
+    //炮塔层
+    TowerLayer* towerLayer = dynamic_cast<TowerLayer*>(TowerLayer::createLayer(this));
+    this->addChild(towerLayer);
+    towerLayer->setTag(TagTower);
+    //log("TowerLayer's Address: %p", this->getChildByTag(TagTower));
+
+    //怪兽层
+    MonsterLayer* monsterLayer = dynamic_cast<MonsterLayer*>(MonsterLayer::createLayer(this));
+    this->addChild(monsterLayer);
+    monsterLayer->setTag(TagMonster);
+    //log("MonsterLayer's Address: %p", this->getChildByTag(TagMonster));
+
 
     //萝卜层
     radish* Radish = dynamic_cast<radish*>(radish::create(Vec2(11 * 75, 6 * 75),this));
@@ -108,8 +109,7 @@ bool GameScene::init() {
     //倒计时
     countToStart();
 
-    //小怪物出现
-    monsterLayer->createMonster();//未写时间间隔
+    
 
     return true;
 
@@ -265,7 +265,7 @@ bool MenuLayer::init() {
     
     //注册触摸事件监听器
     auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
-    touchListener->setSwallowTouches(true);
+    //touchListener->setSwallowTouches(true);
     touchListener->onTouchBegan = CC_CALLBACK_2(MenuLayer::touchBegan, this);
     
     //touchListener->onTouchMoved = CC_CALLBACK_2(TouchLayer::onTouchMoved, this);
@@ -493,44 +493,50 @@ cocos2d::Layer* MonsterLayer::createLayer(GameScene* pScene)
 }
 
 bool MonsterLayer::init() {
-    if (!Layer::init()) {
-        return false;
-    }
-    schedule(schedule_selector(MonsterLayer::spawnMonster), 2.0f); // 每2秒生成一个怪物
-    schedule(schedule_selector(MonsterLayer::moveMonster), 22.0f);   // 每22秒移动一个怪物
-
-    return true;
+	if (!Layer::init())
+	{
+		return false;
+	}
+    this->scheduleOnce([this](float dt) { 
+        schedule(schedule_selector(MonsterLayer::spawnMonster), 3.0f); // 每3秒生成一个怪物
+	    schedule(schedule_selector(MonsterLayer::moveMonster), 22.0f); // 每22秒移动一个怪物 
+        }, 5.0f, "uniqueKeyForThisSchedule"); // 注意：3.0f 是延迟时间（秒），"uniqueKeyForThisSchedule" 是这个调度的唯一标识符
+	
+	return true;
 }
 
-void MonsterLayer::spawnMonster(float dt) {
-    // 仅创建并添加怪物到队列
-    auto monster = enemy1::create(_pGameScene);
-    this->addChild(monster);
-    monsterQueue.push(monster);
+void MonsterLayer::spawnMonster(float dt)
+{
+	enemy* monster = nullptr;
+	switch (monsterSpawnIndex % 3)
+	{ // 使用模运算来循环怪物类型
+		case 0: monster = enemy1::create(_pGameScene, 1);
+			break;
+		case 1:
+			monster = enemy2::create(_pGameScene, 1);
+			break;
+		case 2: 
+            monster = enemy3::create(_pGameScene, 1); 
+            break;
+	} this->addChild(monster); monsterQueue.push(monster); monsterSpawnIndex++; // 增加索引以便下次生成不同的怪物 
 }
 
-void MonsterLayer::moveMonster(float dt) {
-    // 移动队列中的第一个怪物
-    if (!monsterQueue.empty()) {
-        enemy* firstMonster = monsterQueue.front();
-        firstMonster->move();
-        monsterQueue.pop(); // 移除已经移动的怪物
-    }
-}
-
-void MonsterLayer::createMonster() {
-    
-    auto monster = enemy1::create(_pGameScene);
-    this->addChild(monster);
+void MonsterLayer::moveMonster(float dt)
+{
+	if (!monsterQueue.empty())
+	{
+		enemy* firstMonster = monsterQueue.front();
+		firstMonster->move(); monsterQueue.pop(); // 移除已经移动的怪物
+	}
 }
 
 bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
     if (!Enemy) {
         return false;
     }
-    Enemy->release();
+    //Enemy->release();
     removeChild(dynamic_cast<Layer*>(Enemy));
-    log("removeMonster: released? %p", Enemy);
+    //log("removeMonster: released? %p", Enemy);
     //和金币层通讯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     pMoney->updateMoney(coins);

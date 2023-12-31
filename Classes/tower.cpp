@@ -83,6 +83,7 @@ void tower::get_stone(stone* a)  //未解之谜函数
 	attack_stone = a;
 	enemy_point = a->getpos();
 	attack_stone->addtower(this);  //向对应的障碍物增加的谁在攻击他 //谁要杀了我，而我又杀了谁？
+	attack_enemy == NULL;
 }
 
 void tower::get_enemy(enemy* a)  //未解之谜函数

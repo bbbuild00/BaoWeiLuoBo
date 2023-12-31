@@ -11,43 +11,19 @@ void stone::addtower(tower* a) {
     Attacktower.pushBack(a);
 }
 
-/*void stone::mouse_click() {
-    auto listener = cocos2d::EventListenerTouchOneByOne::create();
 
-    listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
-        //获取点击位置
-        auto touchLocation = this->convertToNodeSpace(touch->getLocation());
-        // 检测是否点击精灵
-        if (stone_s->getBoundingBox().containsPoint(touchLocation)) {
-            // 在这里可以执行你需要的操作
-            TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
-
-            for (Node* child : pTower->getChildren()) {
-                if (tower* e = dynamic_cast<tower*>(child)) {
-                    bool a = e->check_if_in_range(this->getpos());
-                    if (a) {
-                        e->get_stone(this);
-
-                    }
-                }
-            }
-        }
-        return true;
-        };
-    // 注册监听器
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, stone_s);
-}*/
 
 void stone::mouse_click() {
-    auto listener = cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
+    auto listener2 = cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
 
-    listener->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+    listener2->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+        log("stone:onTouchBegan, %p", this);
         auto touchLocation = this->convertToNodeSpace(touch->getLocation());
         // 检测鼠标是否点击精灵
         if (stone_s->getBoundingBox().containsPoint(touchLocation)) {
             // 在这里可以执行你需要的操作
             //在这里建一个点击以后的动画
-
+            log("stone:clicked, %p", this);
             TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
 
             for (Node* child : pTower->getChildren()) {
@@ -66,7 +42,7 @@ void stone::mouse_click() {
         };
 
     // 注册监听器
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, stone_s);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener2, stone_s);
 
 }
 
@@ -462,6 +438,8 @@ bool stone::init() {
     }
 
     draw_stone();
+
+    mouse_click();
 
     this->addChild(Brush);
 

@@ -94,13 +94,13 @@ public:
     static cocos2d::Layer* createLayer(GameScene* pScene);
     virtual bool init();
     CREATE_FUNC(MonsterLayer);
-    void createMonster();//生成小怪兽
     bool removeMonster(enemy* Enemy, int coins);//移掉小怪兽，增加金币
-    void spawnMonster(float dt);
+    void spawnMonster(float dt);//生成小怪兽
     void moveMonster(float dt);
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
     std::queue<enemy*> monsterQueue;
+    int monsterSpawnIndex = 0; // 用于跟踪下一个要生成的怪物类型
 };
 
 //创建炮塔管理层TowerLayer

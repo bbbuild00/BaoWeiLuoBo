@@ -6,10 +6,10 @@ waypoint::waypoint(cocos2d::Vec2 m_pos) {
 }
 
 bool crash(cocos2d::Vec2 a, cocos2d::Vec2 b) {//碰撞检测
-	int x = a.x - b.x;
-	int y = a.y - b.y;
-	int s = x * x + y * y;//计算欧氏距离的平方
-	if (s <= 16) {
+	float x = a.x - b.x;
+    float y = a.y - b.y;
+    float s = x * x + y * y;//计算欧氏距离的平方
+	if (s <= 100) {
 		return true;
 	}
 	return false;

@@ -27,7 +27,7 @@ int radish::change_HP(int a)
 	HP += a;
 	std::string str;
 	if (HP < 10) {
-		char t = a + '0';
+		char t = HP + '0';
 		str += t;
 	}
 	else {
@@ -40,34 +40,34 @@ int radish::change_HP(int a)
 
 	label->setString(str);
 	if (HP == 9) {
-		MySprite = cocos2d::Sprite::create("/radish/HP9.png");
+		MySprite->setTexture("/radish/HP9.png");
 	}
 	else if (HP == 8) {
-		MySprite = cocos2d::Sprite::create("/radish/HP8.png");
+		MySprite->setTexture("/radish/HP8.png");
 	}
 	else if (HP == 7) {
-		MySprite = cocos2d::Sprite::create("/radish/HP7.png");
+		MySprite->setTexture("/radish/HP7.png");
 	}
 	else if (HP == 6) {
-		MySprite = cocos2d::Sprite::create("/radish/HP6.png");
+		MySprite->setTexture("/radish/HP6.png");
 	}
 	else if (HP == 5) {
-		MySprite = cocos2d::Sprite::create("/radish/HP5.png");
+		MySprite->setTexture("/radish/HP5.png");
 	}
 	else if (HP == 4) {
-		MySprite = cocos2d::Sprite::create("/radish/HP4.png");
+		MySprite->setTexture("/radish/HP4.png");
 	}
 	else if (HP == 3) {
-		MySprite = cocos2d::Sprite::create("/radish/HP3.png");
+		MySprite->setTexture("/radish/HP3.png");
 	}
 	else if (HP == 2) {
-		MySprite = cocos2d::Sprite::create("/radish/HP2.png");
+		MySprite->setTexture("/radish/HP2.png");
 	}
 	else if (HP ==1) {
-		MySprite = cocos2d::Sprite::create("/radish/HP1.png");
+		MySprite->setTexture("/radish/HP1.png");
 	}
 	else if (HP == 0) {
-		MySprite = cocos2d::Sprite::create("/radish/HP0.png");
+		MySprite->setTexture("/radish/HP0.png");
 	}
 	MySprite->setPosition(rpoint);
 	MySprite->setContentSize(cocos2d::Size(size_of_radish, size_of_radish));

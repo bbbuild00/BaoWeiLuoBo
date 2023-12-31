@@ -20,7 +20,7 @@ void enemy::getout(tower* a) {
 
 enemy1::enemy1(GameScene* lay,int le) {
     // mpos = st->getpos();
-    log("Enemy's GameScene p: %p", lay);
+    //log("Enemy's GameScene p: %p", lay);
     stop = false;
     slowice = false;
     active = false;
@@ -116,7 +116,7 @@ void enemy::mouse_click() {
         if (monster->getBoundingBox().containsPoint(touchLocation)) {
             // 在这里可以执行你需要的操作
             //在这里建一个点击以后的动画
-
+            //log("enemy : onTouchBegan, %p", this);
             TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
 
             for (Node* child : pTower->getChildren()) {
@@ -149,8 +149,22 @@ bool enemy::init() {
 
    
     this->schedule([this](float dt) {
-        RadishLayer* pRadish = dynamic_cast<RadishLayer*>(this->getChildByTag(TagRadish));
-      //  crash(pRadish->getpos(),;
+        //log("enter schedule: %p",this);
+        //和萝卜层通讯
+        radish* pRadish = dynamic_cast<radish*>(w->getChildByTag(TagRadish));
+        if (crash(pRadish->getpos(), getpos())) {
+            log("change_HP(-1) %p", this);
+            pRadish->change_HP(-1);
+            
+            for (size_t i = 0; i < Attacktower.size(); i++) {
+                tower* e;
+                e = Attacktower.at(i);
+                e->enemy_killed();
+            }
+            MonsterLayer* pMonster = dynamic_cast<MonsterLayer*>(w->getChildByTag(TagMonster));
+            //调用函数：移走石头（防御塔和控制台），添加金币，
+            pMonster->removeMonster(this, 0);
+        }
         }, 0.1, "ShootScheduler2"); //1.0f为间隔时间，"ShootScheduler"为调度器的标签名
 
     move();
@@ -373,7 +387,7 @@ void enemy::move() {
 		addWayPoint1(m_waypointList, monster);//走向的航点
 	else if (leval == 2)
 		addWayPoint2(m_waypointList, monster);//走向的航点
-    if (slowice) {
+    /*if (slowice) {
         auto moveTo1 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(0)->getpos());
         auto moveTo2 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(1)->getpos());
         auto moveTo3 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(2)->getpos());
@@ -419,8 +433,8 @@ void enemy::move() {
         monster->runAction(sequence1);
         brush->runAction(sequence2);
     }
-
-    else {
+    */
+   // else {
         if (leval == 1) {
             auto moveTo1 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(0)->getpos());
             auto moveTo2 = cocos2d::MoveTo::create(MOVESPEED, m_waypointList.at(1)->getpos());
@@ -524,7 +538,7 @@ void enemy::move() {
             brush->runAction(sequence2);
         }
     }
-}
+//}
 
 enemy1::~enemy1() {
     // enemy_killed();
