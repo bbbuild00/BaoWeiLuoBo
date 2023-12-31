@@ -49,7 +49,6 @@ public:
 	void check_enemy_in(); //我来选择出我目标攻击的敌人是谁，目前还没实现
 	void removed();  //去还没有实现，功能是想拆除炮塔
 	int get_damage(); //向子弹类传伤害值
-	bool if_continue(int a); //由子弹类来调用，判断能否扣血
 	void add_money(); //由子弹类调用
 	cocos2d::Vec2 getpos() { return  point; }
 
