@@ -308,7 +308,7 @@ bool WelcomeScene::init()
 
 void WelcomeScene::adventureCallback(Ref* pSender)
 {
-    auto scene = GameScene::createGameScene();
+    auto scene = GameScene::createGameScene(2);
     //Í£Ö¹±³¾°ÒôÀÖ
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->replaceScene(scene);

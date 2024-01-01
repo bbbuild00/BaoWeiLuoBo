@@ -10,13 +10,22 @@
 USING_NS_CC;
 int ifSpeedUp;//1为二倍速
 int ifPause;//1为暂停
-char gameMap[7][12] = { {0,0,4,4,4,4,4,4,4,4,0,0},
+char gameMap[7][12];
+char gameMap1[7][12] = {{0,0,4,4,4,4,4,4,4,4,0,0},
                         {0,9,4,4,4,4,4,4,4,4,9,0},
                         {0,9,0,0,4,0,0,4,0,0,9,0},
                         {0,9,4,0,9,9,9,9,0,4,9,0}, 
                         {0,9,9,9,9,4,4,9,9,9,9,0},
                         {9,9,0,0,0,4,4,0,0,0,9,9},
                         {9,9,9,9,0,4,4,0,0,9,9,9} };//地图框架,0为空，1-3为炮塔，4为障碍物、9为路或不可移动障碍
+
+char gameMap2[7][12] = {{0,0,0,0,0,0,0,0,0,0,0,0},
+                        {0,0,0,0,9,9,9,9,9,9,0,0},
+                        {0,0,0,0,0,0,0,0,0,9,0,0},
+                        {0,0,9,9,9,9,9,9,9,9,0,0},
+                        {0,0,9,0,0,0,0,0,0,0,0,0},
+                        {9,0,9,9,9,9,9,9,9,0,0,9},
+                        {9,9,9,0,0,0,0,0,0,0,9,9} };//地图框架,0为空，1-3为炮塔，4为障碍物、9为路或不可移动障碍
 
 
 
@@ -43,20 +52,32 @@ bool positionToGrid(const Vec2& position, struct mapPos& grid) {
     return true;
 }
 
-Scene* GameScene::createGameScene() {
-	return GameScene::create();
+Scene* GameScene::createGameScene(int level) {
+    GameScene* scene = new GameScene(level);
+    if (scene && scene->init(level)) {
+        scene->autorelease();
+        return scene;
+    }
+    else {
+        delete scene;
+        return nullptr;
+    }
 }
+
 
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
 }
 
-bool GameScene::init() {
+
+bool GameScene::init(int level) {
     if (!Scene::init())
     {
         return false;
     }
+    log("Level: %d", m_level);
+
     visibleSize = Director::getInstance()->getVisibleSize();
     origin = Director::getInstance()->getVisibleOrigin();
     
@@ -64,12 +85,22 @@ bool GameScene::init() {
     ifSpeedUp = 0;
     ifPause = 0;
 
+    //地图
+    if (m_level == 1) {
+        memcpy(gameMap, gameMap1, sizeof(gameMap));
+    }
+    else if (m_level == 2) {
+        memcpy(gameMap, gameMap2, sizeof(gameMap));
+    }
+    
+
     //背景
     createBackground();
 
     log("GameScene's Address: %p", this);
 
     //金币
+    log("MoneyLayer::createLayer(this) : %p", this);
     MoneyLayer* money = dynamic_cast<MoneyLayer*>(MoneyLayer::createLayer(this));
     this->addChild(money);
     money->setTag(TagMoney);
@@ -77,12 +108,12 @@ bool GameScene::init() {
 
 
     //障碍物层
-    StoneLayer* stoneLayer = dynamic_cast<StoneLayer*>(StoneLayer::createLayer(this));
-    this->addChild(stoneLayer);
-    stoneLayer->setTag(TagStone);
-    //log("StoneLayer's Address1: %p", stoneLayer);
-    //log("StoneLayer's Address2: %p", this->getChildByTag(TagStone));
-
+    if (m_level == 1) {
+        StoneLayer* stoneLayer = dynamic_cast<StoneLayer*>(StoneLayer::createLayer(this));
+        this->addChild(stoneLayer);
+        stoneLayer->setTag(TagStone);
+    }
+    
     //菜单
     MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
     this->addChild(Menu);
@@ -102,7 +133,11 @@ bool GameScene::init() {
 
 
     //萝卜层
-    radish* Radish = dynamic_cast<radish*>(radish::create(Vec2(11 * 75, 6 * 75),this));
+    Vec2 vec = Vec2(11 * 75, 6 * 75);
+    if (m_level == 2) {
+        vec = Vec2(9 * 75, 2 * 75);
+    }
+    radish* Radish = dynamic_cast<radish*>(radish::create(vec,this));
     this->addChild(Radish);
     Radish->setTag(TagRadish);
 
@@ -132,7 +167,11 @@ void GameScene::createBackground() {
         // add the sprite as a child to this layer
         spriteBG->addChild(spriteBackground);
     }
+   
     auto spriteRoad = Sprite::create("/game/BG-hd.png");//小路
+    if (m_level == 2) {
+        spriteRoad->setTexture("/game/BG-hd2.png");
+    }
     if (spriteRoad == nullptr)
     {
         problemLoading("'/game/BG-hd.png'");
@@ -211,9 +250,15 @@ void GameScene::countToStart() {
 
 cocos2d::Layer* MoneyLayer::createLayer(GameScene* pScene)
 {
-    MoneyLayer* layer = dynamic_cast<MoneyLayer*>(MoneyLayer::create());
-    layer->_pGameScene = pScene;
-    return layer;
+    MoneyLayer* scene = new MoneyLayer(pScene);
+    if (scene && scene->init()) {
+        scene->autorelease();
+        return scene;
+    }
+    else {
+        delete scene;
+        return nullptr;
+    }
 }
 
 bool MoneyLayer::init() {
@@ -222,7 +267,12 @@ bool MoneyLayer::init() {
         return false;
     }
     //金币栏
-    log("Create MoneyLabel.");
+    if (_pGameScene->getLevel() == 1) {
+        coins = 1450;
+    }
+    else if (_pGameScene->getLevel() == 2) {
+        coins = 2000;
+    }
     MoneyLabel = Label::createWithTTF(StringUtils::toString(getMoney()), "/fonts/Marker Felt.ttf", 32);
     if (!MoneyLabel) {
         return false;
@@ -288,7 +338,7 @@ bool MenuLayer::init() {
                 grid[i][j].spriteGrid->setAnchorPoint(Vec2(0, 0));
                 grid[i][j].spriteGrid->setPosition(vec.x, vec.y);
                 this->addChild(grid[i][j].spriteGrid);
-                grid[i][j].spriteGrid->setVisible(false);
+                grid[i][j].spriteGrid->setVisible(true);
             }
             
         }
@@ -328,16 +378,33 @@ void MenuLayer::buildTower(int row, int col) {
     Vec2 vec = gridToPosition(col, row);
     greenBottle->setPosition(Vec2(vec.x - greenBottle->getContentSize().width / 2 + 40, vec.y + greenBottle->getContentSize().height + 40));
     layerBuild->addChild(greenBottle);
-    //便便
-    if (!(pTower->ifAvailable(SHIT))) {
-        shit->setTexture("/game/shit_CanClick0.PNG");
+    //第一第二关的第二个道具不一样
+    int level = _pGameScene->getLevel();
+    if (level == 1) {
+        //便便
+        if (!(pTower->ifAvailable(SHIT))) {
+            shit->setTexture("/game/shit_CanClick0.PNG");
+        }
+        else {
+            shit->setTexture("/game/shit_CanClick1.PNG");
+        }
+        shit->setPosition(Vec2(vec.x + shit->getContentSize().width / 2 + 40,
+            vec.y + shit->getContentSize().height + 40));
+        layerBuild->addChild(shit);
     }
-    else {
-        shit->setTexture("/game/shit_CanClick1.PNG");
+    else if (level == 2) {
+        //蓝冰冻
+        if (!(pTower->ifAvailable(ICE))) {
+            shit->setTexture("/game/frozen_CanClick0.PNG");
+        }
+        else {
+            shit->setTexture("/game/frozen_CanClick1.PNG");
+        }
+        shit->setPosition(Vec2(vec.x + shit->getContentSize().width / 2 + 40,
+            vec.y + shit->getContentSize().height + 40));
+        layerBuild->addChild(shit);
     }
-    shit->setPosition(Vec2(vec.x + shit->getContentSize().width / 2 + 40,
-        vec.y + shit->getContentSize().height + 40));
-    layerBuild->addChild(shit);
+   
     this->addChild(layerBuild);
 
 }
@@ -379,8 +446,17 @@ bool MenuLayer::touchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
             }
         }
         else if (towerShit->getBoundingBox().containsPoint(touchLocation)) {
-            if (pTower->ifAvailable(SHIT)) {
-                pTower->buidTower(SHIT, grid.x, grid.y);
+            //第一第二关不一样
+            int level = _pGameScene->getLevel();
+            if (level == 1) {
+                if (pTower->ifAvailable(SHIT)) {
+                    pTower->buidTower(SHIT, grid.x, grid.y);
+                }
+            }
+            else if (level == 2) {
+                if (pTower->ifAvailable(ICE)) {
+                    pTower->buidTower(ICE, grid.x, grid.y);
+                }
             }
         }
         this->removeChildByName("layerBuild");//移除菜单
@@ -428,6 +504,12 @@ bool TowerLayer::ifAvailable(int Type) {
             else
                 return false;
             break;
+        case ICE:
+            if (pMoney->getMoney() >= 200)
+                return true;
+            else
+                return false;
+            break;
         default:
             return false;
             break;
@@ -447,10 +529,14 @@ void TowerLayer::buidTower(int Type, int gridx, int gridy) {
         //TowerLayer* ptower = dynamic_cast<TowerLayer*>(newTower->getParent());
         //ptower->removeTower(this);
     }
-
     else if (Type == SHIT) {
         //建tower3
         auto newTower = tower_3::create(position, _pGameScene);
+        this->addChild(newTower);
+    }
+    else if (Type == ICE) {
+        //建tower2
+        auto newTower = tower_2::create(position, _pGameScene);
         this->addChild(newTower);
     }
     gameMap[gridy][gridx] = TOWER1;
@@ -509,15 +595,18 @@ bool MonsterLayer::init() {
 void MonsterLayer::spawnMonster(float dt)
 {
 	enemy* monster = nullptr;
+    int mType = _pGameScene->getLevel();
+    if (mType != 1 && mType != 2)return;
+
 	switch (monsterSpawnIndex % 3)
 	{ // 使用模运算来循环怪物类型
-		case 0: monster = enemy1::create(_pGameScene, 1);
+		case 0: monster = enemy1::create(_pGameScene, mType);
 			break;
 		case 1:
-			monster = enemy2::create(_pGameScene, 1);
+			monster = enemy2::create(_pGameScene, mType);
 			break;
 		case 2: 
-            monster = enemy3::create(_pGameScene, 1); 
+            monster = enemy3::create(_pGameScene, mType);
             break;
 	} this->addChild(monster); monsterQueue.push(monster); monsterSpawnIndex++; // 增加索引以便下次生成不同的怪物 
 }

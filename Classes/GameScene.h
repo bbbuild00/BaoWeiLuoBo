@@ -12,6 +12,7 @@
 #define TOWER3 3//顶级塔
 #define GREEN_BOTTLE 1
 #define SHIT 2
+#define ICE 3
 #define TagMenu 1
 #define TagTower 2
 #define TagMonster 3
@@ -25,32 +26,37 @@
 class GameScene : public cocos2d::Scene
 {
 public:
+    //构造函数接收整数参数
+    GameScene(int level) : m_level(level) {}
+   
     //创建场景（static说明场景的转换是释放再赋值）
-    static cocos2d::Scene* createGameScene();
+    static cocos2d::Scene* createGameScene(int level);
 
     //初始化
-    virtual bool init();
+    virtual bool init(int level);
     void createBackground();//添加背景图
     void countToStart();//倒计时
-
-    CREATE_FUNC(GameScene);
-
+    
+    int getLevel() { return m_level; }
 private:
     cocos2d::Size visibleSize;
     cocos2d::Vec2 origin;
+    int m_level;
 };
 
 class MoneyLayer : public cocos2d::Layer
 {
 public:
+    //构造函数
+    MoneyLayer(GameScene* pScene) : _pGameScene(pScene) {
+    }
     static cocos2d::Layer* createLayer(GameScene* pScene);
     virtual bool init();
-    CREATE_FUNC(MoneyLayer);
     void updateMoney(const int& changedCoins);
     int getMoney();
 
 private:
-    int coins = 11450;
+    int coins;
     cocos2d::Label* MoneyLabel = nullptr;
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
 };
@@ -137,10 +143,6 @@ public:
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
 };
-
-//创建萝卜管理层StoneLayer
-//刘文美和闫雯晴写的bool removeStone(stone* Stone)
-//刘文美和闫雯晴调用的create
 
 
 #endif // __GAME_SCENE_H__

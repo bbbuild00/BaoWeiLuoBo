@@ -42,7 +42,7 @@ AppDelegate::~AppDelegate()
 // it will affect all platforms
 void AppDelegate::initGLContextAttrs()
 {
-    // set OpenGL context attributes: red,green,blue,alpha,depth,stencil,multisamplesCount
+    // set OpenGL context attributes: red,green,ICE,alpha,depth,stencil,multisamplesCount
     GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8, 0};
 
     GLView::setGLContextAttrs(glContextAttrs);
@@ -96,8 +96,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object ´´½¨³¡¾°
-    auto scene = GameScene::createGameScene();
-    //auto scene = WelcomeScene::createWelcomeScene();
+    //auto scene = GameScene::createGameScene();
+    auto scene = WelcomeScene::createWelcomeScene();
     // run
     director->runWithScene(scene);
 
