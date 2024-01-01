@@ -298,8 +298,10 @@ bool tower_1::init()
 				else {
 					listener->setSwallowTouches(false);
 				}
-				this->removeChild(upSprite);  //把这个精灵摘除喽
-				this->removeChild(downSprite);
+				if (upSprite != NULL)
+					this->removeChild(upSprite);  //把这个精灵摘除喽
+				if (downSprite != NULL)
+					this->removeChild(downSprite);
 				return false;
 			};
 			// 注册监听器
@@ -452,8 +454,10 @@ bool tower_2::init()
 				}
 				else
 					listener->setSwallowTouches(false);
-				this->removeChild(upSprite);  //把这个精灵摘除喽
-				this->removeChild(downSprite);
+				if (upSprite != NULL)
+					this->removeChild(upSprite);  //把这个精灵摘除喽
+				if (downSprite != NULL)
+					this->removeChild(downSprite);
 				return false;
 			};
 			// 注册监听器
@@ -611,8 +615,10 @@ bool tower_3::init()
 				}
 				else
 					listener->setSwallowTouches(true);
-				this->removeChild(upSprite);  //把这个精灵摘除喽
-				this->removeChild(downSprite);
+				if (upSprite != NULL)
+					this->removeChild(upSprite);  //把这个精灵摘除喽
+				if (downSprite != NULL)
+					this->removeChild(downSprite);
 				return false;
 			};
 			// 注册监听器
