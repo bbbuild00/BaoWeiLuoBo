@@ -547,13 +547,10 @@ bool TowerLayer::removeTower(tower* Tower) {
         return false;
     }
     
-    
-    //Vec2 position0 = Tower->getPosition();
     Vec2 position0 = Tower->getpos();
-    Vec2 position = Vec2(position0.x - 75 / 2, position0.y - 75 / 2);
-    log("remove tower position : (% fl, % fl)", position0.x, position0.y);
     mapPos mappos;
-    positionToGrid(position, mappos);
+    positionToGrid(position0, mappos);
+    log("gameMap[mappos.y][mappos.x] : (%d, %d)", mappos.y, mappos.x);
     gameMap[mappos.y][mappos.x] = 0;
     
     
