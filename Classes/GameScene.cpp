@@ -600,32 +600,39 @@ bool MonsterLayer::init() {
 	return true;
 }
 
-void MonsterLayer::spawnMonster(float dt)
-{
-	enemy* monster = nullptr;
-    int mType = _pGameScene->getLevel();
-    if (mType != 1 && mType != 2)return;
+void MonsterLayer::spawnMonster(float dt) {
+    // 仅当怪物数量小于20时生成新怪物
+    if (monsterQueue.size() < 20) {
+        enemy* monster = nullptr;
+        int mType = _pGameScene->getLevel();
+        if (mType != 1 && mType != 2) return;
 
-	switch (monsterSpawnIndex % 3)
-	{ // 使用模运算来循环怪物类型
-		case 0: monster = enemy1::create(_pGameScene, mType);
-			break;
-		case 1:
-			monster = enemy2::create(_pGameScene, mType);
-			break;
-		case 2: 
-            monster = enemy3::create(_pGameScene, mType);
-            break;
-	} this->addChild(monster); monsterQueue.push(monster); monsterSpawnIndex++; // 增加索引以便下次生成不同的怪物 
+        switch (monsterSpawnIndex % 3) {
+            case 0: monster = enemy1::create(_pGameScene, mType);
+                break;
+            case 1: monster = enemy2::create(_pGameScene, mType);
+                break;
+            case 2: monster = enemy3::create(_pGameScene, mType);
+                break;
+        }
+        this->addChild(monster);
+        monsterQueue.push(monster);
+        monsterSpawnIndex++; // 增加索引以便下次生成不同的怪物 
+    }
 }
 
-void MonsterLayer::moveMonster(float dt)
-{
-	if (!monsterQueue.empty())
-	{
-		enemy* firstMonster = monsterQueue.front();
-		firstMonster->move(); monsterQueue.pop(); // 移除已经移动的怪物
-	}
+void MonsterLayer::moveMonster(float dt) {
+    if (!monsterQueue.empty()) {
+        enemy* firstMonster = monsterQueue.front();
+        firstMonster->move();
+        monsterQueue.pop(); // 移除已经移动的怪物
+
+        // 如果怪物队列为空，判断为游戏结束
+        if (monsterQueue.empty()) {
+            // 在这里添加游戏结束的逻辑
+            _pGameScene->winGame();
+        }
+    }
 }
 
 bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
