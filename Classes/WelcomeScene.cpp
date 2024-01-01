@@ -34,8 +34,7 @@ bool WelcomeScene::init()
     }
     /*播放音乐*/
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("/welcome/BGMusic.mp3", true);
-
-
+    
 
     //获取当前layer大小
     auto wndSize = getContentSize();
@@ -312,8 +311,7 @@ void WelcomeScene::adventureCallback(Ref* pSender)
 {
     //auto scene = GameScene::createGameScene(2);
     auto scene = GameSelectionScene::createScene();
-    //停止背景音乐
-    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    
     Director::getInstance()->replaceScene(scene);
 }
 

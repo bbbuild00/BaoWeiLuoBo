@@ -98,7 +98,7 @@ bool SkyLayer::init()
     game2_image->setPosition(Vec2(origin.x + visibleSize.width * 0.75 - 20,
         origin.y + visibleSize.height * 0.54));
     this->addChild(game2_image);
-    if (1) {//ÕâÀï¸Ä£¡£¡£¡£¡UserDefault::getInstance()->getIntegerForKey("level_1") < 2
+    if (UserDefault::getInstance()->getBoolForKey("Level_1") == false) {
         auto game2_lock = Sprite::create("/selection/stages_bg-hd_31.PNG");
         game2_lock->setPosition(Vec2(origin.x + visibleSize.width * 1.64,
             origin.y + visibleSize.height * 0.4));
@@ -108,8 +108,11 @@ bool SkyLayer::init()
     auto level_2_btn = Button::create("/selection/stages_bg-hd_30.PNG", "/selection/stages_bg-hd_28.PNG",
         "/selection/stages_bg-hd_39.PNG");
     level_2_btn->addTouchEventListener(CC_CALLBACK_2(SkyLayer::game2, this));
-    if (1) {//UserDefault::getInstance()->getIntegerForKey("level_1") < 2
+    if (UserDefault::getInstance()->getBoolForKey("Level_1") == false){
         level_2_btn->setEnabled(false);
+    }
+    else {
+        level_2_btn->setEnabled(true);
     }
     level_2_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.75 - 20,
         origin.y + visibleSize.height * 0.1));

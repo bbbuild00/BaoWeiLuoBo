@@ -1,13 +1,11 @@
 #include "GameScene.h"
-//#include "SimpleAudioEngine.h"
-#include "ui/CocosGUI.h"
+#include"GameSelectionScene.h"
 #include<string>
 #include"tower.h"
 #include"enemy.h"
 #include"stone.h"
 #include"radish.h"
 
-USING_NS_CC;
 int ifSpeedUp;//1为二倍速
 int ifPause;//1为暂停
 char gameMap[7][12];
@@ -92,7 +90,10 @@ bool GameScene::init(int level) {
     else if (m_level == 2) {
         memcpy(gameMap, gameMap2, sizeof(gameMap));
     }
-    
+
+    //更新背景音乐和音效
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    experimental::AudioEngine::preload("/radish/carrot2.mp3");
 
     //背景
     createBackground();
@@ -197,7 +198,6 @@ void GameScene::countToStart() {
     ifPause = 1;
     auto timeLayer = Layer::create();
     this->addChild(timeLayer);
-
     //屏蔽触摸事件
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
@@ -252,6 +252,12 @@ void GameScene::countToStart() {
     ifPause = 1;
 }
 
+void GameScene::winGame() {
+    UserDefault::getInstance()->setBoolForKey("Level_1", true);
+    UserDefault::getInstance()->flush();
+    //切换到选关场景
+    cocos2d::Director::getInstance()->replaceScene(GameSelectionScene::createScene());
+}
 
 cocos2d::Layer* MoneyLayer::createLayer(GameScene* pScene)
 {

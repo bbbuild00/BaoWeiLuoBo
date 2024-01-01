@@ -1,5 +1,9 @@
 #pragma once
+#include "SimpleAudioEngine.h"
+#include "audio/include/AudioEngine.h"
+#include "ui/CocosGUI.h"
 
+USING_NS_CC;
 #ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
@@ -38,6 +42,8 @@ public:
     void countToStart();//µ¹¼ÆÊ±
     
     int getLevel() { return m_level; }
+
+    void winGame();//Ó®£¡
 private:
     cocos2d::Size visibleSize;
     cocos2d::Vec2 origin;

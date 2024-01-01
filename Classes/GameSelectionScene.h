@@ -3,8 +3,8 @@
 #define __GameSelection_SCENE_H__
 #include"WelcomeScene.h"
 #include "cocos2d.h"
+#include "cocos/ui/UIWidget.h"
 #include"ui/CocosGUI.h"
-using namespace cocos2d::ui;
 
 
 class GameSelectionScene : public cocos2d::Scene
@@ -25,9 +25,9 @@ public:
     virtual bool init();
     CREATE_FUNC(SkyLayer);
     //选择第1小关
-    void game1(Ref* psender, Widget::TouchEventType type);
+    void game1(Ref* psender, ui::Widget::TouchEventType type);
     //选择第2小关
-    void game2(Ref* psender, Widget::TouchEventType type);
+    void game2(Ref* psender, ui::Widget::TouchEventType type);
 
     //返回上一层
     void return_to_welcome(Ref* pSender)

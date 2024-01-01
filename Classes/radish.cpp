@@ -1,7 +1,8 @@
 ﻿#include "radish.h"
 #include "GameScene.h"
-#include"WelcomeScene.h"
+#include"GameSelectionScene.h"
 #include <string>
+
 radish::radish(cocos2d::Vec2& a,GameScene* b)
 {
 	//log("radish::radish: radish's pscene: %p", b);
@@ -26,6 +27,10 @@ radish* radish::create(cocos2d::Vec2& a,GameScene* b)
 int radish::change_HP(int a)
 {
 	HP += a;
+	if (a < 0) {
+		experimental::AudioEngine::play2d("/radish/Crash.mp3");
+	}
+
 	std::string str;
 	if (HP < 10) {
 		char t = HP + '0';
@@ -74,7 +79,7 @@ int radish::change_HP(int a)
 	MySprite->setContentSize(cocos2d::Size(size_of_radish, size_of_radish));
 	if (HP == 0) {
 		// 切换到下一个场景
-		cocos2d::Director::getInstance()->replaceScene(WelcomeScene::createWelcomeScene());
+		cocos2d::Director::getInstance()->replaceScene(GameSelectionScene::createScene());
 		return 1;   //血量清零，游戏结束，返回值为1
 	}
 	return 0;
@@ -193,7 +198,7 @@ bool radish::init()
 
 			MySprite->runAction(rotateAction);
 			
-			
+			experimental::AudioEngine::play2d("/radish/carrot2.mp3");
 
 
 		}
