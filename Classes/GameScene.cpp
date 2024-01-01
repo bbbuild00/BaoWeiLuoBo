@@ -602,14 +602,13 @@ bool MonsterLayer::init() {
 	}
     this->scheduleOnce([this](float dt) { 
         schedule(schedule_selector(MonsterLayer::spawnMonster), 3.0f); // 每3秒生成一个怪物
-	    schedule(schedule_selector(MonsterLayer::moveMonster), 22.0f); // 每22秒移动一个怪物 
         }, 5.0f, "uniqueKeyForThisSchedule"); // 注意：3.0f 是延迟时间（秒），"uniqueKeyForThisSchedule" 是这个调度的唯一标识符
 	
 	return true;
 }
 
 void MonsterLayer::spawnMonster(float dt) {
-    log("MonsterLayer::spawnMonster pGamescene %p", _pGameScene);
+    //log("MonsterLayer::spawnMonster pGamescene %p", _pGameScene);
     // 仅当怪物数量小于20时生成新怪物
     if (monsterQueue.size() < 20) {
         enemy* monster = nullptr;
@@ -625,36 +624,26 @@ void MonsterLayer::spawnMonster(float dt) {
                 break;
         }
         this->addChild(monster);
-        monsterQueue.push(monster);
+        monsterQueue.push_back(monster);
         monsterSpawnIndex++; // 增加索引以便下次生成不同的怪物 
     }
 }
 
-void MonsterLayer::moveMonster(float dt) {
-    if (!monsterQueue.empty()) {
-        enemy* firstMonster = monsterQueue.front();
-        firstMonster->move();
-        monsterQueue.pop(); // 移除已经移动的怪物
-
-        // 如果怪物队列为空，判断为游戏结束
-        if (monsterQueue.empty()) {
-            // 在这里添加游戏结束的逻辑
-            _pGameScene->winGame();
-        }
-    }
-}
 
 bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
     if (!Enemy) {
         return false;
     }
-    //Enemy->release();
     removeChild(dynamic_cast<Layer*>(Enemy));
-    //log("removeMonster: released? %p", Enemy);
     //和金币层通讯
     MoneyLayer* pMoney = dynamic_cast<MoneyLayer*>(_pGameScene->getChildByTag(TagMoney));
     pMoney->updateMoney(coins);
     
+    //减少当前还剩的怪兽
+    monsterNum--;
+    if (monsterNum == 0) {
+        _pGameScene->winGame();
+    }
     return true;
 }
 

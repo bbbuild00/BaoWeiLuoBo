@@ -97,8 +97,6 @@ private:
 };
 
 //创建怪物管理层MonsterLayer
-//创建函数create
-//存储敌人的list
 class enemy;
 class MonsterLayer : public cocos2d::Layer
 {
@@ -110,11 +108,12 @@ public:
     virtual bool init();
     bool removeMonster(enemy* Enemy, int coins);//移掉小怪兽，增加金币
     void spawnMonster(float dt);//生成小怪兽
-    void moveMonster(float dt);
+    //void moveMonster(float dt);
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
-    std::queue<enemy*> monsterQueue;
+    std::list<enemy*> monsterQueue;//中间的怪兽会被消灭，还是不要用队列啦
     int monsterSpawnIndex = 0; // 用于跟踪下一个要生成的怪物类型
+    int monsterNum = 20;
 };
 
 //创建炮塔管理层TowerLayer
