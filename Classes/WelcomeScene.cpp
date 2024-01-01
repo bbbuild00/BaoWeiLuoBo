@@ -41,8 +41,8 @@ bool WelcomeScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
-    //先假设通了第一关，便于调试
-    UserDefault::getInstance()->setBoolForKey("Level_1", true);
+    //先假设每次进去都初始化为第一关未通过
+    UserDefault::getInstance()->setBoolForKey("Level_1", false);
     UserDefault::getInstance()->flush();
 
     /***背景***/
@@ -206,7 +206,7 @@ bool WelcomeScene::init()
         this->addChild(title);
     }
 
-    /*****************************************************************菜单界面************************************************************************/
+    /**菜单**/
     auto menu = Menu::create();
     menu->setPosition(Vec2(0, 0));
     //退出游戏按钮
@@ -287,7 +287,7 @@ bool WelcomeScene::init()
         nest_item->setPosition(Vec2(origin.x + visibleSize.width / 2 + nest_item->getContentSize().width,
             origin.y + visibleSize.height / 8));
         
-        auto nest_lock = Sprite::create("/MenuScene/lock.png");
+        auto nest_lock = Sprite::create("/welcome/lock.png");
         if (nest_lock == nullptr) {
             problemLoading("'lock.png'");
         }
@@ -298,11 +298,11 @@ bool WelcomeScene::init()
                 origin.y + visibleSize.height / 8 - nest_item->getContentSize().height / 5));
             this->addChild(nest_lock, 2);
         }
-        menu->addChild(nest_item);
-        this->addChild(menu);
-
-        return true;
     }
+    menu->addChild(nest_item);
+    this->addChild(menu);
+
+    return true;
 }
 
 void WelcomeScene::adventureCallback(Ref* pSender)

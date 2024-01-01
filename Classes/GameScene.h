@@ -86,7 +86,8 @@ public:
     void buildTower(int row, int col);
     //触摸事件
     bool touchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
-
+    
+    void options();
 
 private:
     
@@ -113,7 +114,8 @@ private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
     std::list<enemy*> monsterQueue;//中间的怪兽会被消灭，还是不要用队列啦
     int monsterSpawnIndex = 0; // 用于跟踪下一个要生成的怪物类型
-    int monsterNum = 20;
+    int monsterNum = 15;
+    cocos2d::Label* monsterLabel = nullptr;
 };
 
 //创建炮塔管理层TowerLayer

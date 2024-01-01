@@ -92,10 +92,19 @@ bool SkyLayer::init()
         origin.y + visibleSize.height * 0.1));
     this->addChild(level_1_btn);
 
+    if (UserDefault::getInstance()->getBoolForKey("Level_1") == true) {
+        auto win_image = Sprite::create("/selection/golden_radish.png");
+        win_image->setScale(0.8);
+        win_image->setPosition(Vec2(origin.x + visibleSize.width / 2 - 30,
+            origin.y + visibleSize.height * 0.4));
+        this->addChild(win_image);
+    }//½ğÂÜ²·£¡
+    
+
     //¹Ø¿¨game2
     auto game2_image = Sprite::create("/selection/Level_2.PNG");
     game2_image->setScale(0.8);
-    game2_image->setPosition(Vec2(origin.x + visibleSize.width * 0.75 - 20,
+    game2_image->setPosition(Vec2(origin.x + visibleSize.width * 0.75 - 40,
         origin.y + visibleSize.height * 0.54));
     this->addChild(game2_image);
     if (UserDefault::getInstance()->getBoolForKey("Level_1") == false) {
@@ -117,6 +126,14 @@ bool SkyLayer::init()
     level_2_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.75 - 20,
         origin.y + visibleSize.height * 0.1));
     this->addChild(level_2_btn);
+
+    if (UserDefault::getInstance()->getBoolForKey("Level_2") == true) {
+        auto win_image = Sprite::create("/selection/golden_radish.png");
+        win_image->setScale(0.8);
+        win_image->setPosition(Vec2(origin.x + visibleSize.width - 30,
+            origin.y + visibleSize.height * 0.4));
+        this->addChild(win_image);
+    }//½ğÂÜ²·£¡
 
     return true;
 }

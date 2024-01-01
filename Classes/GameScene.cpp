@@ -115,11 +115,6 @@ bool GameScene::init(int level) {
         stoneLayer->setTag(TagStone);
     }
     
-    //菜单
-    MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
-    this->addChild(Menu);
-    Menu->setTag(TagMenu);
-    
     //炮塔层
     TowerLayer* towerLayer = dynamic_cast<TowerLayer*>(TowerLayer::createLayer(this));
     this->addChild(towerLayer);
@@ -131,6 +126,12 @@ bool GameScene::init(int level) {
     this->addChild(monsterLayer);
     monsterLayer->setTag(TagMonster);
     //log("MonsterLayer's Address: %p", this->getChildByTag(TagMonster));
+    
+
+    //菜单
+    MenuLayer* Menu = dynamic_cast<MenuLayer*>(MenuLayer::createMenuLayer(this));
+    this->addChild(Menu);
+    Menu->setTag(TagMenu);
 
 
     //萝卜层
@@ -168,7 +169,7 @@ void GameScene::createBackground() {
         // add the sprite as a child to this layer
         spriteBG->addChild(spriteBackground);
     }
-   
+
     auto spriteRoad = Sprite::create("/game/BG-hd.png");//小路
     if (m_level == 2) {
         spriteRoad->setTexture("/game/BG-hd2.png");
@@ -185,6 +186,23 @@ void GameScene::createBackground() {
         // add the sprite as a child to this layer
         spriteBG->addChild(spriteRoad);
     }
+
+    auto wood = Sprite::create("/game/startPoint.PNG");//木牌
+    if (wood == nullptr) {
+        problemLoading("'/game/startPoint.PNG'");
+    }
+    Vec2 vec;
+    if (m_level == 1) {
+        vec = gridToPosition(1, 1);
+    }
+    else {
+        vec = gridToPosition(4, 1);
+    }
+
+    wood->setAnchorPoint(Vec2(0, 0));
+    wood->setPosition(Vec2(vec.x, vec.y));
+    spriteBG->addChild(wood);
+
     auto header = Sprite::create("/game/touming-hd.pvr_13.PNG");
     header->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height - header->getContentSize().height / 2));
@@ -251,9 +269,81 @@ void GameScene::countToStart() {
     timeLayer->runAction(Sequence::create(DelayTime::create(3.6), removeCallBack, nullptr));
     ifPause = 1;
 }
+void MenuLayer::options() {
 
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    
+    auto black_layer = LayerColor::create(Color4B::BLACK);
+    black_layer->setPosition(Vec2::ZERO);
+    black_layer->setOpacity(90);
+    this->addChild(black_layer, 6);
+
+    auto options_layer = Layer::create();
+    options_layer->setName("options");
+    this->addChild(options_layer, 7);
+    options_layer->setGlobalZOrder(20);
+
+    //禁止触摸
+    auto listener = EventListenerTouchOneByOne::create();
+    listener->setSwallowTouches(true);
+    listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
+        return true;
+    };
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
+    //背景
+    auto options_bg = Sprite::create("/game/options_bg.png");
+    options_bg->setPosition(Vec2(origin.x + visibleSize.width / 2,
+        origin.y + visibleSize.height / 2));
+    options_layer->addChild(options_bg);
+    auto options_menu = Menu::create();
+    options_menu->setPosition(Vec2::ZERO); 
+    options_menu->setGlobalZOrder(7);
+    options_layer->addChild(options_menu);
+
+    //继续游戏
+    auto resume_btn = MenuItemImage::create("/game/resume_normal.png", "/game/resume_selected.png");
+    resume_btn->setPosition(Vec2(visibleSize.width * 0.49, visibleSize.height * 0.67));
+    resume_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
+        this->removeChild(black_layer);
+        this->removeChildByName("options");
+        });
+    options_menu->addChild(resume_btn);
+
+    //重新开始
+    auto restart_btn = MenuItemImage::create("/game/restart_normal.png", "/game/restart_selected.png");
+    restart_btn->setPosition(Vec2(visibleSize.width * 0.49, visibleSize.height * 0.52));
+    restart_btn->setCallback([this, black_layer](Ref* psender) {
+        // 获取当前运行的场景
+        auto currentScene = Director::getInstance()->getRunningScene();
+
+        // 如果当前场景不为nullptr，则重新加载它
+        if (currentScene) {
+
+            // 重新加载当前场景
+            auto newScene = GameScene::createGameScene(_pGameScene->getLevel());
+            Director::getInstance()->replaceScene(newScene);
+        }
+        });
+    options_menu->addChild(restart_btn);
+
+    //选择关卡
+    auto return_btn = MenuItemImage::create("/game/return_normal.png", "/game/return_selected.png");
+    return_btn->setPosition(Vec2(visibleSize.width * 0.49, visibleSize.height * 0.37));
+    return_btn->setCallback([this, black_layer](Ref* psender) {
+        Director::getInstance()->replaceScene(GameSelectionScene::createScene());
+        });
+    options_menu->addChild(return_btn);
+
+}
 void GameScene::winGame() {
-    UserDefault::getInstance()->setBoolForKey("Level_1", true);
+    experimental::AudioEngine::play2d("/game/Perfect.mp3");
+    if (m_level == 1) {
+        UserDefault::getInstance()->setBoolForKey("Level_1", true);
+    }
+    else if (m_level == 2) {
+        UserDefault::getInstance()->setBoolForKey("Level_2", true);
+    }
     UserDefault::getInstance()->flush();
     //切换到选关场景
     cocos2d::Director::getInstance()->replaceScene(GameSelectionScene::createScene());
@@ -335,7 +425,19 @@ bool MenuLayer::init() {
     //touchListener->onTouchEnded = CC_CALLBACK_2(TouchLayer::onTouchEnded, this);
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
     
-    
+    //选项按钮
+    auto options_btn = ui::Button::create("/game/touming-hd.pvr_28.PNG", "/game/touming-hd.pvr_26.PNG");
+    options_btn->setPosition(Vec2(960 * 0.88, 640 * 0.94));
+    options_btn->addTouchEventListener([this](Ref* psender, ui::Button::TouchEventType type) {
+        switch (type) {
+            case ui::Button::TouchEventType::ENDED:
+                experimental::AudioEngine::play2d("/game/MenuSelect.mp3");
+                options();
+            default:
+                break;
+        }
+        });
+    this->addChild(options_btn);
 
     //格子测试
     //Sprite* grid[7][12];
@@ -603,14 +705,23 @@ bool MonsterLayer::init() {
     this->scheduleOnce([this](float dt) { 
         schedule(schedule_selector(MonsterLayer::spawnMonster), 3.0f); // 每3秒生成一个怪物
         }, 5.0f, "uniqueKeyForThisSchedule"); // 注意：3.0f 是延迟时间（秒），"uniqueKeyForThisSchedule" 是这个调度的唯一标识符
-	
+    std::string labelText = StringUtils::format("%d Monsters want the carrot!", monsterNum);
+    monsterLabel = Label::createWithTTF(labelText, "/fonts/Marker Felt.ttf", 32);
+    if (!monsterLabel) {
+        return false;
+    }
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    monsterLabel->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - monsterLabel->getContentSize().height * 1.2));
+
+    this->addChild(monsterLabel);
 	return true;
 }
 
 void MonsterLayer::spawnMonster(float dt) {
     //log("MonsterLayer::spawnMonster pGamescene %p", _pGameScene);
-    // 仅当怪物数量小于20时生成新怪物
-    if (monsterQueue.size() < 20) {
+    // 仅当怪物数量小于既定数量时生成新怪物
+    if (monsterQueue.size() < 15) {
         enemy* monster = nullptr;
         int mType = _pGameScene->getLevel();
         if (mType != 1 && mType != 2) return;
@@ -644,6 +755,9 @@ bool MonsterLayer::removeMonster(enemy* Enemy, int coins) {
     if (monsterNum == 0) {
         _pGameScene->winGame();
     }
+
+    std::string labelText = StringUtils::format("%d Monsters want the carrot!", monsterNum);
+    monsterLabel->setString(labelText);
     return true;
 }
 

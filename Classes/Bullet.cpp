@@ -37,6 +37,7 @@ void Bullet::move()
 //Bullet_1类的成员函数
 void Bullet_1::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二种炮塔有冰冻效果的时候，还得调用对方敌人一个函数
 {
+	//experimental::AudioEngine::play2d("/game/Bottle.mp3");
 	this->removeChild(my_picture);
 	if (attack_stone != NULL) { 
 			attack_stone->Attacked(damage);   //让障碍物减血条
@@ -52,6 +53,7 @@ void Bullet_1::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二
 //Bullet_2类的成员函数
 void Bullet_2::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二种炮塔有冰冻效果的时候，还得调用对方敌人一个函数
 {
+	experimental::AudioEngine::play2d("/game/IceBottle.mp3");
 	this->removeChild(my_picture);
 	if (attack_stone != NULL) { 
 			attack_stone->Attacked(damage);   //让障碍物减血条
@@ -67,6 +69,7 @@ void Bullet_2::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二
 //Bullet_3类的成员函数
 void Bullet_3::hittarget()  //第一种炮塔没有这个冰冻效果，所以不必考虑这个；第二种炮塔有冰冻效果的时候，还得调用对方敌人一个函数
 {
+	experimental::AudioEngine::play2d("/game/Shit.mp3");
 	this->removeChild(my_picture);
 	if (attack_stone != NULL) { 
 			attack_stone->Attacked(damage);   //让障碍物减血条
