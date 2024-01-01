@@ -31,7 +31,7 @@ void tower::rotation()
 		if (attack_enemy != NULL) {
 			enemy_point = attack_enemy->getpos();
 		}
-		else {
+		else if (attack_stone != NULL) {
 			enemy_point = attack_stone->getpos();
 		}
 		double x = point.x - enemy_point.x;
@@ -99,11 +99,16 @@ void tower::enemy_killed()
 	if (attack_enemy != NULL) {
 		attack_enemy = NULL;
 	}
-	for (Node* child : this->getChildren()) {
-		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
-			this->removeChild(e);
+	Vector<Node*> bulletsToRemove;
+	for (auto child : this->getChildren()) {
+		if (Bullet* bullet = dynamic_cast<Bullet*>(child)) {
+			bulletsToRemove.pushBack(bullet);
 		}
 	}
+	for (auto bullet : bulletsToRemove) {
+		this->removeChild(bullet);
+	}
+
 }
 
 void tower::stone_killed()
@@ -111,10 +116,14 @@ void tower::stone_killed()
 	if (attack_stone != NULL) {
 		attack_stone = NULL;
 	}
-	for (Node* child : this->getChildren()) {
-		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
-			this->removeChild(e);
+	Vector<Node*> bulletsToRemove;
+	for (auto child : this->getChildren()) {
+		if (Bullet* bullet = dynamic_cast<Bullet*>(child)) {
+			bulletsToRemove.pushBack(bullet);
 		}
+	}
+	for (auto bullet : bulletsToRemove) {
+		this->removeChild(bullet);
 	}
 }
 
@@ -259,7 +268,7 @@ bool tower_1::init()
 			else if (grade == 1)
 				downSprite->setTexture("tower1-2-c.png");
 			else 
-				downSprite->setTexture("tower1-3-a.png");
+				downSprite->setTexture("tower1-3-b.png");
 			downSprite->setPosition(cocos2d::Vec2(point.x, point.y - (size_of_tower / 2) - (size_of_up / 2)));
 			downSprite->setContentSize(cocos2d::Size(size_of_up, size_of_up));
 			this->addChild(downSprite);

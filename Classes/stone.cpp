@@ -17,7 +17,7 @@ void stone::mouse_click() {
     auto listener2 = cocos2d::EventListenerTouchOneByOne::create();//新建了一个监听器
 
     listener2->onTouchBegan = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
-        log("stone:onTouchBegan, %p", this);
+        //log("stone:onTouchBegan, %p", this);
         auto touchLocation = this->convertToNodeSpace(touch->getLocation());
         // 检测鼠标是否点击精灵
         if (stone_s->getBoundingBox().containsPoint(touchLocation)) {
@@ -25,7 +25,7 @@ void stone::mouse_click() {
             //在这里建一个点击以后的动画
             log("stone:clicked, %p", this);
             TowerLayer* pTower = dynamic_cast<TowerLayer*>(w->getChildByTag(TagTower));
-
+            if (pTower == nullptr) return true;
             for (Node* child : pTower->getChildren()) {
                 if (tower* e = dynamic_cast<tower*>(child)) {
                     bool a = e->check_if_in_range(this->getpos());
@@ -38,7 +38,7 @@ void stone::mouse_click() {
 
 
         }
-        return false;
+        return true;
         };
 
     // 注册监听器
@@ -56,7 +56,8 @@ void stone::Attacked(int damage) {
         for (size_t i = 0; i < Attacktower.size(); i++) {
             tower* e;
             e = Attacktower.at(i);
-            e->enemy_killed();
+            log("Attacktower.at(%d) e %p", i, e);
+            e->stone_killed();
         }
 
         StoneLayer* pStone = dynamic_cast<StoneLayer*>(w->getChildByTag(TagStone));
@@ -67,6 +68,7 @@ void stone::Attacked(int damage) {
 }
 
 stone1* stone1::create(cocos2d::Vec2 po, GameScene* lay) {
+    //log("stone1::create's pGame: %p", lay);
     stone1* layer = new stone1(po, lay);
     if (layer && layer->init()) {
         layer->autorelease();

@@ -9,7 +9,6 @@ Scene* WelcomeScene::createWelcomeScene()
     //创建一个以WelcomeScene的Layer为结点的Scene（可能这样比直接创建scene好一点？）
 
     auto scene = Scene::create();
-
     auto layerWelcome = WelcomeScene::create();
 
     scene->addChild(layerWelcome);
@@ -41,11 +40,10 @@ bool WelcomeScene::init()
     //获取屏幕大小
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /*
-    auto spritecache = SpriteFrameCache::getInstance();
-    spritecache->addSpriteFramesWithFile("welcome_scene-hd.plist");
-    失败地解压图层
-    */
+    
+    //先假设通了第一关，便于调试
+    UserDefault::getInstance()->setBoolForKey("Level_1", true);
+    UserDefault::getInstance()->flush();
 
     /***背景***/
     auto spriteBackground = Sprite::create("/welcome/MainBG.PNG");

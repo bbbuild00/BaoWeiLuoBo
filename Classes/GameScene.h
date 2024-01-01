@@ -80,9 +80,9 @@ struct Grid
 class MenuLayer : public cocos2d::Layer
 {
 public:
+    MenuLayer(GameScene* pScene) : _pGameScene(pScene) {}
     static cocos2d::Layer* createMenuLayer(GameScene* pScene);
     virtual bool init();
-    CREATE_FUNC(MenuLayer);
     void buildTower(int row, int col);
     //触摸事件
     bool touchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
@@ -103,9 +103,11 @@ class enemy;
 class MonsterLayer : public cocos2d::Layer
 {
 public:
+    //构造函数
+    MonsterLayer(GameScene* pScene) : _pGameScene(pScene) {
+    }
     static cocos2d::Layer* createLayer(GameScene* pScene);
     virtual bool init();
-    CREATE_FUNC(MonsterLayer);
     bool removeMonster(enemy* Enemy, int coins);//移掉小怪兽，增加金币
     void spawnMonster(float dt);//生成小怪兽
     void moveMonster(float dt);
@@ -145,7 +147,7 @@ public:
     virtual bool init();
     CREATE_FUNC(StoneLayer);
     bool removeStone(stone* Stone, int coins);
-
+    void createStones();
 private:
     GameScene* _pGameScene = nullptr;//通过场景的通讯方式
 };

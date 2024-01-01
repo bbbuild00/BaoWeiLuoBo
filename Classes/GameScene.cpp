@@ -272,7 +272,7 @@ cocos2d::Layer* MoneyLayer::createLayer(GameScene* pScene)
     }
 }
 
-bool MoneyLayer::init() {
+bool MoneyLayer::init() {//md!init函数是在调用cocos的create时候就用的！_pGameScene当然还没初始化！
     if (!Layer::init())
     {
         return false;
@@ -293,18 +293,14 @@ bool MoneyLayer::init() {
     MoneyLabel->setPosition(Vec2(origin.x + MoneyLabel->getContentSize().width * 3, origin.y + visibleSize.height - MoneyLabel->getContentSize().height * 1.2));
     
     this->addChild(MoneyLabel);
-    //MoneyLabel->setString(StringUtils::toString(666));//非常匪夷所思，不知道为什么换不了
+    //MoneyLabel->setString(StringUtils::toString(666));//能换了！！！！！！
     return true;
 }
 
 void MoneyLayer::updateMoney(const int& changedCoins) {
     coins += changedCoins;
     //同步更改分数显示栏
-    auto LabelPos = MoneyLabel->getPosition();
-    MoneyLabel->removeFromParent();
-    MoneyLabel = Label::createWithTTF(StringUtils::toString(getMoney()), "/fonts/Marker Felt.ttf", 32);
-    MoneyLabel->setPosition(LabelPos);
-    this->addChild(MoneyLabel);    
+    MoneyLabel->setString(StringUtils::toString(coins));
 }
 
 int MoneyLayer::getMoney() {
@@ -313,9 +309,15 @@ int MoneyLayer::getMoney() {
 
 cocos2d::Layer* MenuLayer::createMenuLayer(GameScene* pScene)
 {
-    MenuLayer* layer = dynamic_cast<MenuLayer*>(MenuLayer::create());
-    layer->_pGameScene = pScene;
-    return layer;
+    MenuLayer* scene = new MenuLayer(pScene);
+    if (scene && scene->init()) {
+        scene->autorelease();
+        return scene;
+    }
+    else {
+        delete scene;
+        return nullptr;
+    }
 }
 bool MenuLayer::init() {
     if (!Layer::init())
@@ -582,9 +584,15 @@ bool TowerLayer::removeTower(tower* Tower) {
 
 cocos2d::Layer* MonsterLayer::createLayer(GameScene* pScene)
 {
-    MonsterLayer* layer = dynamic_cast<MonsterLayer*>(MonsterLayer::create());
-    layer->_pGameScene = pScene;
-    return layer;
+    MonsterLayer* scene = new MonsterLayer(pScene);
+    if (scene && scene->init()) {
+        scene->autorelease();
+        return scene;
+    }
+    else {
+        delete scene;
+        return nullptr;
+    }
 }
 
 bool MonsterLayer::init() {
@@ -601,6 +609,7 @@ bool MonsterLayer::init() {
 }
 
 void MonsterLayer::spawnMonster(float dt) {
+    log("MonsterLayer::spawnMonster pGamescene %p", _pGameScene);
     // 仅当怪物数量小于20时生成新怪物
     if (monsterQueue.size() < 20) {
         enemy* monster = nullptr;
@@ -653,7 +662,7 @@ cocos2d::Layer* StoneLayer::createLayer(GameScene* pScene)
 {
     StoneLayer* layer = dynamic_cast<StoneLayer*>(StoneLayer::create());
     layer->_pGameScene = pScene;
-
+    layer->createStones();
     return layer;
 }
 
@@ -662,7 +671,13 @@ bool StoneLayer::init() {
     {
         return false;
     }
-    auto stone1 = stone1::create(Vec2(0,0),_pGameScene);
+    return true;
+}
+void StoneLayer::createStones() {
+    if (_pGameScene == nullptr) {
+        log("StoneLayer::createStones() _pGameScene not exist!");
+    }
+    auto stone1 = stone1::create(Vec2(0, 0), _pGameScene);
     auto stone2 = stone2::create(Vec2(0, 0), _pGameScene);
     auto stone3 = stone3::create(Vec2(0, 0), _pGameScene);
     auto stone4 = stone4::create(Vec2(0, 0), _pGameScene);
@@ -681,7 +696,6 @@ bool StoneLayer::init() {
     this->addChild(stone8);
     this->addChild(stone9);
 
-    return true;
 }
 
 bool StoneLayer::removeStone(stone* Stone, int coins) {
