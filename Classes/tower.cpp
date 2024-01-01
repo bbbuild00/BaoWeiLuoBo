@@ -93,10 +93,16 @@ void tower::get_enemy(enemy* a)  //未解之谜函数
 	attack_enemy->addtower(this);  //向对应的障碍物增加的谁在攻击他 //谁要杀了我，而我又杀了谁？
 }
 
+
 void tower::enemy_killed()
 {
 	if (attack_enemy != NULL) {
 		attack_enemy = NULL;
+	}
+	for (Node* child : this->getChildren()) {
+		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
+			this->removeChild(e);
+		}
 	}
 }
 
@@ -104,6 +110,11 @@ void tower::stone_killed()
 {
 	if (attack_stone != NULL) {
 		attack_stone = NULL;
+	}
+	for (Node* child : this->getChildren()) {
+		if (Bullet* e = dynamic_cast<Bullet*>(child)) {
+			this->removeChild(e);
+		}
 	}
 }
 
