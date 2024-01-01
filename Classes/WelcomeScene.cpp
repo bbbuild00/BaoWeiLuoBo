@@ -1,5 +1,6 @@
 #include "WelcomeScene.h"
 #include "SimpleAudioEngine.h"
+#include"GameSelectionScene.h"
 
 USING_NS_CC;
 //using namespace CocosDenshion;
@@ -288,7 +289,7 @@ bool WelcomeScene::init()
         nest_item->setScale(0.9f);
         nest_item->setPosition(Vec2(origin.x + visibleSize.width / 2 + nest_item->getContentSize().width,
             origin.y + visibleSize.height / 8));
-        menu->addChild(nest_item);
+        
         auto nest_lock = Sprite::create("/MenuScene/lock.png");
         if (nest_lock == nullptr) {
             problemLoading("'lock.png'");
@@ -298,8 +299,9 @@ bool WelcomeScene::init()
             nest_lock->setScale(1.4);
             nest_lock->setPosition(Vec2(origin.x + visibleSize.width / 2 + nest_item->getContentSize().width * 1.44,
                 origin.y + visibleSize.height / 8 - nest_item->getContentSize().height / 5));
-            this->addChild(nest_lock, 1);
+            this->addChild(nest_lock, 2);
         }
+        menu->addChild(nest_item);
         this->addChild(menu);
 
         return true;
@@ -308,7 +310,8 @@ bool WelcomeScene::init()
 
 void WelcomeScene::adventureCallback(Ref* pSender)
 {
-    auto scene = GameScene::createGameScene(2);
+    //auto scene = GameScene::createGameScene(2);
+    auto scene = GameSelectionScene::createScene();
     //Í£Ö¹±³¾°ÒôÀÖ
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->replaceScene(scene);

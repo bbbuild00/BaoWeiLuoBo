@@ -184,6 +184,11 @@ void GameScene::createBackground() {
         // add the sprite as a child to this layer
         spriteBG->addChild(spriteRoad);
     }
+    auto header = Sprite::create("/game/touming-hd.pvr_13.PNG");
+    header->setPosition(Vec2(origin.x + visibleSize.width / 2,
+        origin.y + visibleSize.height - header->getContentSize().height / 2));
+    spriteBG->addChild(header);
+
     this->addChild(spriteBG);
 }
 
@@ -279,7 +284,7 @@ bool MoneyLayer::init() {
     }
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    MoneyLabel->setPosition(Vec2(origin.x + MoneyLabel->getContentSize().width * 2, origin.y + visibleSize.height - MoneyLabel->getContentSize().height * 1.5));
+    MoneyLabel->setPosition(Vec2(origin.x + MoneyLabel->getContentSize().width * 3, origin.y + visibleSize.height - MoneyLabel->getContentSize().height * 1.2));
     
     this->addChild(MoneyLabel);
     //MoneyLabel->setString(StringUtils::toString(666));//非常匪夷所思，不知道为什么换不了
@@ -338,7 +343,7 @@ bool MenuLayer::init() {
                 grid[i][j].spriteGrid->setAnchorPoint(Vec2(0, 0));
                 grid[i][j].spriteGrid->setPosition(vec.x, vec.y);
                 this->addChild(grid[i][j].spriteGrid);
-                grid[i][j].spriteGrid->setVisible(true);
+                grid[i][j].spriteGrid->setVisible(false);
             }
             
         }
