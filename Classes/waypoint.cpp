@@ -104,17 +104,17 @@ void addWayPoint2(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* m
     waypoint4->setNext(waypoint5);
     m_waypointList.pushBack(waypoint5);
 
-    waypoint* waypoint6 = new waypoint(cocos2d::Vec2(9* 75 +30, 6 * 75));
+    waypoint* waypoint6 = new waypoint(cocos2d::Vec2(9* 75 +60, 6 * 75));
     waypoint5->setNext(waypoint6);
     m_waypointList.pushBack(waypoint6);
 
     
 
-    waypoint* waypoint7 = new waypoint(cocos2d::Vec2(9 * 75 + 30, 5 * 75));
+    waypoint* waypoint7 = new waypoint(cocos2d::Vec2(9 * 75 + 60, 5 * 75));
     waypoint6->setNext(waypoint7);
     m_waypointList.pushBack(waypoint7);
 
-    waypoint* waypoint8 = new waypoint(cocos2d::Vec2(9 * 75 + 30, 4 * 75));
+    waypoint* waypoint8 = new waypoint(cocos2d::Vec2(9 * 75 + 60, 4 * 75));
     waypoint7->setNext(waypoint8);
     m_waypointList.pushBack(waypoint8);
 
@@ -142,15 +142,15 @@ void addWayPoint2(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* m
     waypoint13->setNext(waypoint14);
     m_waypointList.pushBack(waypoint14);
 
-    waypoint* waypoint15 = new waypoint(cocos2d::Vec2(2 * 75 +30, 4 * 75));
+    waypoint* waypoint15 = new waypoint(cocos2d::Vec2(2 * 75 +60, 4 * 75));
     waypoint14->setNext(waypoint15);
     m_waypointList.pushBack(waypoint15);
 
-    waypoint* waypoint16 = new waypoint(cocos2d::Vec2(2 * 75 + 30, 3* 75));
+    waypoint* waypoint16 = new waypoint(cocos2d::Vec2(2 * 75 + 60, 3* 75));
     waypoint15->setNext(waypoint16);
     m_waypointList.pushBack(waypoint16);
 
-    waypoint* waypoint17 = new waypoint(cocos2d::Vec2(2 * 75 + 30, 2 * 75));
+    waypoint* waypoint17 = new waypoint(cocos2d::Vec2(2 * 75 + 60, 2 * 75));
     waypoint16->setNext(waypoint17);
     m_waypointList.pushBack(waypoint17);
 
@@ -166,11 +166,11 @@ void addWayPoint2(cocos2d::Vector<waypoint*>& m_waypointList, cocos2d::Sprite* m
     waypoint19->setNext(waypoint20);
     m_waypointList.pushBack(waypoint20);
 
-    waypoint* waypoint21 = new waypoint(cocos2d::Vec2(6 * 75 - 10, 2* 75));
+    waypoint* waypoint21 = new waypoint(cocos2d::Vec2(7 * 75 - 10, 2* 75));
     waypoint20->setNext(waypoint21);
     m_waypointList.pushBack(waypoint21);
 
-    waypoint* waypoint22 = new waypoint(cocos2d::Vec2(7 * 75 - 10, 2* 75));
+    waypoint* waypoint22 = new waypoint(cocos2d::Vec2(9 * 75 +20, 2* 75));
     waypoint21->setNext(waypoint22);
     m_waypointList.pushBack(waypoint22);
 }
