@@ -95,9 +95,9 @@ bool SkyLayer::init()
     if (UserDefault::getInstance()->getBoolForKey("Level_1") == true) {
         auto win_image = Sprite::create("/selection/golden_radish.png");
         win_image->setScale(0.8);
-        win_image->setPosition(Vec2(origin.x + visibleSize.width / 2 - 30,
+        win_image->setPosition(Vec2(origin.x + visibleSize.width / 2 - 50,
             origin.y + visibleSize.height * 0.4));
-        this->addChild(win_image);
+        this->addChild(win_image,1);
     }//½ğÂÜ²·£¡
     
 
@@ -130,9 +130,9 @@ bool SkyLayer::init()
     if (UserDefault::getInstance()->getBoolForKey("Level_2") == true) {
         auto win_image = Sprite::create("/selection/golden_radish.png");
         win_image->setScale(0.8);
-        win_image->setPosition(Vec2(origin.x + visibleSize.width - 30,
+        win_image->setPosition(Vec2(origin.x + visibleSize.width - 100,
             origin.y + visibleSize.height * 0.4));
-        this->addChild(win_image);
+        this->addChild(win_image,1);
     }//½ğÂÜ²·£¡
 
     return true;

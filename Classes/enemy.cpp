@@ -26,6 +26,7 @@ enemy1::enemy1(GameScene* lay,int le) {
     active = false;
     w = lay;
     leval = le;
+    money = 30;
     //mpos=st->getpos();
 }
 
@@ -36,6 +37,7 @@ enemy2::enemy2(GameScene* lay, int le) {
     active = false;
     w = lay;
     leval = le;
+    money = 30;
     //mpos=st->getpos();
 }
 
@@ -46,6 +48,7 @@ enemy3::enemy3(GameScene* lay, int le) {
     active = false;
     w = lay;
     leval = le;
+    money = 50;
     //mpos=st->getpos();
 }
 

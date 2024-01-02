@@ -3,7 +3,7 @@
 #include <cmath>
 #define size_of_radish 120  //炮塔显示的长和宽
 #define ALLHP 10
-#define UPMONEY 1500  //升级一次的钱，升级一次涨一次命
+#define UPMONEY 500  //升级一次的钱，升级一次涨一次命
 #define size_of_up 50  //升级小标识的长和宽
 #define size_of_blood 40  //升级小标识的长和宽
 class GameScene;

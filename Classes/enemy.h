@@ -54,7 +54,7 @@ protected:
 	bool active;//是否移动
 	//cocos2d::Vec2 mpos;//当前位置
 	waypoint* walktowards;//走向的航点
-	int money=50; //打败小怪兽奖励的金币
+	int money; //打败小怪兽奖励的金币
 
 	cocos2d::Vector<waypoint*>m_waypointList;//走向的航点
 

@@ -41,10 +41,6 @@ bool WelcomeScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
-    //先假设每次进去都初始化为第一关未通过
-    UserDefault::getInstance()->setBoolForKey("Level_1", false);
-    UserDefault::getInstance()->flush();
-
     /***背景***/
     auto spriteBackground = Sprite::create("/welcome/MainBG.PNG");
     if (spriteBackground == nullptr)
