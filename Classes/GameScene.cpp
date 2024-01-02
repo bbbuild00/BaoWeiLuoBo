@@ -369,10 +369,10 @@ bool MoneyLayer::init() {//md!init函数是在调用cocos的create时候就用�
     }
     //金币栏
     if (_pGameScene->getLevel() == 1) {
-        coins = 1450;
+        coins = 1500;
     }
     else if (_pGameScene->getLevel() == 2) {
-        coins = 2000;
+        coins = 100;
     }
     MoneyLabel = Label::createWithTTF(StringUtils::toString(getMoney()), "/fonts/Marker Felt.ttf", 32);
     if (!MoneyLabel) {

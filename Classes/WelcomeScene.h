@@ -23,8 +23,13 @@ public:
     //怪物窝的回调
     void nestCallback(cocos2d::Ref* pSender) {};
 
-    //设置中心的回调
-    void optionsCallback(cocos2d::Ref* pSender) {};
+    //设置中心的回调(彩蛋：点中即重置）
+    void optionsCallback(cocos2d::Ref* pSender) {
+        UserDefault::getInstance()->setBoolForKey("Level_1", false);
+        UserDefault::getInstance()->setBoolForKey("Level_2", false);
+        UserDefault::getInstance()->flush();
+
+    }
 
     //帮助中心的回调
     void helperCallback(cocos2d::Ref* pSender) {};
